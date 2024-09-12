@@ -1,5 +1,3 @@
-# GyeongHo's Portpolio
+# It's me, GyeongHo
 
-nice to meet you.
-
-[여기에 도메인 입력]
+nice to meet you, meet GyeongHo at https://gyeongho.dev
