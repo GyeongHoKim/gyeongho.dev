@@ -23,6 +23,8 @@ import { useGLTF, useTexture } from "@react-three/drei";
 
 type RigidBodyWithLerp = RapierRigidBody & { lerped?: Vector3 };
 
+useTexture.preload("/texture/Rope002_1K-JPG/Rope002_1K-JPG_Color.jpg");
+useGLTF.preload("/models/employee_card.glb");
 extend({ MeshLineGeometry, MeshLineMaterial });
 
 interface EmployeeCardProps {
@@ -40,7 +42,7 @@ export function EmployeeCard({
   const texture = useTexture(
     "/texture/Rope002_1K-JPG/Rope002_1K-JPG_Color.jpg",
   );
-  const { nodes, materials } = useGLTF("/models/tag.glb");
+  const { nodes, materials } = useGLTF("/models/employee_card.glb");
   /**
    * References for the band and the joints
    */
