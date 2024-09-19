@@ -11,7 +11,7 @@
     "test": "npm run test:snapshot",
     "test:cypress-headless": "cypress run --browser chrome --config-file cypress.config.mts",
     "test:cypress-ui": "cypress open --config-file cypress.config.mts",
-    "test:snapshot": "npx percy exec -- cypress run --config-file cypress.config.mts"
+    "test:snapshot": "npx percy exec -- cypress run --config-file cypress.config.mts --browser chrome"
   },
   "dependencies": {
     "@react-three/drei": "^9.112.0",
