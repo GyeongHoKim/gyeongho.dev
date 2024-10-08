@@ -5,9 +5,9 @@ import {
   Lightformer,
   Scroll,
   ScrollControls,
-  Stars,
 } from "@react-three/drei";
 import { About } from "@/components/About.tsx";
+import { Title } from "@/components/Title.tsx";
 
 extend({ MeshLineGeometry, MeshLineMaterial });
 
@@ -17,12 +17,14 @@ export default function App() {
       <ambientLight intensity={Math.PI} />
       <ScrollControls damping={2} pages={3}>
         <Scroll>
-          <Stars depth={10} radius={50} speed={2} />
           <About />
+        </Scroll>
+        <Scroll html>
+          <Title />
         </Scroll>
       </ScrollControls>
       <Environment background blur={0.75}>
-        <color attach="background" args={["black"]} />
+        <color attach="background" args={["#12071f"]} />
         <Lightformer
           intensity={2}
           color="white"
