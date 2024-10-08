@@ -1,5 +1,5 @@
 import { Physics } from "@react-three/rapier";
-import { EmployeeCard } from "./EmployeeCard.tsx";
+import { EmployeeCard } from "@/components/EmployeeCard.tsx";
 import { useThree } from "@react-three/fiber";
 import { Text } from "@react-three/drei";
 

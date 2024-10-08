@@ -25,7 +25,13 @@
     "types": [
       "cypress",
       "@percy/cypress"
-    ]
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    }
   },
   "include": [
     "src"

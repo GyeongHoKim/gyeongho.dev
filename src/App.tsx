@@ -7,7 +7,7 @@ import {
   ScrollControls,
   Stars,
 } from "@react-three/drei";
-import { About } from "./components/About.tsx";
+import { About } from "@/components/About.tsx";
 
 extend({ MeshLineGeometry, MeshLineMaterial });
 
