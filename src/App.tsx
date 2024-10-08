@@ -1,8 +1,13 @@
 import { Canvas, extend } from "@react-three/fiber";
-import { Physics } from "@react-three/rapier";
 import { MeshLineGeometry, MeshLineMaterial } from "meshline";
-import { EmployeeCard } from "./components/EmployeeCard.tsx";
-import { Environment, Lightformer } from "@react-three/drei";
+import {
+  Environment,
+  Lightformer,
+  Scroll,
+  ScrollControls,
+} from "@react-three/drei";
+import { About } from "@/components/About.tsx";
+import { Title } from "@/components/Title.tsx";
 
 extend({ MeshLineGeometry, MeshLineMaterial });
 
@@ -10,11 +15,16 @@ export default function App() {
   return (
     <Canvas camera={{ position: [0, 0, 13], fov: 25 }}>
       <ambientLight intensity={Math.PI} />
-      <Physics interpolate gravity={[0, -40, 0]} timeStep={1 / 60}>
-        <EmployeeCard />
-      </Physics>
+      <ScrollControls damping={2} pages={3}>
+        <Scroll>
+          <About />
+        </Scroll>
+        <Scroll html>
+          <Title />
+        </Scroll>
+      </ScrollControls>
       <Environment background blur={0.75}>
-        <color attach="background" args={["black"]} />
+        <color attach="background" args={["#12071f"]} />
         <Lightformer
           intensity={2}
           color="white"
