@@ -8,21 +8,28 @@ import {
 } from "@react-three/drei";
 import { About } from "@/components/About.tsx";
 import { Title } from "@/components/Title.tsx";
+import { WordCloud } from "@/components/WordCloud.tsx";
+import { OrbitControlsProvider } from "@/components/OrbitControlsProvider.tsx";
+import { Skills } from "@/components/Skills.tsx";
 
 extend({ MeshLineGeometry, MeshLineMaterial });
 
 export default function App() {
   return (
     <Canvas camera={{ position: [0, 0, 13], fov: 25 }}>
+      <OrbitControlsProvider>
+        <ScrollControls pages={3}>
+          <Scroll>
+            <About />
+            <WordCloud />
+          </Scroll>
+          <Scroll html>
+            <Title />
+            <Skills />
+          </Scroll>
+        </ScrollControls>
+      </OrbitControlsProvider>
       <ambientLight intensity={Math.PI} />
-      <ScrollControls damping={2} pages={3}>
-        <Scroll>
-          <About />
-        </Scroll>
-        <Scroll html>
-          <Title />
-        </Scroll>
-      </ScrollControls>
       <Environment background blur={0.75}>
         <color attach="background" args={["#12071f"]} />
         <Lightformer
