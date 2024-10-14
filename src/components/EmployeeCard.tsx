@@ -20,6 +20,7 @@ import {
   Vector3Like,
 } from "three";
 import { useGLTF, useTexture } from "@react-three/drei";
+import { useOrbitControls } from "@/hooks/orbit-controls.hook.ts";
 
 type RigidBodyWithLerp = RapierRigidBody & { lerped?: Vector3 };
 
@@ -36,6 +37,7 @@ export function EmployeeCard({
   maxSpeed = 50,
   minSpeed = 10,
 }: EmployeeCardProps) {
+  const { setEnabled } = useOrbitControls();
   /**
    * Texture and Models
    */
@@ -180,8 +182,14 @@ export function EmployeeCard({
           <group
             scale={2.25}
             position={[0, -1.2, -0.05]}
-            onPointerOver={() => hover(true)}
-            onPointerOut={() => hover(false)}
+            onPointerOver={() => {
+              setEnabled(false);
+              hover(true);
+            }}
+            onPointerOut={() => {
+              setEnabled(true);
+              hover(false);
+            }}
             onPointerUp={(e) => {
               (e.target as HTMLElement).releasePointerCapture(e.pointerId);
               drag(undefined);

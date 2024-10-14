@@ -1,20 +1,37 @@
 import { Canvas, extend } from "@react-three/fiber";
-import { Physics } from "@react-three/rapier";
 import { MeshLineGeometry, MeshLineMaterial } from "meshline";
-import { EmployeeCard } from "./components/EmployeeCard.tsx";
-import { Environment, Lightformer } from "@react-three/drei";
+import {
+  Environment,
+  Lightformer,
+  Scroll,
+  ScrollControls,
+} from "@react-three/drei";
+import { About } from "@/components/About.tsx";
+import { Title } from "@/components/Title.tsx";
+import { WordCloud } from "@/components/WordCloud.tsx";
+import { OrbitControlsProvider } from "@/components/OrbitControlsProvider.tsx";
+import { Skills } from "@/components/Skills.tsx";
 
 extend({ MeshLineGeometry, MeshLineMaterial });
 
 export default function App() {
   return (
     <Canvas camera={{ position: [0, 0, 13], fov: 25 }}>
+      <OrbitControlsProvider>
+        <ScrollControls pages={3}>
+          <Scroll>
+            <About />
+            <WordCloud />
+          </Scroll>
+          <Scroll html>
+            <Title />
+            <Skills />
+          </Scroll>
+        </ScrollControls>
+      </OrbitControlsProvider>
       <ambientLight intensity={Math.PI} />
-      <Physics interpolate gravity={[0, -40, 0]} timeStep={1 / 60}>
-        <EmployeeCard />
-      </Physics>
       <Environment background blur={0.75}>
-        <color attach="background" args={["black"]} />
+        <color attach="background" args={["#12071f"]} />
         <Lightformer
           intensity={2}
           color="white"
