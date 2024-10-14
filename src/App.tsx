@@ -17,7 +17,7 @@ export default function App() {
   return (
     <Canvas camera={{ position: [0, 0, 13], fov: 25 }}>
       <OrbitControlsProvider>
-        <ScrollControls damping={2} pages={3}>
+        <ScrollControls pages={3}>
           <Scroll>
             <About />
             <WordCloud />
