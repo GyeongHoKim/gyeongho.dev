@@ -7,13 +7,18 @@ const dictionary: string[] = [
   "Lit",
   "React",
   "Cypress",
-  "WTR",
   "BackstopJS",
   "DesignSystem",
   "Test",
   "Streaming",
   "Redux",
   "TanstackQuery",
+  "Storybook",
+  "Jenkins",
+  "Terraform",
+  "IaC",
+  "RTSP",
+  "WebRTC",
 ];
 
 interface WordCloudProps {
@@ -25,7 +30,7 @@ interface WordCloudProps {
 export function WordCloud({
   count = 4,
   radius = 2,
-  center = new THREE.Vector3(0, -5, 0),
+  center = new THREE.Vector3(0, -6, 0),
 }: WordCloudProps) {
   const words = useMemo(() => {
     const temp = [];

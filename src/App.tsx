@@ -10,6 +10,7 @@ import { About } from "@/components/About.tsx";
 import { Title } from "@/components/Title.tsx";
 import { WordCloud } from "@/components/WordCloud.tsx";
 import { OrbitControlsProvider } from "@/components/OrbitControlsProvider.tsx";
+import { Skills } from "@/components/Skills.tsx";
 
 extend({ MeshLineGeometry, MeshLineMaterial });
 
@@ -24,6 +25,7 @@ export default function App() {
           </Scroll>
           <Scroll html>
             <Title />
+            <Skills />
           </Scroll>
         </ScrollControls>
       </OrbitControlsProvider>

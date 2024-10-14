@@ -6,7 +6,7 @@ import { Billboard, BillboardProps, Text } from "@react-three/drei";
 export function Word({ children, ...props }: BillboardProps) {
   const color = new THREE.Color();
   const fontProps = {
-    fontSize: 0.3,
+    fontSize: 0.2,
     letterSpacing: -0.05,
     lineHeight: 1,
     "material-toneMapped": false,
