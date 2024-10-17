@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { Mesh, MeshBasicMaterial } from "three";
 import { useEffect, useRef, useState } from "react";
 import { ThreeEvent, useFrame } from "@react-three/fiber";
 import { Billboard, BillboardProps, Text } from "@react-three/drei";
@@ -11,7 +12,7 @@ export function Word({ children, ...props }: BillboardProps) {
     lineHeight: 1,
     "material-toneMapped": false,
   };
-  const ref = useRef<Text>(null);
+  const ref = useRef<Mesh>(null);
   const [hovered, setHovered] = useState(false);
   const hover = (e: ThreeEvent<PointerEvent>) => {
     e.stopPropagation();
@@ -30,7 +31,7 @@ export function Word({ children, ...props }: BillboardProps) {
   }, [hovered]);
 
   useFrame(() => {
-    ref.current?.material.color.lerp(
+    (ref.current?.material as MeshBasicMaterial).color.lerp(
       color.set(hovered ? "#fa2720" : "white"),
       0.1,
     );
