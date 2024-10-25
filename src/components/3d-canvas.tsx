@@ -14,7 +14,7 @@ import { Skills } from "@/components/Skills.tsx";
 
 extend({ MeshLineGeometry, MeshLineMaterial });
 
-export default function App() {
+export default function ThreeCanvas() {
   return (
     <Canvas camera={{ position: [0, 0, 13], fov: 25 }}>
       <OrbitControlsProvider>
