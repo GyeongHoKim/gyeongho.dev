@@ -12,6 +12,7 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs.tsx";
 import { FileText, Github, Globe, Mail, Phone } from "lucide-react";
+import ThreeCanvas from "@/components/three-resume/three-canvas.tsx";
 
 export default function Resume() {
   return (
@@ -67,7 +68,7 @@ export default function Resume() {
         <Tabs defaultValue="skills" className="w-full">
           <nav className="bg-secondary">
             <div className="container mx-auto">
-              <TabsList className="grid w-full grid-cols-4">
+              <TabsList className="grid w-full grid-cols-5">
                 <TabsTrigger aria-label="skills" value="skills">
                   Skills
                 </TabsTrigger>
@@ -79,6 +80,13 @@ export default function Resume() {
                 </TabsTrigger>
                 <TabsTrigger aria-label="awards" value="awards">
                   Awards
+                </TabsTrigger>
+                <TabsTrigger
+                  className="overflow-ellipsis"
+                  aria-label="employee card"
+                  value="employee card"
+                >
+                  Employee Card
                 </TabsTrigger>
               </TabsList>
             </div>
@@ -207,7 +215,7 @@ export default function Resume() {
                       "Introduced concept of theme using shadow DOM and tokens for productivity for OEM-specific designs.",
                       "Built an internal NPM registry server and StoryBook server.",
                       "Implemented component testing with Cypress and visual regression testing with BackstopJS, and integrated them into the CI pipeline.",
-                      "Introduced importMap, grunt minifying, and the rollup bundler for compatibility with existing pages, improving the initial load time of the legacy pages from over one minute to less than three seconds.",
+                      "Introduced importMap, grunt minifying, and the rollup bundler for compatibility with existing pages, improving the initial load time of the legacy pages from over one minute to less than three-resume seconds.",
                     ],
                   },
                   {
@@ -305,6 +313,11 @@ export default function Resume() {
                   </ul>
                 </CardContent>
               </Card>
+            </TabsContent>
+            <TabsContent value="employee card">
+              <div className="relative min-h-screen">
+                <ThreeCanvas />
+              </div>
             </TabsContent>
           </main>
         </Tabs>

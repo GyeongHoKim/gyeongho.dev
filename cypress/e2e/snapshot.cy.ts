@@ -22,4 +22,10 @@ describe("스냅샷 테스트들", () => {
     cy.get('[aria-label="awards"]').click();
     cy.percySnapshot("Awards Tab");
   });
+
+  it("Employee Card Tab", () => {
+    cy.visit("https://gyeongho.dev");
+    cy.get('[aria-label="employee-card"]').click();
+    cy.percySnapshot("Employee Card Tab");
+  });
 });
