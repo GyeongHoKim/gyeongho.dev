@@ -2,7 +2,7 @@ import { useContext } from "react";
 import {
   OrbitControlsContext,
   OrbitControlsContextProps,
-} from "@/components/OrbitControlsProvider.tsx";
+} from "@/components/three-resume/OrbitControlsProvider.tsx";
 
 export const useOrbitControls = (): OrbitControlsContextProps => {
   const context = useContext(OrbitControlsContext);

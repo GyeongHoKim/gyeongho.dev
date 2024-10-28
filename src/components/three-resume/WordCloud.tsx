@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { Word } from "@/components/Word.tsx";
+import { Word } from "@/components/three-resume";
 import { useMemo } from "react";
 
 const dictionary: string[] = [
