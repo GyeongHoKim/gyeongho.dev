@@ -1,6 +1,5 @@
 import { Physics } from "@react-three/rapier";
-import { EmployeeCard } from "@/components/EmployeeCard.tsx";
-import { Stars } from "@/components/Stars.tsx";
+import { EmployeeCard, Stars } from "@/components/three-resume";
 
 export function About() {
   return (
