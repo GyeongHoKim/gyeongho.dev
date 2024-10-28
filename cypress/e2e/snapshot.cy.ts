@@ -34,7 +34,7 @@ describe("스냅샷 테스트들", () => {
 
   it("Employee Card Tab", () => {
     cy.visit(url);
-    cy.get('[aria-label="employee-card"]').click();
+    cy.get('[aria-label="employee card"]').click();
     cy.percySnapshot("Employee Card Tab");
   });
 });
