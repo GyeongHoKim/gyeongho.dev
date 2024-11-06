@@ -48,7 +48,7 @@ export function Resume() {
                 <span className="hidden md:inline">GitHub</span>
               </a>
               <a
-                href="https://velog.io/@rlarudgh"
+                href="https://blog.gyeongho.dev"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center mr-4 md:mr-0"
