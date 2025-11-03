@@ -197,7 +197,7 @@ export function Resume() {
                             </ul>
                           </li>
                           <li>
-                            Build Media Server(RTSP -&gt;
+                            Built Media Server(RTSP -&gt;
                             WebSocket/WebTransport/HLS/WebRTC)
                           </li>
                           <li>
@@ -224,10 +224,10 @@ export function Resume() {
                         "Typescript, Go, WebAssembly(Emscripten)",
                       achievements: [
                         "Developed INEXVideoPlayer interface(Play, Pause, Seek, Stop) and 4 impl objects(Canvas/Video * WebCodecs/WebAssembly)",
-                        "Build WebAssembly Decoder(AVC, HEVC) with x264, x265, AVCodecs, Emscripten(C++)",
+                        "Built WebAssembly Decoder(AVC, HEVC) with x264, x265, AVCodecs, Emscripten(C++)",
                         "3 Web Workers: send commands & receive NALu buffer, decode to YUV buffer, render using WebGPU or WebGL2",
-                        "Build Media Server which extracts AV from RTP and serves AV to WebAPPs with http(HLS,DASH), websocket and webtransport.",
-                        "5+ Our SI WebAPPs use this library to render videos on their WebAPP.",
+                        "Built Media Server which extracts AV from RTP and serves AV to WebAPPs with http(HLS,DASH), websocket and webtransport.",
+                        "5+ SI WebAPPs use this library to render videos on their WebAPP.",
                       ],
                     },
                     {
@@ -249,7 +249,7 @@ export function Resume() {
                       date: "Feb 2023 - PRESENT",
                       description:
                         "Introduced to domestic and overseas construction companies or local governments for the purpose of construction site management or on/off management of roads and footbreakers around rivers in the event of heavy rain, and provides customized functions to each company or local government (display water level sensors, remote control of circuit breakers, upload construction site drawings, tracking the location of vehicles or helicopters, etc.)",
-                      technologies: "",
+                      technologies: "React, Tanstack Query, React Router",
                       achievements: [
                         "System Integration to each companies or local governments",
                         "Developed Web UI with Google maps or Openlayers map or Kakao maps",
@@ -304,7 +304,7 @@ export function Resume() {
                       Google Developer Students Clubs Hackathon
                     </h3>
                     <p className="text-sm text-muted-foreground">
-                      Grand Prize | December 2023
+                      Grand Prize | Dec 2023
                     </p>
                     <p className="mt-2">
                       Participated in a hackathon where teams developed services
