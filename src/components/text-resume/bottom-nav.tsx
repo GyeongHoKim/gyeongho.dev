@@ -1,4 +1,4 @@
-import { Award, Briefcase, Code, CreditCard, User } from "lucide-react";
+import { Award, Briefcase, Code, CreditCard, GraduationCap, User } from "lucide-react";
 
 type BottomNavProps = {
   activeTab: string;
@@ -46,6 +46,15 @@ export function BottomNav({ activeTab, setActiveTab }: BottomNavProps) {
         >
           <Award size={24} />
           <span className="text-xs mt-1">Awards</span>
+        </button>
+        <button
+          onClick={() => setActiveTab("education")}
+          className={`flex flex-col items-center p-2 ${
+            activeTab === "education" ? "text-primary" : "text-muted-foreground"
+          }`}
+        >
+          <GraduationCap size={24} />
+          <span className="text-xs mt-1">Education</span>
         </button>
         <button
           onClick={() => setActiveTab("employee card")}

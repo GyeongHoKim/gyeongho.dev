@@ -21,15 +21,15 @@ export function Resume() {
           <div className="container mx-auto">
             <h1 className="text-2xl md:text-3xl font-bold">GyeongHo Kim</h1>
             <p className="text-lg md:text-xl">
-              I Build Web Experience, Full Stack
+              building A to Z of Video Streaming WebAPP
             </p>
             <div className="flex flex-wrap items-center mt-2 md:space-x-4 sm:space-x-0">
               <a
-                href="mailto:rlarudgh2017@gmail.com"
+                href="mailto:gyeongho.dev@proton.me"
                 className="flex items-center mr-4 md:mr-0"
               >
                 <Mail className="w-4 h-4 mr-2" />
-                <span className="hidden md:inline">rlarudgh2017@gmail.com</span>
+                <span className="hidden md:inline">gyeongho.dev@proton.me</span>
               </a>
               <a
                 href="tel:+821038125469"
@@ -78,7 +78,7 @@ export function Resume() {
           >
             <nav className="bg-secondary hidden sm:block">
               <div className="container mx-auto">
-                <TabsList className="hidden md:grid w-full grid-cols-5">
+                <TabsList className="hidden md:grid w-full grid-cols-6">
                   <TabsTrigger aria-label="skills" value="skills">
                     Skills
                   </TabsTrigger>
@@ -90,6 +90,9 @@ export function Resume() {
                   </TabsTrigger>
                   <TabsTrigger aria-label="awards" value="awards">
                     Awards
+                  </TabsTrigger>
+                  <TabsTrigger aria-label="education" value="education">
+                    Education
                   </TabsTrigger>
                   <TabsTrigger
                     className="overflow-ellipsis"
@@ -104,60 +107,35 @@ export function Resume() {
 
             <main className="container mx-auto py-6">
               <TabsContent value="skills">
-                <div className="space-y-6">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Skills(Front End)</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <ul className="list-disc pl-5 space-y-2">
-                        <li>
-                          Developing flexible and adaptable components (Lit, Web
-                          Components, React)
-                        </li>
-                        <li>
-                          Component Test, Visual Regression Test (Cypress,
-                          BackstopJS, Percy)
-                        </li>
-                        <li>
-                          Design System & Storybook (Typography, Theme Color,
-                          Grid System)
-                        </li>
-                        <li>
-                          Real-time Video Streaming Player (Browser side H264 &
-                          H265 decode)
-                        </li>
-                      </ul>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Skills(Back End)</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <ul className="list-disc pl-5 space-y-2">
-                        <li>Developing testable APIs (Nest.js, Gin)</li>
-                        <li>RTP Client Library (Node.js, Golang)</li>
-                        <li>
-                          Real-time Video Streaming (WebRTC, HLS, ll-HLS,
-                          WebSocket(Raw NALu))
-                        </li>
-                      </ul>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Skills(Devops)</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <ul className="list-disc pl-5 space-y-2">
-                        <li>CI/CD (Jenkins, GitHub Actions)</li>
-                        <li>Infrastructure as code (Terraform)</li>
-                        <li>Cloud (AWS ECR, AWS ECS)</li>
-                      </ul>
-                    </CardContent>
-                  </Card>
-                </div>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Skills</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="list-disc pl-5 space-y-2">
+                      <li>
+                        Video Streaming System(RTSP, HLS, LL-HLS, WebRTC,
+                        WebTransport, WebSocket)
+                      </li>
+                      <li>
+                        Web Assembly Decoder(AVC, HEVC) using x264, x265,
+                        AVCodec
+                      </li>
+                      <li>
+                        Open Source contribution to RTSP Client
+                        libraries(Yellowstone, VDK)
+                      </li>
+                      <li>
+                        Building Design System Web Component library with
+                        Storybook, Regression test
+                      </li>
+                      <li>
+                        CI(Test Automation)/CD(npm), several automated
+                        pipelines(Jenkins)
+                      </li>
+                    </ul>
+                  </CardContent>
+                </Card>
               </TabsContent>
 
               <TabsContent value="experience">
@@ -169,40 +147,64 @@ export function Resume() {
                     <div className="space-y-4">
                       <div>
                         <h3 className="text-lg font-semibold">
-                          IDIS / Web Engineer
+                          IDIS, Pangyo
                         </h3>
                         <p className="text-sm text-muted-foreground">
-                          July 2023 - PRESENT, Pangyo
+                          Web Engineer | July 2023 - PRESENT
                         </p>
                         <ul className="list-disc pl-5 mt-2 space-y-1">
                           <li>
-                            Developed Web UIs for the Video Management System
-                            (VMS)
+                            Deployed foundation libraries for our frontend
+                            developers
+                            <ul className="list-disc pl-5 mt-1 space-y-1">
+                              <li>
+                                Web Component Design System library with
+                                automated regression test,{" "}
+                                <code>@ids/web-components</code>
+                              </li>
+                              <li>
+                                WebGPU/WebGL Video Player library,{" "}
+                                <code>@ids/inex-video-player</code>
+                              </li>
+                              <li>
+                                WebAssembly Decoder library,{" "}
+                                <code>@ids/inex-wasm-decoder</code>
+                              </li>
+                              <li>
+                                Event pub/sub library,{" "}
+                                <code>@ids/event-emitter</code>
+                              </li>
+                              <li>
+                                External promise resolving library,{" "}
+                                <code>@ids/deferred</code>
+                              </li>
+                              <li>
+                                iNEX Solution Suite Client's API Client library,{" "}
+                                <code>@ids/inex-http-client</code>
+                              </li>
+                              <li>
+                                State library for React users{" "}
+                                <code>@ids/inex-react-http-client</code>
+                              </li>
+                              <li>
+                                Config libraries for iNEX coding convention,{" "}
+                                <code>@ids/eslint</code>,{" "}
+                                <code>@ids/ts-config</code>
+                              </li>
+                              <li>
+                                Jenkins pipelines, <code>@ids/jenkins</code>
+                              </li>
+                            </ul>
                           </li>
                           <li>
-                            Introduced ES modules and a component-based
-                            development approach
+                            Build Media Server(RTSP -&gt;
+                            WebSocket/WebTransport/HLS/WebRTC)
                           </li>
                           <li>
-                            Created a Design System using Web Component and
-                            StoryBook Server
+                            Map UI's WebAPP solutions that track the vehicle
+                            with real-time video with its NVR
                           </li>
-                          <li>
-                            Integrated component testing, visual regression
-                            testing into the Jenkins CI pipeline
-                          </li>
-                          <li>
-                            Developed several web solutions using the design
-                            system I built
-                          </li>
-                          <li>
-                            Built a REALTIME WEB VIDEO PLAYER that parses RTP
-                            packets in the browser environment
-                          </li>
-                          <li>
-                            Developed an RTSP library that operates in a Node.js
-                            environment
-                          </li>
+                          <li>Introduced login/logout feature for WebAPPs.</li>
                         </ul>
                       </div>
                     </div>
@@ -214,57 +216,47 @@ export function Resume() {
                 <div className="space-y-6">
                   {[
                     {
-                      title: "iNEX Web Components",
-                      date: "November 2023 - PRESENT",
+                      title: "iNEX Video Player & iNEX WebAssembly Decoder",
+                      date: "Feb 2023 - PRESENT",
                       description:
-                        "Created a library of web components for a design system applied to all serviced web solutions.",
+                        "Libraries for displaying RTSP video streams on WebAPPs.",
                       technologies:
-                        "Lit, Storybook, Design System (Typography, Theme Color, Grid System)",
+                        "Typescript, Go, WebAssembly(Emscripten)",
                       achievements: [
-                        "Introduced the concept of design systems and created a web component library.",
-                        "Introduced concept of theme using shadow DOM and tokens for productivity for OEM-specific designs.",
-                        "Built an internal NPM registry server and StoryBook server.",
-                        "Implemented component testing with Cypress and visual regression testing with BackstopJS, and integrated them into the CI pipeline.",
-                        "Introduced importMap, grunt minifying, and the rollup bundler for compatibility with existing pages, improving the initial load time of the legacy pages from over one minute to less than three-resume seconds.",
+                        "Developed INEXVideoPlayer interface(Play, Pause, Seek, Stop) and 4 impl objects(Canvas/Video * WebCodecs/WebAssembly)",
+                        "Build WebAssembly Decoder(AVC, HEVC) with x264, x265, AVCodecs, Emscripten(C++)",
+                        "3 Web Workers: send commands & receive NALu buffer, decode to YUV buffer, render using WebGPU or WebGL2",
+                        "Build Media Server which extracts AV from RTP and serves AV to WebAPPs with http(HLS,DASH), websocket and webtransport.",
+                        "5+ Our SI WebAPPs use this library to render videos on their WebAPP.",
                       ],
                     },
                     {
-                      title: "iNEX Live Player",
-                      date: "February 2024 - June 2024",
-                      description:
-                        "A library designed to display RTSP streams on the web.",
-                      technologies:
-                        "Lit, Nest.js, Gin, FFMPEG, Live-streaming (RTP, HLS, WebRTC)",
-                      achievements: [
-                        "Developed a proxy server using Node.js or Golang for RTSP connection and extracting Video NALu.",
-                        "Created a Web Component to decode NALu using WebCodecs API or a WebAssembly decoder and render the video.",
-                        "Added Worker Thread support for video decoding to display multiple CCTV streams on a single screen.",
-                        "Developed additional support for WebRTC, HLS, and LL-HLS protocols.",
-                      ],
-                    },
-                    {
-                      title: "Clip Archive",
+                      title: "Clip Archive Service",
                       date: "May 2023 - PRESENT",
                       description:
-                        "A system for managing and creating short clips from CCTV recordings.",
+                        "When buses equipped with MVR reach the depot, recorded videos are uploaded to a recording server. The system allows users to check the status of the recorder, search, manage, and create short clips under 2 Hours via the web interface. Users can view the clip creation status, check detailed information, add tags and comments, and view logs. The system also supports downloading clips, printing logs, and tracking buses at that time with Google maps.",
                       technologies:
-                        "React, Tanstack Query, React Router Dom, FSD",
+                        "React, Tanstack Query, React Router Dom, FSD; Gin, VDK, Video streaming, FFmpeg C binding",
                       achievements: [
-                        "Developed the WEB UI",
-                        "Focused on domain separation and abstraction as I wanted to add GPS location information for the clips.",
-                        "Abstracted the api Client due to frequent changes in both our protocol and the HTTP protocol, and separated the Entity, DTO, and RDO for the frequently changing API.",
+                        "Developed Web UI(dashboard, clip request, clip history, clip detail, health notification, settings page).",
+                        "Developed Media Server for streaming Videos and GPS data to WebAPP.",
+                        "Contributed open source libraries fixing race conditions and rtp payload parsing.",
+                        "Focused on Optimistic UI, Error Boundary, Fallback components for lazy loading",
                       ],
                     },
                     {
-                      title: "Real-time Flood Monitor",
-                      date: "February 2024 - July 2024",
+                      title: "GIS Tracking Service",
+                      date: "Feb 2023 - PRESENT",
                       description:
-                        "A project for monitoring CCTV status and controlling road barriers in flood-prone areas.",
-                      technologies: "Lit, Redux, Gin",
+                        "Introduced to domestic and overseas construction companies or local governments for the purpose of construction site management or on/off management of roads and footbreakers around rivers in the event of heavy rain, and provides customized functions to each company or local government (display water level sensors, remote control of circuit breakers, upload construction site drawings, tracking the location of vehicles or helicopters, etc.)",
+                      technologies: "",
                       achievements: [
-                        "Developed the WEB UI.",
-                        "Developed a Golang Gin-based media server that receives video via RTP and transmits it via various protocols (WebRTC, HLS, ll-HLS, RTP).",
+                        "System Integration to each companies or local governments",
+                        "Developed Web UI with Google maps or Openlayers map or Kakao maps",
+                        "Contributed open source libraries wrapping map sdk into web components.",
+                        "Focused on multiple video streaming with restricted resources(low memory, low cpu power).",
                       ],
+                      link: "https://youtu.be/YrOl5wlji0o?si=3yw6fd5_dSKNJac0",
                     },
                   ].map((project, index) => (
                     <Card key={index}>
@@ -274,14 +266,28 @@ export function Resume() {
                       </CardHeader>
                       <CardContent>
                         <p>{project.description}</p>
-                        <p className="mt-2">
-                          <strong>Technologies:</strong> {project.technologies}
-                        </p>
+                        {project.technologies && (
+                          <p className="mt-2">
+                            <strong>Technologies:</strong> {project.technologies}
+                          </p>
+                        )}
                         <ul className="list-disc pl-5 mt-2 space-y-1">
                           {project.achievements.map((achievement, i) => (
                             <li key={i}>{achievement}</li>
                           ))}
                         </ul>
+                        {project.link && (
+                          <p className="mt-2">
+                            <a
+                              href={project.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-primary hover:underline"
+                            >
+                              View Demo Video
+                            </a>
+                          </p>
+                        )}
                       </CardContent>
                     </Card>
                   ))}
@@ -295,17 +301,20 @@ export function Resume() {
                   </CardHeader>
                   <CardContent>
                     <h3 className="text-lg font-semibold">
-                      Grand Prize in Hackathon
+                      Google Developer Students Clubs Hackathon
                     </h3>
                     <p className="text-sm text-muted-foreground">
-                      December 2023, Namuthon hosted by Google Developer Student
-                      Clubs & alpaco
+                      Grand Prize | December 2023
                     </p>
                     <p className="mt-2">
                       Participated in a hackathon where teams developed services
                       using Google technologies. Our team consisted of one
                       designer, two machine learning engineers, and one
-                      full-stack developer.
+                      full-stack developer. We built a service that generates
+                      virtual interview questions using OpenAI and extracts
+                      scripts from uploaded videos using Google's speech-to-text
+                      model. I was responsible for both backend and frontend
+                      development.
                     </p>
                     <ul className="list-disc pl-5 mt-2 space-y-1">
                       <li>
@@ -321,6 +330,22 @@ export function Resume() {
                         APIs using Flask for their models.
                       </li>
                     </ul>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              <TabsContent value="education">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Education</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <h3 className="text-lg font-semibold">
+                      Hanyang Univ, Seoul
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      Bachelor | March 2018 - Feb 2024
+                    </p>
+                    <p className="mt-2">Double major in Electronics and Big Data</p>
                   </CardContent>
                 </Card>
               </TabsContent>
