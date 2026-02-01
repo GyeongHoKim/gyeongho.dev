@@ -309,16 +309,11 @@ export async function executeCommand(
 			};
 		}
 
-		const file = getFile(fs, "/resume");
-		if (!file) {
-			return {
-				result: createErrorResult("./resume: command not found"),
-			};
-		}
-
+		getFile(fs, "/resume");
+		// Do not print file content to terminal; resume viewer overlay shows it.
 		return {
 			result: {
-				stdout: file.content,
+				stdout: "",
 				stderr: "",
 				exitCode: 0,
 				resumeRevealed: true,
@@ -402,16 +397,11 @@ export function executeCommandSync(
 			};
 		}
 
-		const file = getFile(fs, "/resume");
-		if (!file) {
-			return {
-				result: createErrorResult("./resume: command not found"),
-			};
-		}
-
+		getFile(fs, "/resume");
+		// Do not print file content to terminal; resume viewer overlay shows it.
 		return {
 			result: {
-				stdout: file.content,
+				stdout: "",
 				stderr: "",
 				exitCode: 0,
 				resumeRevealed: true,
