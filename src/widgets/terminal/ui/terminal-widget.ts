@@ -143,6 +143,7 @@ export class TerminalWidget extends LitElement {
 	private fs: VirtualFilesystem = createDefaultFilesystem();
 	private currentLine = "";
 	private isWaitingForPassword = false;
+	private isWaitingForSuPassword = false;
 	private pendingSudoCommand = "";
 
 	// Drag state
@@ -279,14 +280,46 @@ export class TerminalWidget extends LitElement {
 	}
 
 	private writePrompt() {
-		const prompt = `visitor@desktop:${this.session.cwd}$ `;
+		const prompt = `${this.session.currentUser}@desktop:${this.session.cwd}$ `;
 		this.terminal?.write(prompt);
 	}
 
 	private async handleInput(data: string) {
 		if (!this.terminal) return;
 
-		// Handle password input mode
+		// Handle su password input mode
+		if (this.isWaitingForSuPassword) {
+			if (data === "\r") {
+				this.terminal.writeln("");
+				const SU_PASSWORD = "1116";
+				if (this.currentLine === SU_PASSWORD) {
+					this.session = { ...this.session, currentUser: "gyeonghokim" };
+				} else {
+					this.terminal.writeln("\x1b[31msu: Authentication failure\x1b[0m");
+				}
+				this.currentLine = "";
+				this.isWaitingForSuPassword = false;
+				this.writePrompt();
+				return;
+			}
+			if (data === "\x7f") {
+				if (this.currentLine.length > 0) {
+					this.currentLine = this.currentLine.slice(0, -1);
+				}
+				return;
+			}
+			if (data === "\x03") {
+				this.terminal.writeln("^C");
+				this.currentLine = "";
+				this.isWaitingForSuPassword = false;
+				this.writePrompt();
+				return;
+			}
+			this.currentLine += data;
+			return;
+		}
+
+		// Handle sudo password input mode
 		if (this.isWaitingForPassword) {
 			if (data === "\r") {
 				// Enter pressed - process password
@@ -360,7 +393,9 @@ export class TerminalWidget extends LitElement {
 		// Check if this is a sudo command that needs password
 		if (trimmed.startsWith("sudo ") && !this.session.sudoAuthenticated) {
 			this.pendingSudoCommand = trimmed.slice(5).trim();
-			this.terminal?.write("[sudo] password for visitor: ");
+			this.terminal?.write(
+				`[sudo] password for ${this.session.currentUser}: `,
+			);
 			this.isWaitingForPassword = true;
 			return;
 		}
@@ -369,6 +404,13 @@ export class TerminalWidget extends LitElement {
 			fs: this.fs,
 			session: this.session,
 		});
+
+		// Handle su gyeonghokim: widget prompts for password
+		if (result.needsSuPassword) {
+			this.terminal?.write("Password: ");
+			this.isWaitingForSuPassword = true;
+			return;
+		}
 
 		// Apply session updates
 		if (result.sessionUpdates) {
