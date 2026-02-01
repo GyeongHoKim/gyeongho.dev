@@ -6,14 +6,21 @@
  */
 
 /**
+ * Shell user identity for the terminal session.
+ */
+export type ShellUser = "visitor" | "gyeonghokim";
+
+/**
  * Per-session state for the terminal.
- * Tracks current working directory and sudo authentication status.
+ * Tracks current working directory, sudo authentication status, and current shell user.
  */
 export interface Session {
 	/** Current working directory (absolute path) */
 	cwd: string;
 	/** True after successful `sudo` with password 1116 */
 	sudoAuthenticated: boolean;
+	/** Current shell user (visitor or gyeonghokim) */
+	currentUser: ShellUser;
 }
 
 /**
@@ -24,6 +31,7 @@ export function createSession(): Session {
 	return {
 		cwd: "/",
 		sudoAuthenticated: false,
+		currentUser: "visitor",
 	};
 }
 
