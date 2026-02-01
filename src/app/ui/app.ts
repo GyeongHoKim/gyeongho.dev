@@ -39,6 +39,7 @@ export class AppRoot extends LitElement {
 			this.route = "briefing";
 			this._unsub = subscribeAuth((state: AuthState) => {
 				if (state.user) this.route = "desktop";
+				else if (this.route === "desktop") this.route = "login";
 			});
 			return;
 		}
@@ -49,6 +50,7 @@ export class AppRoot extends LitElement {
 		}, 1500);
 		this._unsub = subscribeAuth((state: AuthState) => {
 			if (state.user) this.route = "desktop";
+			else if (this.route === "desktop") this.route = "login";
 		});
 	}
 

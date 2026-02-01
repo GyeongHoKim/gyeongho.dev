@@ -10,6 +10,7 @@ import { customElement, state } from "lit/decorators.js";
 import "iconify-icon";
 import "../../../widgets/menu/ui/menu-widget.ts";
 import "../../../widgets/terminal/ui/terminal-widget.ts";
+import "../../../widgets/top-bar-right/ui/top-bar-right-widget.ts";
 import "../../../features/resume-viewer/ui/resume-viewer.ts";
 
 @customElement("desktop-page")
@@ -70,12 +71,6 @@ export class DesktopPage extends LitElement {
 		.top-bar-right {
 			display: flex;
 			align-items: center;
-			gap: 12px;
-		}
-
-		.system-icons {
-			display: flex;
-			gap: 8px;
 		}
 
 		.desktop-area {
@@ -240,11 +235,7 @@ export class DesktopPage extends LitElement {
 					${this.getCurrentTime()}
 				</div>
 				<div class="top-bar-right">
-					<div class="system-icons">
-						<iconify-icon icon="lucide:volume-2" width="16" height="16" aria-hidden="true"></iconify-icon>
-						<iconify-icon icon="lucide:battery-medium" width="16" height="16" aria-hidden="true"></iconify-icon>
-						<iconify-icon icon="lucide:wifi" width="16" height="16" aria-hidden="true"></iconify-icon>
-					</div>
+					<top-bar-right-widget></top-bar-right-widget>
 				</div>
 			</div>
 
