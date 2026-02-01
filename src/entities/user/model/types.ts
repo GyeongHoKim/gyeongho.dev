@@ -14,9 +14,12 @@ export interface User {
 	role: UserRole;
 }
 
-/** Fixed list of users for this feature (per spec). */
+/**
+ * Fixed list of users available for local login.
+ * Note: gyeonghokim is a remote user on a different device (192.168.1.20)
+ * and can only be accessed via SSH, not through the login screen.
+ */
 export const USERS: readonly User[] = [
-	{ id: "gyeonghokim", displayName: "gyeonghokim", role: "authenticated" },
 	{ id: "visitor", displayName: "visitor", role: "visitor" },
 ] as const;
 
