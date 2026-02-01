@@ -6,6 +6,7 @@
 
 import { LitElement, css, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
+import { msg, str, updateWhenLocaleChanges } from "@lit/localize";
 import {
 	setVisitor,
 	startGyeonghokimLogin,
@@ -22,6 +23,10 @@ import "../../../entities/user/ui/user-tile.ts";
 
 @customElement("login-page")
 export class LoginPage extends LitElement {
+	constructor() {
+		super();
+		updateWhenLocaleChanges(this);
+	}
 	static styles = css`
 		:host {
 			display: block;
@@ -180,10 +185,10 @@ export class LoginPage extends LitElement {
 		const authState = this._authState;
 		const showPassword = this._passwordUser !== null;
 		return html`
-			<div class="main" role="main" aria-label="Select user to sign in">
+			<div class="main" role="main" aria-label="${msg("Select user to sign in", { desc: "Login page main area" })}">
 				${
 					authState.status === "error" && !showPassword
-						? html`<p class="error-msg" role="alert">${authState.errorMessage ?? "Sign-in failed."}</p>`
+						? html`<p class="error-msg" role="alert">${authState.errorMessage ?? msg("Sign-in failed.", { desc: "Login error" })}</p>`
 						: ""
 				}
 				<div class="user-list" role="list">
@@ -199,7 +204,7 @@ export class LoginPage extends LitElement {
 				${
 					showPassword
 						? html`
-							<div class="password-bar" role="form" aria-label="Password for ${this._passwordUser?.displayName ?? ""}">
+							<div class="password-bar" role="form" aria-label="${msg(str`Password for ${this._passwordUser?.displayName ?? ""}`, { desc: "Password form for user" })}">
 								${
 									authState.errorMessage
 										? html`<p class="error-msg" role="alert">${authState.errorMessage}</p>`
@@ -207,17 +212,17 @@ export class LoginPage extends LitElement {
 								}
 								<input
 									type="password"
-									placeholder="Password"
+									placeholder="${msg("Password", { desc: "Password field" })}"
 									autocomplete="current-password"
 									.value=${this._password}
 									@input=${this._onPasswordInput}
 									@keydown=${this._onPasswordKeydown}
-									aria-label="Password"
+									aria-label="${msg("Password", { desc: "Password field" })}"
 								/>
 								<div class="password-actions">
-									<button type="button" @click=${this._onPasswordCancel}>Cancel</button>
+									<button type="button" @click=${this._onPasswordCancel}>${msg("Cancel", { desc: "Cancel button" })}</button>
 									<button type="button" class="unlock" @click=${this._onPasswordSubmit}>
-										Unlock
+										${msg("Unlock", { desc: "Unlock/login button" })}
 									</button>
 								</div>
 							</div>
@@ -227,11 +232,11 @@ export class LoginPage extends LitElement {
 			</div>
 			<footer class="bottom-bar" role="contentinfo">
 				<div class="bottom-bar-left">
-					<button type="button" aria-label="Accessibility options">Accessibility</button>
+					<button type="button" aria-label="${msg("Accessibility options", { desc: "Bottom bar" })}">${msg("Accessibility", { desc: "Accessibility button" })}</button>
 				</div>
 				<div class="bottom-bar-right">
-					<button type="button" aria-label="Keyboard layout">Keyboard</button>
-					<button type="button" aria-label="Power options">Power</button>
+					<button type="button" aria-label="${msg("Keyboard layout", { desc: "Bottom bar" })}">${msg("Keyboard", { desc: "Keyboard button" })}</button>
+					<button type="button" aria-label="${msg("Power options", { desc: "Bottom bar" })}">${msg("Power", { desc: "Power button" })}</button>
 				</div>
 			</footer>
 		`;
@@ -267,7 +272,7 @@ export class LoginPage extends LitElement {
 			this._passwordUser = null;
 			this._password = "";
 		} else {
-			setGyeonghokimError("Wrong password. Please try again.");
+			setGyeonghokimError(msg("Wrong password. Please try again.", { desc: "Login error" }));
 		}
 	}
 

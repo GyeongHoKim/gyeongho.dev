@@ -7,6 +7,7 @@
 
 import { LitElement, css, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
+import { msg, updateWhenLocaleChanges } from "@lit/localize";
 import "iconify-icon";
 import "../../../widgets/menu/ui/menu-widget.ts";
 import "../../../widgets/terminal/ui/terminal-widget.ts";
@@ -15,6 +16,10 @@ import "../../../features/resume-viewer/ui/resume-viewer.ts";
 
 @customElement("desktop-page")
 export class DesktopPage extends LitElement {
+	constructor() {
+		super();
+		updateWhenLocaleChanges(this);
+	}
 	static styles = css`
 		:host {
 			display: block;
@@ -228,7 +233,7 @@ export class DesktopPage extends LitElement {
 			<div class="top-bar">
 				<div class="top-bar-left">
 					<button class="activities-button" @click=${this.handleMenuToggle}>
-						Activities
+						${msg("Activities", { desc: "Top bar menu button" })}
 					</button>
 				</div>
 				<div class="top-bar-center">
@@ -264,8 +269,8 @@ export class DesktopPage extends LitElement {
 					`
 						: html`
 						<div class="welcome-text">
-							<h2>Welcome to gyeongho.dev</h2>
-							<p>Click "Activities" to open the terminal and start exploring</p>
+							<h2>${msg("Welcome to gyeongho.dev", { desc: "Desktop welcome heading" })}</h2>
+							<p>${msg('Click "Activities" to open the terminal and start exploring', { desc: "Desktop welcome hint" })}</p>
 						</div>
 					`
 				}
@@ -288,7 +293,7 @@ export class DesktopPage extends LitElement {
 						<button
 							class="dock-item ${this.terminalMinimized ? "minimized" : "active"}"
 							@click=${this.handleOpenTerminal}
-							aria-label="${this.terminalMinimized ? "Restore Terminal" : "Terminal is open"}"
+							aria-label="${this.terminalMinimized ? msg("Restore Terminal", { desc: "Dock button" }) : msg("Terminal is open", { desc: "Dock button" })}"
 						>
 							<iconify-icon icon="lucide:terminal" width="24" height="24" style="color: #4ec9b0" aria-hidden="true"></iconify-icon>
 						</button>

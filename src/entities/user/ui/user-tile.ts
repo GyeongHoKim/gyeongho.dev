@@ -5,10 +5,15 @@
 
 import { LitElement, css, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
+import { msg, str, updateWhenLocaleChanges } from "@lit/localize";
 import type { User } from "../model/types.js";
 
 @customElement("user-tile")
 export class UserTile extends LitElement {
+	constructor() {
+		super();
+		updateWhenLocaleChanges(this);
+	}
 	static styles = css`
 		:host {
 			display: block;
@@ -74,7 +79,7 @@ export class UserTile extends LitElement {
 			<button
 				type="button"
 				data-user-id="${this.user.id}"
-				aria-label="Select user ${this.user.displayName}"
+				aria-label="${msg(str`Select user ${this.user.displayName}`, { desc: "Login user tile" })}"
 				@click=${this._onClick}
 			>
 				<div class="avatar" aria-hidden="true">${initial}</div>

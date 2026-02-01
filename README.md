@@ -36,6 +36,38 @@ pnpm run format && pnpm run lint && pnpm run typecheck
 pnpm run test
 ```
 
+## 🌐 Localization (i18n)
+
+The app supports **English**, **Korean**, and **Japanese**. UI strings and the resume content are localized per locale.
+
+### Supported locales
+
+| Code | Language |
+|------|----------|
+| `en` | English (source) |
+| `ko` | 한국어 (Korean) |
+| `ja` | 日本語 (Japanese) |
+
+### How it works
+
+- **Lit Localize** ([@lit/localize](https://lit.dev/docs/localization/overview/)) in **runtime mode**: UI strings are wrapped in `msg()` / `msg(str`…`)` / `msg(html`…`)`, and translations live in generated locale modules loaded when the user switches language.
+- **Locale switcher**: On the desktop, use the language control (globe icon) in the top bar to choose English / 한국어 / 日本語. The choice is stored in `localStorage` and restored on the next visit.
+- **Resume**: Markdown files are split by locale: `src/assets/resume-en.md`, `resume-ko.md`, `resume-ja.md`. The resume viewer renders the file that matches the current locale.
+
+### Adding or updating translations
+
+1. **Extract** messages from source into XLIFF:
+   ```bash
+   pnpm run lit-localize:extract
+   ```
+2. **Edit** `xliff/ko.xlf` and `xliff/ja.xlf`: add or update `<target>` inside each `<trans-unit>`.
+3. **Build** locale modules:
+   ```bash
+   pnpm run lit-localize:build
+   ```
+
+New or changed UI strings will appear in the XLIFF files after step 1; update the `<target>` tags for ko/ja, then run step 3. For the resume, edit the corresponding `resume-*.md` file.
+
 ## 📁 Project Structure (Feature Sliced Design)
 
 ```

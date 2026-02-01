@@ -7,6 +7,7 @@
 
 import { LitElement, css, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
+import { msg, str, updateWhenLocaleChanges } from "@lit/localize";
 import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
 import {
@@ -22,6 +23,10 @@ import { executeCommand } from "../lib/command-interpreter.ts";
 
 @customElement("terminal-widget")
 export class TerminalWidget extends LitElement {
+	constructor() {
+		super();
+		updateWhenLocaleChanges(this);
+	}
 	static styles = css`
 		:host {
 			display: block;
@@ -275,8 +280,8 @@ export class TerminalWidget extends LitElement {
 		}, 0);
 
 		// Welcome message
-		this.terminal.writeln("Welcome to gyeongho.dev terminal");
-		this.terminal.writeln('Type "help" for available commands.');
+		this.terminal.writeln(msg("Welcome to gyeongho.dev terminal", { desc: "Terminal welcome" }));
+		this.terminal.writeln(msg('Type "help" for available commands.', { desc: "Terminal hint" }));
 		this.terminal.writeln("");
 		this.writePrompt();
 
@@ -306,7 +311,7 @@ export class TerminalWidget extends LitElement {
 					this.session = { ...this.session, currentUser: "gyeonghokim" };
 					setGyeonghokimSuccess(); // sync user entity (auth) with shell user
 				} else {
-					this.terminal.writeln("\x1b[31msu: Authentication failure\x1b[0m");
+					this.terminal.writeln(`\x1b[31m${msg("su: Authentication failure", { desc: "Terminal su error" })}\x1b[0m`);
 				}
 				this.currentLine = "";
 				this.isWaitingForSuPassword = false;
@@ -405,7 +410,7 @@ export class TerminalWidget extends LitElement {
 		if (trimmed.startsWith("sudo ") && !this.session.sudoAuthenticated) {
 			this.pendingSudoCommand = trimmed.slice(5).trim();
 			this.terminal?.write(
-				`[sudo] password for ${this.session.currentUser}: `,
+				msg(str`[sudo] password for ${this.session.currentUser}: `, { desc: "Terminal sudo prompt" }),
 			);
 			this.isWaitingForPassword = true;
 			return;
@@ -418,7 +423,7 @@ export class TerminalWidget extends LitElement {
 
 		// Handle su gyeonghokim: widget prompts for password
 		if (result.needsSuPassword) {
-			this.terminal?.write("Password: ");
+			this.terminal?.write(msg("Password: ", { desc: "Terminal password prompt" }));
 			this.isWaitingForSuPassword = true;
 			return;
 		}
@@ -453,7 +458,7 @@ export class TerminalWidget extends LitElement {
 		const SUDO_PASSWORD = "1116";
 
 		if (password !== SUDO_PASSWORD) {
-			this.terminal?.writeln("\x1b[31mSorry, try again.\x1b[0m");
+			this.terminal?.writeln(`\x1b[31m${msg("Sorry, try again.", { desc: "Error message" })}\x1b[0m`);
 			this.writePrompt();
 			return;
 		}
@@ -504,11 +509,11 @@ export class TerminalWidget extends LitElement {
 			>
 				<div class="title-bar" @mousedown=${this.handleDragStart}>
 					<div class="window-controls">
-						<button class="window-control close" @click=${this.handleClose} aria-label="Close terminal"></button>
-						<button class="window-control minimize" @click=${this.handleMinimize} aria-label="Minimize terminal"></button>
-						<button class="window-control maximize" @click=${this.handleMaximize} aria-label="${this.isMaximized ? "Restore terminal" : "Maximize terminal"}"></button>
+						<button class="window-control close" @click=${this.handleClose} aria-label="${msg("Close terminal", { desc: "Window control" })}"></button>
+						<button class="window-control minimize" @click=${this.handleMinimize} aria-label="${msg("Minimize terminal", { desc: "Window control" })}"></button>
+						<button class="window-control maximize" @click=${this.handleMaximize} aria-label="${this.isMaximized ? msg("Restore terminal", { desc: "Window control" }) : msg("Maximize terminal", { desc: "Window control" })}"></button>
 					</div>
-					<span class="title">Terminal</span>
+					<span class="title">${msg("Terminal", { desc: "Window title" })}</span>
 					<div></div>
 				</div>
 				<div class="terminal-container"></div>

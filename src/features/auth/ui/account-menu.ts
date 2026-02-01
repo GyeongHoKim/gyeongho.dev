@@ -7,12 +7,17 @@
 
 import { LitElement, css, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
+import { msg, updateWhenLocaleChanges } from "@lit/localize";
 import "iconify-icon";
 import { getCurrentUser, logout, subscribeAuth } from "../model/auth-state.js";
 import type { AuthState } from "../model/auth-state.js";
 
 @customElement("account-menu")
 export class AccountMenu extends LitElement {
+	constructor() {
+		super();
+		updateWhenLocaleChanges(this);
+	}
 	static styles = css`
 		:host {
 			display: inline-flex;
@@ -137,7 +142,7 @@ export class AccountMenu extends LitElement {
 	}
 
 	render() {
-		const displayName = this.authState.user?.displayName ?? "Guest";
+		const displayName = this.authState.user?.displayName ?? msg("Guest", { desc: "Fallback when no user name" });
 
 		return html`
 			<button
@@ -145,7 +150,7 @@ export class AccountMenu extends LitElement {
 				type="button"
 				aria-haspopup="true"
 				aria-expanded="${this.open}"
-				aria-label="Account menu"
+				aria-label="${msg("Account menu", { desc: "Account dropdown trigger" })}"
 				@click=${this._toggle}
 			>
 				<iconify-icon icon="lucide:user-circle" width="20" height="20" aria-hidden="true"></iconify-icon>
@@ -168,7 +173,7 @@ export class AccountMenu extends LitElement {
 								@click=${this._signOut}
 							>
 								<iconify-icon icon="lucide:log-out" width="18" height="18" aria-hidden="true"></iconify-icon>
-								Sign out
+								${msg("Sign out", { desc: "Account menu item" })}
 							</button>
 						</div>
 					`

@@ -5,6 +5,7 @@
  * Implements Linux-like commands: ls, cd, pwd, cat, clear, sudo, ./resume
  */
 
+import { msg, str } from "@lit/localize";
 import {
 	type Session,
 	createErrorResult,
@@ -56,7 +57,7 @@ function executeLs(
 	if (children === null) {
 		const node = getNode(fs, absolutePath);
 		if (node === null) {
-			return createErrorResult(`ls: No such file or directory: ${targetPath}`);
+			return createErrorResult(msg(str`ls: No such file or directory: ${targetPath}`, { desc: "ls error" }));
 		}
 		// It's a file, just show its name
 		return createSuccessResult(node.name);
@@ -108,12 +109,12 @@ function executeCd(
 		if (node === null) {
 			return {
 				result: createErrorResult(
-					`cd: No such file or directory: ${targetPath}`,
+					msg(str`cd: No such file or directory: ${targetPath}`, { desc: "cd error" }),
 				),
 			};
 		}
 		return {
-			result: createErrorResult(`cd: Not a directory: ${targetPath}`),
+			result: createErrorResult(msg(str`cd: Not a directory: ${targetPath}`, { desc: "cd error" })),
 		};
 	}
 
@@ -139,7 +140,7 @@ function executeCat(
 	args: string[],
 ): CommandResult {
 	if (args.length === 0) {
-		return createErrorResult("cat: missing operand");
+		return createErrorResult(msg("cat: missing operand", { desc: "cat error" }));
 	}
 
 	const outputs: string[] = [];
@@ -150,14 +151,14 @@ function executeCat(
 
 		// Deny reading resume via cat; only ./resume (with sudo) may reveal it
 		if (absolutePath === fs.resumePath) {
-			errors.push(`cat: ${absolutePath}: Permission denied`);
+			errors.push(msg(str`cat: ${absolutePath}: Permission denied`, { desc: "cat error" }));
 			continue;
 		}
 
 		const result = readFile(fs, absolutePath);
 
 		if ("error" in result) {
-			errors.push(`cat: ${result.error}`);
+			errors.push(msg(str`cat: ${result.error}`, { desc: "cat error" }));
 		} else {
 			outputs.push(result.content);
 		}
@@ -210,7 +211,8 @@ function executeEcho(args: string[]): CommandResult {
  * Executes the `help` command.
  */
 function executeHelp(): CommandResult {
-	const helpText = `Available commands:
+	const helpText = msg(
+		`Available commands:
   ls [path]     List directory contents
   cd [path]     Change directory
   pwd           Print working directory
@@ -220,7 +222,9 @@ function executeHelp(): CommandResult {
   echo [text]   Display text
   help          Show this help message
   su [user]     Switch user (e.g. su gyeonghokim)
-  sudo <cmd>    Run command with elevated privileges`;
+  sudo <cmd>    Run command with elevated privileges`,
+		{ desc: "Terminal help output" },
+	);
 	return createSuccessResult(helpText);
 }
 
@@ -263,7 +267,7 @@ export async function executeCommand(
 	if (command === "sudo") {
 		if (args.length === 0) {
 			return {
-				result: createErrorResult("usage: sudo command"),
+				result: createErrorResult(msg("usage: sudo command", { desc: "sudo error" })),
 			};
 		}
 
@@ -274,13 +278,13 @@ export async function executeCommand(
 				const password = await promptPassword();
 				if (password !== SUDO_PASSWORD) {
 					return {
-						result: createErrorResult("Sorry, try again."),
+						result: createErrorResult(msg("Sorry, try again.", { desc: "Error message" })),
 					};
 				}
 			} else {
 				// No password prompt available, check if session is authenticated
 				return {
-					result: createErrorResult("Sorry, try again."),
+					result: createErrorResult(msg("Sorry, try again.", { desc: "Error message" })),
 				};
 			}
 		}
@@ -305,26 +309,26 @@ export async function executeCommand(
 	if (command === "./resume") {
 		if (session.currentUser === "visitor") {
 			return {
-				result: createErrorResult("./resume: command not found"),
+				result: createErrorResult(msg("./resume: command not found", { desc: "resume error" })),
 			};
 		}
 		// Must be at root and authenticated
 		if (session.cwd !== "/") {
 			return {
-				result: createErrorResult("./resume: command not found"),
+				result: createErrorResult(msg("./resume: command not found", { desc: "resume error" })),
 			};
 		}
 
 		if (!session.sudoAuthenticated) {
 			return {
-				result: createErrorResult("./resume: Permission denied"),
+				result: createErrorResult(msg("./resume: Permission denied", { desc: "resume error" })),
 			};
 		}
 
 		// Check if resume exists and is executable
 		if (!isExecutable(fs, "/resume")) {
 			return {
-				result: createErrorResult("./resume: command not found"),
+				result: createErrorResult(msg("./resume: command not found", { desc: "resume error" })),
 			};
 		}
 
@@ -344,7 +348,7 @@ export async function executeCommand(
 	if (command === "su") {
 		if (args.length === 0) {
 			return {
-				result: createErrorResult("Usage: su username"),
+				result: createErrorResult(msg("Usage: su username", { desc: "su error" })),
 			};
 		}
 		const targetUser = args[0];
@@ -361,7 +365,7 @@ export async function executeCommand(
 			};
 		}
 		return {
-			result: createErrorResult(`su: user ${targetUser} does not exist`),
+			result: createErrorResult(msg(str`su: user ${targetUser} does not exist`, { desc: "su error" })),
 		};
 	}
 
@@ -401,7 +405,7 @@ export async function executeCommand(
 
 		default:
 			return {
-				result: createErrorResult(`command not found: ${command}`),
+				result: createErrorResult(msg(str`command not found: ${command}`, { desc: "shell error" })),
 			};
 	}
 }
@@ -425,24 +429,24 @@ export function executeCommandSync(
 	if (command === "./resume") {
 		if (session.currentUser === "visitor") {
 			return {
-				result: createErrorResult("./resume: command not found"),
+				result: createErrorResult(msg("./resume: command not found", { desc: "resume error" })),
 			};
 		}
 		if (session.cwd !== "/") {
 			return {
-				result: createErrorResult("./resume: command not found"),
+				result: createErrorResult(msg("./resume: command not found", { desc: "resume error" })),
 			};
 		}
 
 		if (!session.sudoAuthenticated) {
 			return {
-				result: createErrorResult("./resume: Permission denied"),
+				result: createErrorResult(msg("./resume: Permission denied", { desc: "resume error" })),
 			};
 		}
 
 		if (!isExecutable(fs, "/resume")) {
 			return {
-				result: createErrorResult("./resume: command not found"),
+				result: createErrorResult(msg("./resume: command not found", { desc: "resume error" })),
 			};
 		}
 
@@ -493,7 +497,7 @@ export function executeCommandSync(
 
 		case "su":
 			if (args.length === 0) {
-				return { result: createErrorResult("Usage: su username") };
+				return { result: createErrorResult(msg("Usage: su username", { desc: "su error" })) };
 			}
 			if (args[0] === "visitor") {
 				return {
@@ -508,18 +512,18 @@ export function executeCommandSync(
 				};
 			}
 			return {
-				result: createErrorResult(`su: user ${args[0]} does not exist`),
+				result: createErrorResult(msg(str`su: user ${args[0]} does not exist`, { desc: "su error" })),
 			};
 
 		case "sudo":
 			// Sudo needs password prompt, return error in sync mode
 			return {
-				result: createErrorResult("sudo: password prompt not available"),
+				result: createErrorResult(msg("sudo: password prompt not available", { desc: "sudo error" })),
 			};
 
 		default:
 			return {
-				result: createErrorResult(`command not found: ${command}`),
+				result: createErrorResult(msg(str`command not found: ${command}`, { desc: "shell error" })),
 			};
 	}
 }

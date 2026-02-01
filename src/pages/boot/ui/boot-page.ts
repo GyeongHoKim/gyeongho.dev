@@ -5,9 +5,14 @@
 
 import { LitElement, css, html } from "lit";
 import { customElement } from "lit/decorators.js";
+import { msg, updateWhenLocaleChanges } from "@lit/localize";
 
 @customElement("boot-page")
 export class BootPage extends LitElement {
+	constructor() {
+		super();
+		updateWhenLocaleChanges(this);
+	}
 	static styles = css`
 		:host {
 			display: block;
@@ -87,7 +92,7 @@ export class BootPage extends LitElement {
 
 	render() {
 		return html`
-			<div class="wrap" role="status" aria-live="polite" aria-label="Loading">
+			<div class="wrap" role="status" aria-live="polite" aria-label="${msg("Loading", { desc: "Boot/splash screen loading state" })}">
 				<div class="logo-wrap" aria-hidden="true">
 					<img src="/gnome/laptop.webp" alt="" width="64" height="64" aria-hidden="true" />
 				</div>
