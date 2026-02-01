@@ -1,14 +1,29 @@
 /**
  * Default Virtual Filesystem Factory
  *
- * Creates the default virtual filesystem with:
+ * Creates virtual filesystems with configurable content:
  * - README file containing the hint 1116
- * - resume executable at root
+ * - resume executable at root (optional)
  * - Basic directory structure for exploration
+ * - Custom hostname-specific content
  */
 
 import type { VirtualDirectory, VirtualFile } from "../model/types.ts";
 import type { VirtualFilesystem } from "./fs-helpers.ts";
+
+/**
+ * Configuration for creating a filesystem.
+ */
+export interface FilesystemConfig {
+	/** Hostname for the device (e.g., "visitor-pc", "gyeongho-mac") */
+	hostname: string;
+	/** Whether to include the resume executable */
+	includeResume?: boolean;
+	/** Custom README content (if not provided, uses default) */
+	readmeContent?: string;
+	/** Custom resume content (if not provided, uses default) */
+	resumeContent?: string;
+}
 
 /**
  * Helper to create a file node.
@@ -104,9 +119,16 @@ Happy exploring!
 `.trim();
 
 /**
- * Creates the default virtual filesystem for the terminal game.
+ * Creates a virtual filesystem with the given configuration.
+ * If no config is provided, creates the default gyeonghokim filesystem.
  */
-export function createDefaultFilesystem(): VirtualFilesystem {
+export function createFilesystem(config?: FilesystemConfig): VirtualFilesystem {
+	const {
+		hostname = "gyeonghokim",
+		includeResume = true,
+		readmeContent = README_CONTENT,
+		resumeContent = RESUME_CONTENT,
+	} = config || {};
 	// Create root directory
 	const root = createDirectory("/", "/", null);
 
@@ -114,26 +136,30 @@ export function createDefaultFilesystem(): VirtualFilesystem {
 	const home = createDirectory("home", "/home", root);
 	root.children.set("home", home);
 
-	// Create user directory inside home
-	const user = createDirectory("user", "/home/user", home);
-	home.children.set("user", user);
+	// Create user directory inside home (use hostname)
+	const user = createDirectory(hostname, `/home/${hostname}`, home);
+	home.children.set(hostname, user);
 
 	// Create README in user directory
 	const readme = createFile(
 		"README",
-		"/home/user/README",
-		README_CONTENT,
+		`/home/${hostname}/README`,
+		readmeContent,
 		user,
 	);
 	user.children.set("README", readme);
 
 	// Create documents directory with some files
-	const documents = createDirectory("documents", "/home/user/documents", user);
+	const documents = createDirectory(
+		"documents",
+		`/home/${hostname}/documents`,
+		user,
+	);
 	user.children.set("documents", documents);
 
 	const notesFile = createFile(
 		"notes.txt",
-		"/home/user/documents/notes.txt",
+		`/home/${hostname}/documents/notes.txt`,
 		"Some random notes...\nNothing special here.",
 		documents,
 	);
@@ -151,13 +177,25 @@ export function createDefaultFilesystem(): VirtualFilesystem {
 	);
 	etc.children.set("hosts", hostsFile);
 
-	// Create resume executable at root
-	const resume = createFile("resume", "/resume", RESUME_CONTENT, root, true);
-	root.children.set("resume", resume);
+	// Create resume executable at root (only if requested)
+	let resumePath = "";
+	if (includeResume) {
+		const resume = createFile("resume", "/resume", resumeContent, root, true);
+		root.children.set("resume", resume);
+		resumePath = "/resume";
+	}
 
 	return {
 		root,
-		readmePath: "/home/user/README",
-		resumePath: "/resume",
+		readmePath: `/home/${hostname}/README`,
+		resumePath,
 	};
+}
+
+/**
+ * Creates the default virtual filesystem for the gyeonghokim device.
+ * Kept for backwards compatibility.
+ */
+export function createDefaultFilesystem(): VirtualFilesystem {
+	return createFilesystem();
 }
