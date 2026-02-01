@@ -272,7 +272,9 @@ export class LoginPage extends LitElement {
 			this._passwordUser = null;
 			this._password = "";
 		} else {
-			setGyeonghokimError(msg("Wrong password. Please try again.", { desc: "Login error" }));
+			setGyeonghokimError(
+				msg("Wrong password. Please try again.", { desc: "Login error" }),
+			);
 		}
 	}
 

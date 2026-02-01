@@ -142,7 +142,9 @@ export class AccountMenu extends LitElement {
 	}
 
 	render() {
-		const displayName = this.authState.user?.displayName ?? msg("Guest", { desc: "Fallback when no user name" });
+		const displayName =
+			this.authState.user?.displayName ??
+			msg("Guest", { desc: "Fallback when no user name" });
 
 		return html`
 			<button
@@ -163,8 +165,9 @@ export class AccountMenu extends LitElement {
 					style="transform: ${this.open ? "rotate(180deg)" : "none"}; transition: transform 0.2s ease"
 				></iconify-icon>
 			</button>
-			${this.open
-				? html`
+			${
+				this.open
+					? html`
 						<div class="dropdown" role="menu">
 							<button
 								class="menu-item"
@@ -177,7 +180,8 @@ export class AccountMenu extends LitElement {
 							</button>
 						</div>
 					`
-				: null}
+					: null
+			}
 		`;
 	}
 }
