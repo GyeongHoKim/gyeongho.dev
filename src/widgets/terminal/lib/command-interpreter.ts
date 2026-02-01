@@ -66,7 +66,18 @@ function executeLs(
 		return createSuccessResult("");
 	}
 
-	const output = children
+	// Hide resume from visitor when listing root
+	let list = children;
+	if (
+		absolutePath === "/" &&
+		session.currentUser === "visitor" &&
+		fs.resumePath
+	) {
+		const resumeName = fs.resumePath.replace(/^\//, "") || "resume";
+		list = children.filter((child) => child.name !== resumeName);
+	}
+
+	const output = list
 		.map((child) => {
 			if (child.type === "directory") {
 				return `${child.name}/`;
@@ -184,8 +195,8 @@ function executeClear(): CommandResult {
 /**
  * Executes the `whoami` command.
  */
-function executeWhoami(): CommandResult {
-	return createSuccessResult("visitor");
+function executeWhoami(session: Session): CommandResult {
+	return createSuccessResult(session.currentUser);
 }
 
 /**
@@ -208,6 +219,7 @@ function executeHelp(): CommandResult {
   whoami        Display current user
   echo [text]   Display text
   help          Show this help message
+  su [user]     Switch user (e.g. su gyeonghokim)
   sudo <cmd>    Run command with elevated privileges`;
 	return createSuccessResult(helpText);
 }
@@ -228,6 +240,8 @@ export interface ExecuteCommandContext {
 export interface ExecuteCommandResult {
 	result: CommandResult;
 	sessionUpdates?: Partial<Session>;
+	/** True when su gyeonghokim was run; widget should prompt for password. */
+	needsSuPassword?: true;
 }
 
 /**
@@ -287,8 +301,13 @@ export async function executeCommand(
 		};
 	}
 
-	// Handle ./resume command
+	// Handle ./resume command (invisible to visitor)
 	if (command === "./resume") {
+		if (session.currentUser === "visitor") {
+			return {
+				result: createErrorResult("./resume: command not found"),
+			};
+		}
 		// Must be at root and authenticated
 		if (session.cwd !== "/") {
 			return {
@@ -321,6 +340,31 @@ export async function executeCommand(
 		};
 	}
 
+	// Handle su command
+	if (command === "su") {
+		if (args.length === 0) {
+			return {
+				result: createErrorResult("Usage: su username"),
+			};
+		}
+		const targetUser = args[0];
+		if (targetUser === "visitor") {
+			return {
+				result: createSuccessResult(""),
+				sessionUpdates: { currentUser: "visitor" },
+			};
+		}
+		if (targetUser === "gyeonghokim") {
+			return {
+				result: createSuccessResult(""),
+				needsSuPassword: true,
+			};
+		}
+		return {
+			result: createErrorResult(`su: user ${targetUser} does not exist`),
+		};
+	}
+
 	// Regular commands
 	switch (command) {
 		case "ls":
@@ -347,7 +391,7 @@ export async function executeCommand(
 			return { result: executeClear() };
 
 		case "whoami":
-			return { result: executeWhoami() };
+			return { result: executeWhoami(session) };
 
 		case "echo":
 			return { result: executeEcho(args) };
@@ -377,8 +421,13 @@ export function executeCommandSync(
 		return { result: createSuccessResult("") };
 	}
 
-	// Handle ./resume command (requires sudo)
+	// Handle ./resume command (requires sudo; invisible to visitor)
 	if (command === "./resume") {
+		if (session.currentUser === "visitor") {
+			return {
+				result: createErrorResult("./resume: command not found"),
+			};
+		}
 		if (session.cwd !== "/") {
 			return {
 				result: createErrorResult("./resume: command not found"),
@@ -434,13 +483,33 @@ export function executeCommandSync(
 			return { result: executeClear() };
 
 		case "whoami":
-			return { result: executeWhoami() };
+			return { result: executeWhoami(session) };
 
 		case "echo":
 			return { result: executeEcho(args) };
 
 		case "help":
 			return { result: executeHelp() };
+
+		case "su":
+			if (args.length === 0) {
+				return { result: createErrorResult("Usage: su username") };
+			}
+			if (args[0] === "visitor") {
+				return {
+					result: createSuccessResult(""),
+					sessionUpdates: { currentUser: "visitor" },
+				};
+			}
+			if (args[0] === "gyeonghokim") {
+				return {
+					result: createSuccessResult(""),
+					needsSuPassword: true,
+				};
+			}
+			return {
+				result: createErrorResult(`su: user ${args[0]} does not exist`),
+			};
 
 		case "sudo":
 			// Sudo needs password prompt, return error in sync mode
