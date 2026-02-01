@@ -9,6 +9,11 @@ import { LitElement, css, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
+import {
+	getCurrentUser,
+	setGyeonghokimSuccess,
+	setVisitor,
+} from "../../../features/auth/model/auth-state.js";
 import { createSession } from "../../../entities/session/model/session.ts";
 import type { Session } from "../../../entities/session/model/session.ts";
 import { createDefaultFilesystem } from "../../../entities/virtual-filesystem/lib/create-default-fs.ts";
@@ -230,8 +235,13 @@ export class TerminalWidget extends LitElement {
 		) as HTMLElement;
 		if (!container) return;
 
-		// Reset session on each terminal open (per U1 spec)
-		this.session = createSession();
+		// Reset session on each terminal open; shell user reflects user entity (auth)
+		const baseSession = createSession();
+		const authUser = getCurrentUser();
+		this.session = {
+			...baseSession,
+			currentUser: authUser?.id === "gyeonghokim" ? "gyeonghokim" : "visitor",
+		};
 		this.fs = createDefaultFilesystem();
 		this.currentLine = "";
 
@@ -294,6 +304,7 @@ export class TerminalWidget extends LitElement {
 				const SU_PASSWORD = "1116";
 				if (this.currentLine === SU_PASSWORD) {
 					this.session = { ...this.session, currentUser: "gyeonghokim" };
+					setGyeonghokimSuccess(); // sync user entity (auth) with shell user
 				} else {
 					this.terminal.writeln("\x1b[31msu: Authentication failure\x1b[0m");
 				}
@@ -412,9 +423,12 @@ export class TerminalWidget extends LitElement {
 			return;
 		}
 
-		// Apply session updates
+		// Apply session updates and sync user entity (auth) when shell user changes
 		if (result.sessionUpdates) {
 			this.session = { ...this.session, ...result.sessionUpdates };
+			if (result.sessionUpdates.currentUser === "visitor") {
+				setVisitor();
+			}
 		}
 
 		// Write output (normalize line endings for xterm.js)
