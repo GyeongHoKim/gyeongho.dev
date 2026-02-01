@@ -10,16 +10,17 @@ import { customElement, state } from "lit/decorators.js";
 import { msg, str, updateWhenLocaleChanges } from "@lit/localize";
 import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
-import {
-	getCurrentUser,
-	setGyeonghokimSuccess,
-	setVisitor,
-} from "../../../features/auth/model/auth-state.js";
+import { setVisitor } from "../../../features/auth/model/auth-state.js";
 import { createSession } from "../../../entities/session/model/session.ts";
 import type { Session } from "../../../entities/session/model/session.ts";
 import { createDefaultFilesystem } from "../../../entities/virtual-filesystem/lib/create-default-fs.ts";
 import type { VirtualFilesystem } from "../../../entities/virtual-filesystem/lib/fs-helpers.ts";
 import { executeCommand } from "../lib/command-interpreter.ts";
+import {
+	getNetwork,
+	initializeNetwork,
+} from "../../../features/network-simulation/lib/network.ts";
+import { getDeviceByIp } from "../../../features/network-simulation/model/types.ts";
 
 @customElement("terminal-widget")
 export class TerminalWidget extends LitElement {
@@ -153,8 +154,32 @@ export class TerminalWidget extends LitElement {
 	private fs: VirtualFilesystem = createDefaultFilesystem();
 	private currentLine = "";
 	private isWaitingForPassword = false;
-	private isWaitingForSuPassword = false;
+	private isWaitingForSshPassword = false;
 	private pendingSudoCommand = "";
+	private pendingSshConnection: {
+		ip: string;
+		user: "visitor" | "gyeonghokim";
+	} | null = null;
+
+	/**
+	 * Gets the filesystem for the currently connected device.
+	 */
+	private getConnectedFilesystem(): VirtualFilesystem {
+		const network = getNetwork();
+		const device = getDeviceByIp(network, this.session.connectedDeviceIp);
+		if (!device) {
+			// Fallback to default filesystem if device not found
+			return createDefaultFilesystem();
+		}
+		return device.fs;
+	}
+
+	/**
+	 * Updates the filesystem reference based on the current session.
+	 */
+	private updateFilesystem(): void {
+		this.fs = this.getConnectedFilesystem();
+	}
 
 	// Drag state
 	private isDragging = false;
@@ -240,14 +265,20 @@ export class TerminalWidget extends LitElement {
 		) as HTMLElement;
 		if (!container) return;
 
-		// Reset session on each terminal open; shell user reflects user entity (auth)
+		// Initialize the network simulation
+		initializeNetwork();
+
+		// Reset session on each terminal open
+		// Always start as visitor (local device user)
+		// gyeonghokim is only accessible via SSH to remote device
 		const baseSession = createSession();
-		const authUser = getCurrentUser();
 		this.session = {
 			...baseSession,
-			currentUser: authUser?.id === "gyeonghokim" ? "gyeonghokim" : "visitor",
+			currentUser: "visitor",
 		};
-		this.fs = createDefaultFilesystem();
+
+		// Get the filesystem from the connected device
+		this.updateFilesystem();
 		this.currentLine = "";
 
 		this.terminal = new Terminal({
@@ -280,8 +311,12 @@ export class TerminalWidget extends LitElement {
 		}, 0);
 
 		// Welcome message
-		this.terminal.writeln(msg("Welcome to gyeongho.dev terminal", { desc: "Terminal welcome" }));
-		this.terminal.writeln(msg('Type "help" for available commands.', { desc: "Terminal hint" }));
+		this.terminal.writeln(
+			msg("Welcome to gyeongho.dev terminal", { desc: "Terminal welcome" }),
+		);
+		this.terminal.writeln(
+			msg('Type "help" for available commands.', { desc: "Terminal hint" }),
+		);
 		this.terminal.writeln("");
 		this.writePrompt();
 
@@ -295,27 +330,25 @@ export class TerminalWidget extends LitElement {
 	}
 
 	private writePrompt() {
-		const prompt = `${this.session.currentUser}@desktop:${this.session.cwd}$ `;
+		// Get the hostname from the connected device
+		const network = getNetwork();
+		const device = getDeviceByIp(network, this.session.connectedDeviceIp);
+		const hostname = device?.hostname || "unknown";
+
+		const prompt = `${this.session.currentUser}@${hostname}:${this.session.cwd}$ `;
 		this.terminal?.write(prompt);
 	}
 
 	private async handleInput(data: string) {
 		if (!this.terminal) return;
 
-		// Handle su password input mode
-		if (this.isWaitingForSuPassword) {
+		if (this.isWaitingForSshPassword) {
 			if (data === "\r") {
 				this.terminal.writeln("");
-				const SU_PASSWORD = "1116";
-				if (this.currentLine === SU_PASSWORD) {
-					this.session = { ...this.session, currentUser: "gyeonghokim" };
-					setGyeonghokimSuccess(); // sync user entity (auth) with shell user
-				} else {
-					this.terminal.writeln(`\x1b[31m${msg("su: Authentication failure", { desc: "Terminal su error" })}\x1b[0m`);
-				}
+				const password = this.currentLine;
 				this.currentLine = "";
-				this.isWaitingForSuPassword = false;
-				this.writePrompt();
+				this.isWaitingForSshPassword = false;
+				await this.processSshWithPassword(password);
 				return;
 			}
 			if (data === "\x7f") {
@@ -327,7 +360,8 @@ export class TerminalWidget extends LitElement {
 			if (data === "\x03") {
 				this.terminal.writeln("^C");
 				this.currentLine = "";
-				this.isWaitingForSuPassword = false;
+				this.isWaitingForSshPassword = false;
+				this.pendingSshConnection = null;
 				this.writePrompt();
 				return;
 			}
@@ -410,7 +444,9 @@ export class TerminalWidget extends LitElement {
 		if (trimmed.startsWith("sudo ") && !this.session.sudoAuthenticated) {
 			this.pendingSudoCommand = trimmed.slice(5).trim();
 			this.terminal?.write(
-				msg(str`[sudo] password for ${this.session.currentUser}: `, { desc: "Terminal sudo prompt" }),
+				msg(str`[sudo] password for ${this.session.currentUser}: `, {
+					desc: "Terminal sudo prompt",
+				}),
 			);
 			this.isWaitingForPassword = true;
 			return;
@@ -421,10 +457,10 @@ export class TerminalWidget extends LitElement {
 			session: this.session,
 		});
 
-		// Handle su gyeonghokim: widget prompts for password
-		if (result.needsSuPassword) {
-			this.terminal?.write(msg("Password: ", { desc: "Terminal password prompt" }));
-			this.isWaitingForSuPassword = true;
+		if (result.needsSshPassword) {
+			this.pendingSshConnection = result.needsSshPassword;
+			this.terminal?.write(msg("password: ", { desc: "SSH password prompt" }));
+			this.isWaitingForSshPassword = true;
 			return;
 		}
 
@@ -433,6 +469,10 @@ export class TerminalWidget extends LitElement {
 			this.session = { ...this.session, ...result.sessionUpdates };
 			if (result.sessionUpdates.currentUser === "visitor") {
 				setVisitor();
+			}
+			// Update filesystem if device connection changed
+			if (result.sessionUpdates.connectedDeviceIp) {
+				this.updateFilesystem();
 			}
 		}
 
@@ -458,7 +498,9 @@ export class TerminalWidget extends LitElement {
 		const SUDO_PASSWORD = "1116";
 
 		if (password !== SUDO_PASSWORD) {
-			this.terminal?.writeln(`\x1b[31m${msg("Sorry, try again.", { desc: "Error message" })}\x1b[0m`);
+			this.terminal?.writeln(
+				`\x1b[31m${msg("Sorry, try again.", { desc: "Error message" })}\x1b[0m`,
+			);
 			this.writePrompt();
 			return;
 		}
@@ -494,6 +536,39 @@ export class TerminalWidget extends LitElement {
 		}
 
 		this.pendingSudoCommand = "";
+		this.writePrompt();
+	}
+
+	private async processSshWithPassword(password: string) {
+		const SSH_PASSWORD = "1116";
+
+		if (!this.pendingSshConnection) {
+			this.writePrompt();
+			return;
+		}
+
+		if (password !== SSH_PASSWORD) {
+			const { user, ip } = this.pendingSshConnection;
+			this.terminal?.writeln(
+				`\x1b[31m${msg(str`${user}@${ip}: Permission denied, please try again.`, { desc: "SSH auth error" })}\x1b[0m`,
+			);
+			this.pendingSshConnection = null;
+			this.writePrompt();
+			return;
+		}
+
+		const { ip, user } = this.pendingSshConnection;
+
+		this.session = {
+			...this.session,
+			connectedDeviceIp: ip,
+			currentUser: user,
+			cwd: "/",
+			sudoAuthenticated: false,
+		};
+
+		this.updateFilesystem();
+		this.pendingSshConnection = null;
 		this.writePrompt();
 	}
 
