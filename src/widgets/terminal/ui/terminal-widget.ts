@@ -380,7 +380,9 @@ export class TerminalWidget extends LitElement {
 			this.terminal?.writeln(this.normalizeLineEndings(result.result.stdout));
 		}
 		if (result.result.stderr) {
-			this.terminal?.writeln(`\x1b[31m${this.normalizeLineEndings(result.result.stderr)}\x1b[0m`);
+			this.terminal?.writeln(
+				`\x1b[31m${this.normalizeLineEndings(result.result.stderr)}\x1b[0m`,
+			);
 		}
 
 		// Check if resume was revealed
@@ -419,7 +421,9 @@ export class TerminalWidget extends LitElement {
 				this.terminal?.writeln(this.normalizeLineEndings(result.result.stdout));
 			}
 			if (result.result.stderr) {
-				this.terminal?.writeln(`\x1b[31m${this.normalizeLineEndings(result.result.stderr)}\x1b[0m`);
+				this.terminal?.writeln(
+					`\x1b[31m${this.normalizeLineEndings(result.result.stderr)}\x1b[0m`,
+				);
 			}
 
 			// Check if resume was revealed
