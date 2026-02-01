@@ -1,10 +1,3 @@
-/**
- * Shell Command Interpreter
- *
- * Parses and executes shell commands against the virtual filesystem.
- * Implements Linux-like commands: ls, cd, pwd, cat, clear, sudo, ./resume
- */
-
 import { msg, str } from "@lit/localize";
 import {
 	type Session,
@@ -22,8 +15,14 @@ import {
 	resolvePath,
 } from "../../../entities/virtual-filesystem/lib/fs-helpers.ts";
 import type { CommandResult } from "../../../entities/session/model/session.ts";
+import { CommandRegistry } from "./command-registry.ts";
+import { executeArp } from "./commands/arp.ts";
+import { executePing } from "./commands/ping.ts";
+import { executeNmap } from "./commands/nmap.ts";
+import { executeSsh } from "./commands/ssh.ts";
+import { executeFind } from "./commands/find.ts";
+import { executeId } from "./commands/id.ts";
 
-/** The correct sudo password */
 const SUDO_PASSWORD = "1116";
 
 /**
@@ -57,7 +56,11 @@ function executeLs(
 	if (children === null) {
 		const node = getNode(fs, absolutePath);
 		if (node === null) {
-			return createErrorResult(msg(str`ls: No such file or directory: ${targetPath}`, { desc: "ls error" }));
+			return createErrorResult(
+				msg(str`ls: No such file or directory: ${targetPath}`, {
+					desc: "ls error",
+				}),
+			);
 		}
 		// It's a file, just show its name
 		return createSuccessResult(node.name);
@@ -109,12 +112,16 @@ function executeCd(
 		if (node === null) {
 			return {
 				result: createErrorResult(
-					msg(str`cd: No such file or directory: ${targetPath}`, { desc: "cd error" }),
+					msg(str`cd: No such file or directory: ${targetPath}`, {
+						desc: "cd error",
+					}),
 				),
 			};
 		}
 		return {
-			result: createErrorResult(msg(str`cd: Not a directory: ${targetPath}`, { desc: "cd error" })),
+			result: createErrorResult(
+				msg(str`cd: Not a directory: ${targetPath}`, { desc: "cd error" }),
+			),
 		};
 	}
 
@@ -140,7 +147,9 @@ function executeCat(
 	args: string[],
 ): CommandResult {
 	if (args.length === 0) {
-		return createErrorResult(msg("cat: missing operand", { desc: "cat error" }));
+		return createErrorResult(
+			msg("cat: missing operand", { desc: "cat error" }),
+		);
 	}
 
 	const outputs: string[] = [];
@@ -149,9 +158,12 @@ function executeCat(
 	for (const arg of args) {
 		const absolutePath = resolvePath(session.cwd, arg);
 
-		// Deny reading resume via cat; only ./resume (with sudo) may reveal it
 		if (absolutePath === fs.resumePath) {
-			errors.push(msg(str`cat: ${absolutePath}: Permission denied`, { desc: "cat error" }));
+			errors.push(
+				msg(str`cat: ${absolutePath}: Permission denied`, {
+					desc: "cat error",
+				}),
+			);
 			continue;
 		}
 
@@ -182,7 +194,6 @@ function executeCat(
 
 /**
  * Executes the `clear` command.
- * Returns a special marker that the terminal should clear.
  */
 function executeClear(): CommandResult {
 	return {
@@ -213,16 +224,26 @@ function executeEcho(args: string[]): CommandResult {
 function executeHelp(): CommandResult {
 	const helpText = msg(
 		`Available commands:
-  ls [path]     List directory contents
-  cd [path]     Change directory
-  pwd           Print working directory
-  cat <file>    Display file contents
-  clear         Clear the terminal
-  whoami        Display current user
-  echo [text]   Display text
-  help          Show this help message
-  su [user]     Switch user (e.g. su gyeonghokim)
-  sudo <cmd>    Run command with elevated privileges`,
+  Filesystem:
+    ls [path]        List directory contents
+    cd [path]        Change directory
+    pwd              Print working directory
+    cat <file>       Display file contents
+    find [path] -name <pattern>  Search for files
+    
+  Network:
+    arp -a           Display ARP table
+    ping <ip>        Check host reachability
+    nmap <ip>        Scan for open ports
+    ssh <user>@<ip>  Connect to remote host
+    
+  System:
+    clear            Clear the terminal
+    whoami           Display current user
+    id               Display user identity
+    echo [text]      Display text
+    help             Show this help message
+    sudo <cmd>       Run command with elevated privileges`,
 		{ desc: "Terminal help output" },
 	);
 	return createSuccessResult(helpText);
@@ -244,13 +265,152 @@ export interface ExecuteCommandContext {
 export interface ExecuteCommandResult {
 	result: CommandResult;
 	sessionUpdates?: Partial<Session>;
-	/** True when su gyeonghokim was run; widget should prompt for password. */
 	needsSuPassword?: true;
+	needsSshPassword?: {
+		ip: string;
+		user: "visitor" | "gyeonghokim";
+	};
+}
+
+const commandRegistry = new CommandRegistry();
+
+/**
+ * Initializes the command registry with built-in commands.
+ */
+function initializeCommandRegistry(): void {
+	commandRegistry.register({
+		name: "ls",
+		description: "List directory contents",
+		usage: "ls [path]",
+		handler: (args, context) => {
+			return { result: executeLs(context.fs, context.session, args) };
+		},
+	});
+
+	commandRegistry.register({
+		name: "cd",
+		description: "Change directory",
+		usage: "cd [path]",
+		handler: (args, context) => {
+			const cdResult = executeCd(context.fs, context.session, args);
+			if (cdResult.newCwd) {
+				return {
+					result: cdResult.result,
+					sessionUpdates: { cwd: cdResult.newCwd },
+				};
+			}
+			return { result: cdResult.result };
+		},
+	});
+
+	commandRegistry.register({
+		name: "pwd",
+		description: "Print working directory",
+		usage: "pwd",
+		handler: (_args, context) => {
+			return { result: executePwd(context.session) };
+		},
+	});
+
+	commandRegistry.register({
+		name: "cat",
+		description: "Display file contents",
+		usage: "cat <file> [file...]",
+		handler: (args, context) => {
+			return { result: executeCat(context.fs, context.session, args) };
+		},
+	});
+
+	commandRegistry.register({
+		name: "clear",
+		description: "Clear the terminal screen",
+		usage: "clear",
+		handler: () => {
+			return { result: executeClear() };
+		},
+	});
+
+	commandRegistry.register({
+		name: "whoami",
+		description: "Display current user",
+		usage: "whoami",
+		handler: (_args, context) => {
+			return { result: executeWhoami(context.session) };
+		},
+	});
+
+	commandRegistry.register({
+		name: "echo",
+		description: "Display text",
+		usage: "echo [text...]",
+		handler: (args) => {
+			return { result: executeEcho(args) };
+		},
+	});
+
+	commandRegistry.register({
+		name: "help",
+		description: "Show available commands",
+		usage: "help",
+		handler: () => {
+			return { result: executeHelp() };
+		},
+	});
+
+	commandRegistry.register({
+		name: "arp",
+		description: "Display ARP table",
+		usage: "arp -a",
+		handler: executeArp,
+	});
+
+	commandRegistry.register({
+		name: "ping",
+		description: "Check host reachability",
+		usage: "ping <ip>",
+		handler: executePing,
+	});
+
+	commandRegistry.register({
+		name: "nmap",
+		description: "Scan for open ports",
+		usage: "nmap <ip>",
+		handler: executeNmap,
+	});
+
+	commandRegistry.register({
+		name: "ssh",
+		description: "Connect to remote host",
+		usage: "ssh <user>@<ip>",
+		handler: executeSsh,
+	});
+
+	commandRegistry.register({
+		name: "find",
+		description: "Search for files",
+		usage: "find [path] -name <pattern>",
+		handler: executeFind,
+	});
+
+	commandRegistry.register({
+		name: "id",
+		description: "Display user identity",
+		usage: "id",
+		handler: executeId,
+	});
+}
+
+initializeCommandRegistry();
+
+/**
+ * Gets the command registry instance.
+ */
+export function getCommandRegistry(): CommandRegistry {
+	return commandRegistry;
 }
 
 /**
  * Executes a shell command and returns the result.
- * May also return session updates (new cwd, sudoAuthenticated).
  */
 export async function executeCommand(
 	line: string,
@@ -263,33 +423,35 @@ export async function executeCommand(
 		return { result: createSuccessResult("") };
 	}
 
-	// Handle sudo command
 	if (command === "sudo") {
 		if (args.length === 0) {
 			return {
-				result: createErrorResult(msg("usage: sudo command", { desc: "sudo error" })),
+				result: createErrorResult(
+					msg("usage: sudo command", { desc: "sudo error" }),
+				),
 			};
 		}
 
-		// If already authenticated, just run the command
 		if (!session.sudoAuthenticated) {
-			// Prompt for password
 			if (promptPassword) {
 				const password = await promptPassword();
 				if (password !== SUDO_PASSWORD) {
 					return {
-						result: createErrorResult(msg("Sorry, try again.", { desc: "Error message" })),
+						result: createErrorResult(
+							msg("Sorry, try again.", { desc: "Error message" }),
+						),
 					};
 				}
 			} else {
 				// No password prompt available, check if session is authenticated
 				return {
-					result: createErrorResult(msg("Sorry, try again.", { desc: "Error message" })),
+					result: createErrorResult(
+						msg("Sorry, try again.", { desc: "Error message" }),
+					),
 				};
 			}
 		}
 
-		// Execute the sudo'd command
 		const sudoedLine = args.join(" ");
 		const sudoResult = await executeCommand(sudoedLine, {
 			...context,
@@ -305,30 +467,36 @@ export async function executeCommand(
 		};
 	}
 
-	// Handle ./resume command (invisible to visitor)
 	if (command === "./resume") {
 		if (session.currentUser === "visitor") {
 			return {
-				result: createErrorResult(msg("./resume: command not found", { desc: "resume error" })),
+				result: createErrorResult(
+					msg("./resume: command not found", { desc: "resume error" }),
+				),
 			};
 		}
-		// Must be at root and authenticated
 		if (session.cwd !== "/") {
 			return {
-				result: createErrorResult(msg("./resume: command not found", { desc: "resume error" })),
+				result: createErrorResult(
+					msg("./resume: command not found", { desc: "resume error" }),
+				),
 			};
 		}
 
 		if (!session.sudoAuthenticated) {
 			return {
-				result: createErrorResult(msg("./resume: Permission denied", { desc: "resume error" })),
+				result: createErrorResult(
+					msg("./resume: Permission denied", { desc: "resume error" }),
+				),
 			};
 		}
 
 		// Check if resume exists and is executable
 		if (!isExecutable(fs, "/resume")) {
 			return {
-				result: createErrorResult(msg("./resume: command not found", { desc: "resume error" })),
+				result: createErrorResult(
+					msg("./resume: command not found", { desc: "resume error" }),
+				),
 			};
 		}
 
@@ -344,11 +512,12 @@ export async function executeCommand(
 		};
 	}
 
-	// Handle su command
 	if (command === "su") {
 		if (args.length === 0) {
 			return {
-				result: createErrorResult(msg("Usage: su username", { desc: "su error" })),
+				result: createErrorResult(
+					msg("Usage: su username", { desc: "su error" }),
+				),
 			};
 		}
 		const targetUser = args[0];
@@ -358,61 +527,29 @@ export async function executeCommand(
 				sessionUpdates: { currentUser: "visitor" },
 			};
 		}
-		if (targetUser === "gyeonghokim") {
-			return {
-				result: createSuccessResult(""),
-				needsSuPassword: true,
-			};
-		}
+		// gyeonghokim is not a local user
 		return {
-			result: createErrorResult(msg(str`su: user ${targetUser} does not exist`, { desc: "su error" })),
+			result: createErrorResult(
+				msg(str`su: user ${targetUser} does not exist`, { desc: "su error" }),
+			),
 		};
 	}
 
-	// Regular commands
-	switch (command) {
-		case "ls":
-			return { result: executeLs(fs, session, args) };
-
-		case "cd": {
-			const cdResult = executeCd(fs, session, args);
-			if (cdResult.newCwd) {
-				return {
-					result: cdResult.result,
-					sessionUpdates: { cwd: cdResult.newCwd },
-				};
-			}
-			return { result: cdResult.result };
-		}
-
-		case "pwd":
-			return { result: executePwd(session) };
-
-		case "cat":
-			return { result: executeCat(fs, session, args) };
-
-		case "clear":
-			return { result: executeClear() };
-
-		case "whoami":
-			return { result: executeWhoami(session) };
-
-		case "echo":
-			return { result: executeEcho(args) };
-
-		case "help":
-			return { result: executeHelp() };
-
-		default:
-			return {
-				result: createErrorResult(msg(str`command not found: ${command}`, { desc: "shell error" })),
-			};
+	// Check if command is registered in the registry
+	if (commandRegistry.has(command)) {
+		return await commandRegistry.execute(command, args, context);
 	}
+
+	// Command not found
+	return {
+		result: createErrorResult(
+			msg(str`command not found: ${command}`, { desc: "shell error" }),
+		),
+	};
 }
 
 /**
  * Synchronous version for commands that don't need password prompt.
- * Use executeCommand for full functionality including sudo.
  */
 export function executeCommandSync(
 	line: string,
@@ -425,28 +562,35 @@ export function executeCommandSync(
 		return { result: createSuccessResult("") };
 	}
 
-	// Handle ./resume command (requires sudo; invisible to visitor)
 	if (command === "./resume") {
 		if (session.currentUser === "visitor") {
 			return {
-				result: createErrorResult(msg("./resume: command not found", { desc: "resume error" })),
+				result: createErrorResult(
+					msg("./resume: command not found", { desc: "resume error" }),
+				),
 			};
 		}
 		if (session.cwd !== "/") {
 			return {
-				result: createErrorResult(msg("./resume: command not found", { desc: "resume error" })),
+				result: createErrorResult(
+					msg("./resume: command not found", { desc: "resume error" }),
+				),
 			};
 		}
 
 		if (!session.sudoAuthenticated) {
 			return {
-				result: createErrorResult(msg("./resume: Permission denied", { desc: "resume error" })),
+				result: createErrorResult(
+					msg("./resume: Permission denied", { desc: "resume error" }),
+				),
 			};
 		}
 
 		if (!isExecutable(fs, "/resume")) {
 			return {
-				result: createErrorResult(msg("./resume: command not found", { desc: "resume error" })),
+				result: createErrorResult(
+					msg("./resume: command not found", { desc: "resume error" }),
+				),
 			};
 		}
 
@@ -462,68 +606,64 @@ export function executeCommandSync(
 		};
 	}
 
-	switch (command) {
-		case "ls":
-			return { result: executeLs(fs, session, args) };
-
-		case "cd": {
-			const cdResult = executeCd(fs, session, args);
-			if (cdResult.newCwd) {
-				return {
-					result: cdResult.result,
-					sessionUpdates: { cwd: cdResult.newCwd },
-				};
-			}
-			return { result: cdResult.result };
+	if (command === "su") {
+		if (args.length === 0) {
+			return {
+				result: createErrorResult(
+					msg("Usage: su username", { desc: "su error" }),
+				),
+			};
 		}
-
-		case "pwd":
-			return { result: executePwd(session) };
-
-		case "cat":
-			return { result: executeCat(fs, session, args) };
-
-		case "clear":
-			return { result: executeClear() };
-
-		case "whoami":
-			return { result: executeWhoami(session) };
-
-		case "echo":
-			return { result: executeEcho(args) };
-
-		case "help":
-			return { result: executeHelp() };
-
-		case "su":
-			if (args.length === 0) {
-				return { result: createErrorResult(msg("Usage: su username", { desc: "su error" })) };
-			}
-			if (args[0] === "visitor") {
-				return {
-					result: createSuccessResult(""),
-					sessionUpdates: { currentUser: "visitor" },
-				};
-			}
-			if (args[0] === "gyeonghokim") {
-				return {
-					result: createSuccessResult(""),
-					needsSuPassword: true,
-				};
-			}
+		if (args[0] === "visitor") {
 			return {
-				result: createErrorResult(msg(str`su: user ${args[0]} does not exist`, { desc: "su error" })),
+				result: createSuccessResult(""),
+				sessionUpdates: { currentUser: "visitor" },
 			};
-
-		case "sudo":
-			// Sudo needs password prompt, return error in sync mode
-			return {
-				result: createErrorResult(msg("sudo: password prompt not available", { desc: "sudo error" })),
-			};
-
-		default:
-			return {
-				result: createErrorResult(msg(str`command not found: ${command}`, { desc: "shell error" })),
-			};
+		}
+		// gyeonghokim is not a local user
+		return {
+			result: createErrorResult(
+				msg(str`su: user ${args[0]} does not exist`, { desc: "su error" }),
+			),
+		};
 	}
+
+	if (command === "sudo") {
+		return {
+			result: createErrorResult(
+				msg("sudo: password prompt not available", { desc: "sudo error" }),
+			),
+		};
+	}
+
+	// Check if command is registered in the registry
+	if (commandRegistry.has(command)) {
+		const context = { fs, session };
+		const cmd = commandRegistry.get(command);
+		if (!cmd) {
+			return {
+				result: createErrorResult(
+					msg(str`command not found: ${command}`, { desc: "shell error" }),
+				),
+			};
+		}
+		const result = cmd.handler(args, context);
+		if (result instanceof Promise) {
+			return {
+				result: createErrorResult(
+					msg(str`${command}: async commands not supported in sync mode`, {
+						desc: "shell error",
+					}),
+				),
+			};
+		}
+		return result;
+	}
+
+	// Command not found
+	return {
+		result: createErrorResult(
+			msg(str`command not found: ${command}`, { desc: "shell error" }),
+		),
+	};
 }
