@@ -7,6 +7,8 @@
 import { LitElement, css, html } from "lit";
 import { customElement } from "lit/decorators.js";
 import "iconify-icon";
+import "../../../widgets/markdown-renderer/ui/markdown-renderer.ts";
+import resumeMarkdown from "../../../assets/resume.md?raw";
 
 @customElement("resume-viewer")
 export class ResumeViewer extends LitElement {
@@ -58,76 +60,8 @@ export class ResumeViewer extends LitElement {
 
 		.content {
 			padding: 32px;
-			color: #e0e0e0;
-			font-family: "Segoe UI", "Cantarell", sans-serif;
 			overflow-y: auto;
 			max-height: calc(80vh - 40px);
-		}
-
-		.header {
-			text-align: center;
-			margin-bottom: 32px;
-			border-bottom: 2px solid #3584e4;
-			padding-bottom: 24px;
-		}
-
-		h1 {
-			margin: 0 0 8px 0;
-			font-size: 28px;
-			font-weight: 600;
-			color: #fff;
-		}
-
-		.subtitle {
-			color: #9cdcfe;
-			font-size: 16px;
-		}
-
-		.section {
-			margin-bottom: 24px;
-		}
-
-		h2 {
-			color: #4ec9b0;
-			font-size: 18px;
-			margin: 0 0 12px 0;
-			border-bottom: 1px solid #333;
-			padding-bottom: 8px;
-		}
-
-		p {
-			margin: 0 0 12px 0;
-			line-height: 1.6;
-		}
-
-		.skills-grid {
-			display: grid;
-			grid-template-columns: repeat(2, 1fr);
-			gap: 8px 24px;
-		}
-
-		.skill {
-			display: flex;
-			align-items: center;
-			gap: 8px;
-		}
-
-		.skill::before {
-			content: "•";
-			color: #3584e4;
-		}
-
-		.contact-list {
-			list-style: none;
-			padding: 0;
-			margin: 0;
-		}
-
-		.contact-list li {
-			margin-bottom: 8px;
-			display: flex;
-			align-items: center;
-			gap: 8px;
 		}
 
 		.unlock-message {
@@ -162,46 +96,7 @@ export class ResumeViewer extends LitElement {
 						<iconify-icon icon="lucide:party-popper" width="20" height="20" style="color: #4ec9b0" aria-hidden="true"></iconify-icon>
 						<span>Congratulations!</span> You've unlocked the secret resume!
 					</div>
-
-					<div class="header">
-						<h1>Gyeongho Kim</h1>
-						<div class="subtitle">Software Engineer</div>
-					</div>
-
-					<div class="section">
-						<h2>About</h2>
-						<p>
-							Passionate software engineer who loves building creative web
-							experiences. Always exploring new technologies and pushing the
-							boundaries of what's possible on the web.
-						</p>
-					</div>
-
-					<div class="section">
-						<h2>Skills</h2>
-						<div class="skills-grid">
-							<div class="skill">TypeScript / JavaScript</div>
-							<div class="skill">React / Lit</div>
-							<div class="skill">Node.js</div>
-							<div class="skill">Python</div>
-							<div class="skill">Web APIs</div>
-							<div class="skill">Cloud Services</div>
-						</div>
-					</div>
-
-					<div class="section">
-						<h2>Contact</h2>
-						<ul class="contact-list">
-							<li>
-								<iconify-icon icon="lucide:mail" width="16" height="16" style="color: #3584e4" aria-hidden="true"></iconify-icon>
-								hello@gyeongho.dev
-							</li>
-							<li>
-								<iconify-icon icon="lucide:link" width="16" height="16" style="color: #3584e4" aria-hidden="true"></iconify-icon>
-								github.com/gyeongho
-							</li>
-						</ul>
-					</div>
+					<markdown-renderer .content=${resumeMarkdown}></markdown-renderer>
 				</div>
 			</div>
 		`;
