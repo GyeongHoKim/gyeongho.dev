@@ -12,7 +12,8 @@ export type ShellUser = "visitor" | "gyeonghokim";
 
 /**
  * Per-session state for the terminal.
- * Tracks current working directory, sudo authentication status, and current shell user.
+ * Tracks current working directory, sudo authentication status, current shell user,
+ * and the connected device IP for network simulation.
  */
 export interface Session {
 	/** Current working directory (absolute path) */
@@ -21,17 +22,24 @@ export interface Session {
 	sudoAuthenticated: boolean;
 	/** Current shell user (visitor or gyeonghokim) */
 	currentUser: ShellUser;
+	/** IP address of the device the user is currently connected to */
+	connectedDeviceIp: string;
+	/** Command history for up arrow navigation (optional) */
+	history: string[];
 }
 
 /**
  * Creates a new session with default values.
  * CWD starts at root (`/`), sudo is not authenticated.
+ * Visitor starts connected to their own device (192.168.1.10).
  */
-export function createSession(): Session {
+export function createSession(connectedDeviceIp = "192.168.1.10"): Session {
 	return {
 		cwd: "/",
 		sudoAuthenticated: false,
 		currentUser: "visitor",
+		connectedDeviceIp,
+		history: [],
 	};
 }
 
