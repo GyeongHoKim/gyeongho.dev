@@ -1,20 +1,24 @@
-# gyeongho.dev — Personal Website Terminal Game
+# gyeongho.dev
 
-A personal website presented as a Gnome Fedora Workstation-style desktop with an interactive terminal game.
+It's me, gyeongho
 
 ## 🎮 How to Play
 
-1. **Visit the site** and click "Activities" to open the menu
-2. **Open the Terminal** from the Applications menu
-3. **Explore** the virtual filesystem using Linux commands:
+1. **First visit**: See the mission briefing (target’s employee card), then click **Accept mission** → boot screen → login screen.
+2. **Login**: Choose **visitor** or **gyeonghokim** (gyeonghokim requires a password).
+3. **Desktop**: Click **Activities** and open the **Terminal** from the Applications menu.
+4. **Explore** the virtual filesystem (as visitor or gyeonghokim):
    - `ls` - list directory contents
    - `cd` - change directory
    - `pwd` - print working directory
    - `cat` - display file contents
+   - `whoami` - show current user
+   - `su [user]` - switch user (e.g. `su gyeonghokim`)
    - `help` - show available commands
-4. **Find the hint**: Navigate to find the README file containing a special hint (1116)
-5. **Unlock the resume**: From root (`/`), run `sudo ./resume` and enter the password `1116`
-6. **Victory!** View the unlocked resume
+5. **As visitor**: `resume` is hidden at root. Find the hint somewhere in the filesystem, then run `su gyeonghokim` and enter the password to switch to gyeonghokim.
+6. **Unlock the resume**: As **gyeonghokim**, from root (`/`) run `sudo ./resume` and enter the password.
+7. **Victory!** View the unlocked resume.
+8. **Sign out**: Click your name (top right) → **Sign out** to return to the login screen.
 
 ## 🚀 Development
 
