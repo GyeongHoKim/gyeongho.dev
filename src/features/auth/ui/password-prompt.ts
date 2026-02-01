@@ -5,10 +5,15 @@
 
 import { LitElement, css, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
+import { msg, str, updateWhenLocaleChanges } from "@lit/localize";
 import type { User } from "../../../entities/user/model/types.js";
 
 @customElement("password-prompt")
 export class PasswordPrompt extends LitElement {
+	constructor() {
+		super();
+		updateWhenLocaleChanges(this);
+	}
 	static styles = css`
 		:host {
 			display: block;
@@ -115,8 +120,8 @@ export class PasswordPrompt extends LitElement {
 		return html`
 			<div class="overlay" role="dialog" aria-modal="true" aria-labelledby="pw-title" aria-describedby=${this.errorMessage ? "pw-err" : undefined}>
 				<div class="dialog">
-					<h2 id="pw-title">Enter password for ${this.user.displayName}</h2>
-					<label for="pw-input">Password</label>
+					<h2 id="pw-title">${msg(str`Enter password for ${this.user.displayName}`, { desc: "Password dialog title" })}</h2>
+					<label for="pw-input">${msg("Password", { desc: "Password field" })}</label>
 					<input
 						id="pw-input"
 						type="password"
@@ -129,8 +134,8 @@ export class PasswordPrompt extends LitElement {
 					/>
 					${this.errorMessage ? html`<p id="pw-err" class="error" role="alert">${this.errorMessage}</p>` : ""}
 					<div class="actions">
-						<button type="button" @click=${this._cancel}>Cancel</button>
-						<button type="button" class="primary" @click=${this._submit}>Sign in</button>
+						<button type="button" @click=${this._cancel}>${msg("Cancel", { desc: "Cancel button" })}</button>
+						<button type="button" class="primary" @click=${this._submit}>${msg("Sign in", { desc: "Sign in button" })}</button>
 					</div>
 				</div>
 			</div>

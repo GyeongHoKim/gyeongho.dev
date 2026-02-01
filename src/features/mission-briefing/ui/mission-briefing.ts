@@ -7,11 +7,16 @@
 
 import { LitElement, css, html } from "lit";
 import { customElement } from "lit/decorators.js";
+import { msg, updateWhenLocaleChanges } from "@lit/localize";
 import { createEmployeeCardScene } from "../lib/employee-card-scene.js";
 import type { EmployeeCardScene } from "../lib/employee-card-scene.js";
 
 @customElement("mission-briefing")
 export class MissionBriefing extends LitElement {
+	constructor() {
+		super();
+		updateWhenLocaleChanges(this);
+	}
 	static styles = css`
 		:host {
 			display: block;
@@ -120,13 +125,16 @@ export class MissionBriefing extends LitElement {
 			</div>
 			<div class="overlay">
 				<p class="mission-text">
-					<strong>TARGET: GyeongHo Kim.</strong><br />
-					Extract the dossier from this system. You will be inserted as
-					<strong>visitor</strong>. Find the decryption key, then switch to
-					<strong>gyeonghokim</strong> and run the dossier.
+					${msg(
+						html`<strong>TARGET: GyeongHo Kim.</strong><br />
+						Extract the dossier from this system. You will be inserted as
+						<strong>visitor</strong>. Find the decryption key, then switch to
+						<strong>gyeonghokim</strong> and run the dossier.`,
+						{ desc: "Mission briefing text" },
+					)}
 				</p>
 				<button class="accept-btn" @click=${this.handleAccept}>
-					Accept mission
+					${msg("Accept mission", { desc: "Mission briefing button" })}
 				</button>
 			</div>
 		`;

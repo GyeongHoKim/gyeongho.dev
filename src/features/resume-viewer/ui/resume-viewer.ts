@@ -2,16 +2,31 @@
  * Resume Viewer
  *
  * Displays the resume content after successful sudo + ./resume.
+ * Renders the markdown for the current locale (en / ko / ja).
  */
 
 import { LitElement, css, html } from "lit";
 import { customElement } from "lit/decorators.js";
+import { msg, updateWhenLocaleChanges } from "@lit/localize";
 import "iconify-icon";
 import "../../../widgets/markdown-renderer/ui/markdown-renderer.ts";
-import resumeMarkdown from "../../../assets/resume.md?raw";
+import { getLocale } from "../../../lib/localization.ts";
+import resumeEn from "../../../assets/resume-en.md?raw";
+import resumeKo from "../../../assets/resume-ko.md?raw";
+import resumeJa from "../../../assets/resume-ja.md?raw";
+
+const resumeByLocale: Record<string, string> = {
+	en: resumeEn,
+	ko: resumeKo,
+	ja: resumeJa,
+};
 
 @customElement("resume-viewer")
 export class ResumeViewer extends LitElement {
+	constructor() {
+		super();
+		updateWhenLocaleChanges(this);
+	}
 	static styles = css`
 		:host {
 			display: block;
@@ -87,16 +102,16 @@ export class ResumeViewer extends LitElement {
 		return html`
 			<div class="resume-window" @click=${(e: Event) => e.stopPropagation()}>
 				<div class="title-bar">
-					<button class="close-button" @click=${this.handleClose} aria-label="Close resume viewer"></button>
-					<span class="title">Resume - Unlocked</span>
+					<button class="close-button" @click=${this.handleClose} aria-label="${msg("Close resume viewer", { desc: "Resume viewer close button" })}"></button>
+					<span class="title">${msg("Resume - Unlocked", { desc: "Resume viewer title" })}</span>
 					<div></div>
 				</div>
 				<div class="content">
 					<div class="unlock-message">
 						<iconify-icon icon="lucide:party-popper" width="20" height="20" style="color: #4ec9b0" aria-hidden="true"></iconify-icon>
-						<span>Congratulations!</span> You've unlocked the secret resume!
+						<span>${msg("Congratulations!", { desc: "Resume unlock message" })}</span> ${msg("You've unlocked the secret resume!", { desc: "Resume unlock message" })}
 					</div>
-					<markdown-renderer .content=${resumeMarkdown}></markdown-renderer>
+					<markdown-renderer .content=${resumeByLocale[getLocale()] ?? resumeEn}></markdown-renderer>
 				</div>
 			</div>
 		`;

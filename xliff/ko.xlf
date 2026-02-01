@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+<file target-language="ko" source-language="en" original="lit-localize-inputs" datatype="plaintext">
+<body>
+<trans-unit id="s11fdceabe7befeff">
+  <source>Accessibility</source>
+  <note from="lit-localize">Accessibility button</note>
+  <target>접근성</target>
+</trans-unit>
+<trans-unit id="s9e19c873c7b5b1cb">
+  <source>Account menu</source>
+  <note from="lit-localize">Account dropdown trigger</note>
+  <target>계정 메뉴</target>
+</trans-unit>
+<trans-unit id="s7cfe12cd14df9950">
+  <source>Sign out</source>
+  <note from="lit-localize">Account menu item</note>
+  <target>로그아웃</target>
+</trans-unit>
+<trans-unit id="sb59d68ed12d46377">
+  <source>Loading</source>
+  <note from="lit-localize">Boot/splash screen loading state</note>
+  <target>로딩 중</target>
+</trans-unit>
+<trans-unit id="sfa2aa9158ba1893d">
+  <source>Accessibility options</source>
+  <note from="lit-localize">Bottom bar</note>
+  <target>접근성 옵션</target>
+</trans-unit>
+<trans-unit id="s3bd842918e03c972">
+  <source>Keyboard layout</source>
+  <note from="lit-localize">Bottom bar</note>
+  <target>키보드 레이아웃</target>
+</trans-unit>
+<trans-unit id="s23118e21c19543fc">
+  <source>Power options</source>
+  <note from="lit-localize">Bottom bar</note>
+  <target>전원 옵션</target>
+</trans-unit>
+<trans-unit id="s2ceb11be2290bb1b">
+  <source>Cancel</source>
+  <note from="lit-localize">Cancel button</note>
+  <target>취소</target>
+</trans-unit>
+<trans-unit id="s741e44b5f3e88dbe">
+  <source>cat: missing operand</source>
+  <note from="lit-localize">cat error</note>
+  <target>cat: 피연산자가 없습니다</target>
+</trans-unit>
+<trans-unit id="s1d6ed4855f41a897">
+  <source>cat: <x id="0" equiv-text="${absolutePath}"/>: Permission denied</source>
+  <note from="lit-localize">cat error</note>
+  <target>cat: <x id="0" equiv-text="${absolutePath}"/>: 권한이 거부되었습니다</target>
+</trans-unit>
+<trans-unit id="sbc6f92621a1744e1">
+  <source>cat: <x id="0" equiv-text="${result.error}"/></source>
+  <note from="lit-localize">cat error</note>
+  <target>cat: <x id="0" equiv-text="${result.error}"/></target>
+</trans-unit>
+<trans-unit id="sefc94c33fac6225a">
+  <source>cd: No such file or directory: <x id="0" equiv-text="${targetPath}"/></source>
+  <note from="lit-localize">cd error</note>
+  <target>cd: 그런 파일이나 디렉터리가 없습니다: <x id="0" equiv-text="${targetPath}"/></target>
+</trans-unit>
+<trans-unit id="sb186cc78d66c800f">
+  <source>cd: Not a directory: <x id="0" equiv-text="${targetPath}"/></source>
+  <note from="lit-localize">cd error</note>
+  <target>cd: 디렉터리가 아닙니다: <x id="0" equiv-text="${targetPath}"/></target>
+</trans-unit>
+<trans-unit id="sdfeddbd8d37d5783">
+  <source>Welcome to gyeongho.dev</source>
+  <note from="lit-localize">Desktop welcome heading</note>
+  <target>gyeongho.dev에 오신 것을 환영합니다</target>
+</trans-unit>
+<trans-unit id="sbd10bb41cd0138ff">
+  <source>Click "Activities" to open the terminal and start exploring</source>
+  <note from="lit-localize">Desktop welcome hint</note>
+  <target>"활동"을 클릭하여 터미널을 열고 탐색을 시작하세요</target>
+</trans-unit>
+<trans-unit id="s4ab135eb7b24619f">
+  <source>Restore Terminal</source>
+  <note from="lit-localize">Dock button</note>
+  <target>터미널 복원</target>
+</trans-unit>
+<trans-unit id="sd01767740a556219">
+  <source>Terminal is open</source>
+  <note from="lit-localize">Dock button</note>
+  <target>터미널이 열려 있음</target>
+</trans-unit>
+<trans-unit id="sabefc3b7ab9272cb">
+  <source>Sorry, try again.</source>
+  <note from="lit-localize">Error message</note>
+  <target>다시 시도해 주세요.</target>
+</trans-unit>
+<trans-unit id="se18c9f83ecd43653">
+  <source>Guest</source>
+  <note from="lit-localize">Fallback when no user name</note>
+  <target>게스트</target>
+</trans-unit>
+<trans-unit id="s868a566fb9603774">
+  <source>Keyboard</source>
+  <note from="lit-localize">Keyboard button</note>
+  <target>키보드</target>
+</trans-unit>
+<trans-unit id="s30cbf38ce20b2b09">
+  <source>Sign-in failed.</source>
+  <note from="lit-localize">Login error</note>
+  <target>로그인에 실패했습니다.</target>
+</trans-unit>
+<trans-unit id="s3af4e20935f67b34">
+  <source>Wrong password. Please try again.</source>
+  <note from="lit-localize">Login error</note>
+  <target>잘못된 비밀번호입니다. 다시 시도해 주세요.</target>
+</trans-unit>
+<trans-unit id="s5e1aea9082e80cf1">
+  <source>Select user to sign in</source>
+  <note from="lit-localize">Login page main area</note>
+  <target>로그인할 사용자 선택</target>
+</trans-unit>
+<trans-unit id="s7f5b7b52093a5ff6">
+  <source>Select user <x id="0" equiv-text="${this.user.displayName}"/></source>
+  <note from="lit-localize">Login user tile</note>
+  <target>사용자 <x id="0" equiv-text="${this.user.displayName}"/> 선택</target>
+</trans-unit>
+<trans-unit id="s40c6362aa484ca80">
+  <source>ls: No such file or directory: <x id="0" equiv-text="${targetPath}"/></source>
+  <note from="lit-localize">ls error</note>
+  <target>ls: 그런 파일이나 디렉터리가 없습니다: <x id="0" equiv-text="${targetPath}"/></target>
+</trans-unit>
+<trans-unit id="sa0ff8a444c35279b">
+  <source>Accept mission</source>
+  <note from="lit-localize">Mission briefing button</note>
+  <target>미션 수락</target>
+</trans-unit>
+<trans-unit id="hd52325e67b2c810a">
+  <source><x id="0" equiv-text="&lt;strong&gt;"/>TARGET: GyeongHo Kim.<x id="1" equiv-text="&lt;/strong&gt;&lt;br&gt;"/>
+						Extract the dossier from this system. You will be inserted as
+						<x id="2" equiv-text="&lt;strong&gt;"/>visitor<x id="3" equiv-text="&lt;/strong&gt;"/>. Find the decryption key, then switch to
+						<x id="4" equiv-text="&lt;strong&gt;"/>gyeonghokim<x id="5" equiv-text="&lt;/strong&gt;"/> and run the dossier.</source>
+  <note from="lit-localize">Mission briefing text</note>
+  <target><x id="0" equiv-text="&lt;strong&gt;"/>대상: GyeongHo Kim.<x id="1" equiv-text="&lt;/strong&gt;&lt;br&gt;"/>
+이 시스템에서 서류를 추출하세요. <x id="2" equiv-text="&lt;strong&gt;"/>visitor<x id="3" equiv-text="&lt;/strong&gt;"/>로 삽입됩니다. 복호화 키를 찾은 후 <x id="4" equiv-text="&lt;strong&gt;"/>gyeonghokim<x id="5" equiv-text="&lt;/strong&gt;"/>으로 전환하여 서류를 실행하세요.</target>
+</trans-unit>
+<trans-unit id="s9bb0ec1e5cb0770f">
+  <source>Enter password for <x id="0" equiv-text="${this.user.displayName}"/></source>
+  <note from="lit-localize">Password dialog title</note>
+  <target><x id="0" equiv-text="${this.user.displayName}"/>의 비밀번호 입력</target>
+</trans-unit>
+<trans-unit id="sf6e1665c7022a1f8">
+  <source>Password</source>
+  <note from="lit-localize">Password field</note>
+  <target>비밀번호</target>
+</trans-unit>
+<trans-unit id="s35797990d0b90351">
+  <source>Password for <x id="0" equiv-text="${this._passwordUser?.displayName ?? &quot;&quot;}"/></source>
+  <note from="lit-localize">Password form for user</note>
+  <target><x id="0" equiv-text="${this._passwordUser?.displayName ?? &quot;&quot;}"/> 비밀번호</target>
+</trans-unit>
+<trans-unit id="s053eb89714fe5c46">
+  <source>Power</source>
+  <note from="lit-localize">Power button</note>
+  <target>전원</target>
+</trans-unit>
+<trans-unit id="s3d46b8e4bb420879">
+  <source>./resume: command not found</source>
+  <note from="lit-localize">resume error</note>
+  <target>./resume: 명령을 찾을 수 없습니다</target>
+</trans-unit>
+<trans-unit id="s887551fc2df910db">
+  <source>./resume: Permission denied</source>
+  <note from="lit-localize">resume error</note>
+  <target>./resume: 권한이 거부되었습니다</target>
+</trans-unit>
+<trans-unit id="s7666ba6aaef2cf0f">
+  <source>Congratulations!</source>
+  <note from="lit-localize">Resume unlock message</note>
+  <target>축하합니다!</target>
+</trans-unit>
+<trans-unit id="sc4f83d73d428d59c">
+  <source>You've unlocked the secret resume!</source>
+  <note from="lit-localize">Resume unlock message</note>
+  <target>비밀 이력서를 잠금 해제했습니다!</target>
+</trans-unit>
+<trans-unit id="s020322193d4667b0">
+  <source>Close resume viewer</source>
+  <note from="lit-localize">Resume viewer close button</note>
+  <target>이력서 뷰어 닫기</target>
+</trans-unit>
+<trans-unit id="sc0ea0bf175d5d852">
+  <source>Resume - Unlocked</source>
+  <note from="lit-localize">Resume viewer title</note>
+  <target>이력서 - 잠금 해제됨</target>
+</trans-unit>
+<trans-unit id="s8aa61b06eab1dbdd">
+  <source>command not found: <x id="0" equiv-text="${command}"/></source>
+  <note from="lit-localize">shell error</note>
+  <target>명령을 찾을 수 없습니다: <x id="0" equiv-text="${command}"/></target>
+</trans-unit>
+<trans-unit id="s5e27738a2e8eb763">
+  <source>Sign in</source>
+  <note from="lit-localize">Sign in button</note>
+  <target>로그인</target>
+</trans-unit>
+<trans-unit id="sf40bfdbc002b61f2">
+  <source>Usage: su username</source>
+  <note from="lit-localize">su error</note>
+  <target>사용법: su 사용자이름</target>
+</trans-unit>
+<trans-unit id="seb6e985e00d99609">
+  <source>su: user <x id="0" equiv-text="${targetUser}"/> does not exist</source>
+  <note from="lit-localize">su error</note>
+  <target>su: 사용자 <x id="0" equiv-text="${targetUser}"/>가 존재하지 않습니다</target>
+</trans-unit>
+<trans-unit id="s31312c1943af9232">
+  <source>usage: sudo command</source>
+  <note from="lit-localize">sudo error</note>
+  <target>사용법: sudo 명령</target>
+</trans-unit>
+<trans-unit id="s52f75ed2a57706e5">
+  <source>sudo: password prompt not available</source>
+  <note from="lit-localize">sudo error</note>
+  <target>sudo: 비밀번호 입력을 사용할 수 없습니다</target>
+</trans-unit>
+<trans-unit id="sc9371c269fbff96e">
+  <source>Available commands:
+  ls [path]     List directory contents
+  cd [path]     Change directory
+  pwd           Print working directory
+  cat &lt;file&gt;    Display file contents
+  clear         Clear the terminal
+  whoami        Display current user
+  echo [text]   Display text
+  help          Show this help message
+  su [user]     Switch user (e.g. su gyeonghokim)
+  sudo &lt;cmd&gt;    Run command with elevated privileges</source>
+  <note from="lit-localize">Terminal help output</note>
+  <target>사용 가능한 명령:
+  ls [path]     디렉터리 내용 나열
+  cd [path]     디렉터리 변경
+  pwd           현재 작업 디렉터리 출력
+  cat &lt;file&gt;    파일 내용 표시
+  clear         터미널 지우기
+  whoami        현재 사용자 표시
+  echo [text]   텍스트 출력
+  help          이 도움말 표시
+  su [user]     사용자 전환 (예: su gyeonghokim)
+  sudo &lt;cmd&gt;    권한 상승하여 명령 실행</target>
+</trans-unit>
+<trans-unit id="s2475d481c33f5e02">
+  <source>Type "help" for available commands.</source>
+  <note from="lit-localize">Terminal hint</note>
+  <target>"help"를 입력하면 사용 가능한 명령을 볼 수 있습니다.</target>
+</trans-unit>
+<trans-unit id="se64f6881ee7eb7b2">
+  <source>Password: </source>
+  <note from="lit-localize">Terminal password prompt</note>
+  <target>비밀번호: </target>
+</trans-unit>
+<trans-unit id="s409df89e7cac3365">
+  <source>su: Authentication failure</source>
+  <note from="lit-localize">Terminal su error</note>
+  <target>su: 인증 실패</target>
+</trans-unit>
+<trans-unit id="s6962301278aea9a8">
+  <source>[sudo] password for <x id="0" equiv-text="${this.session.currentUser}"/>: </source>
+  <note from="lit-localize">Terminal sudo prompt</note>
+  <target>[sudo] <x id="0" equiv-text="${this.session.currentUser}"/>의 비밀번호: </target>
+</trans-unit>
+<trans-unit id="s9fcc970a57f0dd2d">
+  <source>Welcome to gyeongho.dev terminal</source>
+  <note from="lit-localize">Terminal welcome</note>
+  <target>gyeongho.dev 터미널에 오신 것을 환영합니다</target>
+</trans-unit>
+<trans-unit id="sf8e156354e5bacb8">
+  <source>Activities</source>
+  <note from="lit-localize">Top bar menu button</note>
+  <target>활동</target>
+</trans-unit>
+<trans-unit id="s5d303fbc88281c15">
+  <source>Unlock</source>
+  <note from="lit-localize">Unlock/login button</note>
+  <target>잠금 해제</target>
+</trans-unit>
+<trans-unit id="s42d2086bb72fa84d">
+  <source>Close terminal</source>
+  <note from="lit-localize">Window control</note>
+  <target>터미널 닫기</target>
+</trans-unit>
+<trans-unit id="seef94b5599e827bb">
+  <source>Minimize terminal</source>
+  <note from="lit-localize">Window control</note>
+  <target>터미널 최소화</target>
+</trans-unit>
+<trans-unit id="sacb5c06adce56a7f">
+  <source>Restore terminal</source>
+  <note from="lit-localize">Window control</note>
+  <target>터미널 복원</target>
+</trans-unit>
+<trans-unit id="s68725a8f12b94b09">
+  <source>Maximize terminal</source>
+  <note from="lit-localize">Window control</note>
+  <target>터미널 최대화</target>
+</trans-unit>
+<trans-unit id="s62c75c025c5c6db1">
+  <source>Terminal</source>
+  <note from="lit-localize">Window title</note>
+  <target>터미널</target>
+</trans-unit>
+<trans-unit id="sefcf950b3cc4fc3b">
+  <source>Language</source>
+  <note from="lit-localize">Locale switcher</note>
+  <target>언어</target>
+</trans-unit>
+<trans-unit id="s8ae60de06fca9646">
+  <source>gyeongho.dev</source>
+  <note from="lit-localize">Page title</note>
+  <target>gyeongho.dev</target>
+</trans-unit>
+</body>
+</file>
+</xliff>

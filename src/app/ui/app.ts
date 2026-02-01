@@ -5,6 +5,8 @@
 
 import { LitElement, css, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
+import { msg, updateWhenLocaleChanges } from "@lit/localize";
+import { getLocale } from "../../lib/localization.ts";
 import {
 	subscribeAuth,
 } from "../../features/auth/model/auth-state.js";
@@ -20,6 +22,11 @@ type Route = "boot" | "briefing" | "login" | "desktop";
 
 @customElement("app-root")
 export class AppRoot extends LitElement {
+	constructor() {
+		super();
+		updateWhenLocaleChanges(this);
+	}
+
 	static styles = css`
 		:host {
 			display: block;
@@ -60,6 +67,11 @@ export class AppRoot extends LitElement {
 		}
 		this._unsub?.();
 		super.disconnectedCallback();
+	}
+
+	protected updated(_changedProperties: Map<string, unknown>): void {
+		document.title = msg("gyeongho.dev", { desc: "Page title" });
+		document.documentElement.lang = getLocale();
 	}
 
 	private _onBriefingAccept(): void {
