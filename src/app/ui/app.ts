@@ -7,9 +7,7 @@ import { LitElement, css, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { msg, updateWhenLocaleChanges } from "@lit/localize";
 import { getLocale } from "../../lib/localization.ts";
-import {
-	subscribeAuth,
-} from "../../features/auth/model/auth-state.js";
+import { subscribeAuth } from "../../features/auth/model/auth-state.js";
 import type { AuthState } from "../../features/auth/model/auth-state.js";
 import "../../features/mission-briefing/ui/mission-briefing.ts";
 import "../../pages/boot/ui/boot-page.ts";
@@ -41,7 +39,9 @@ export class AppRoot extends LitElement {
 
 	connectedCallback(): void {
 		super.connectedCallback();
-		const briefingSeen = typeof localStorage !== "undefined" && localStorage.getItem(BRIEFING_SEEN_KEY);
+		const briefingSeen =
+			typeof localStorage !== "undefined" &&
+			localStorage.getItem(BRIEFING_SEEN_KEY);
 		if (!briefingSeen) {
 			this.route = "briefing";
 			this._unsub = subscribeAuth((state: AuthState) => {

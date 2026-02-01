@@ -11,7 +11,10 @@ import { msg, updateWhenLocaleChanges } from "@lit/localize";
 import "iconify-icon";
 import "../../../features/auth/ui/account-menu.ts";
 import { getLocale, setLocaleAndSave } from "../../../lib/localization.ts";
-import { sourceLocale, targetLocales } from "../../../generated/locale-codes.ts";
+import {
+	sourceLocale,
+	targetLocales,
+} from "../../../generated/locale-codes.ts";
 
 const LOCALE_LABELS: Record<string, string> = {
 	en: "English",
@@ -103,16 +106,24 @@ export class TopBarRightWidget extends LitElement {
 
 	connectedCallback(): void {
 		super.connectedCallback();
-		window.addEventListener("lit-localize-status", this._onLocaleStatus.bind(this));
+		window.addEventListener(
+			"lit-localize-status",
+			this._onLocaleStatus.bind(this),
+		);
 	}
 
 	disconnectedCallback(): void {
-		window.removeEventListener("lit-localize-status", this._onLocaleStatus.bind(this));
+		window.removeEventListener(
+			"lit-localize-status",
+			this._onLocaleStatus.bind(this),
+		);
 		document.removeEventListener("click", this._boundClose);
 		super.disconnectedCallback();
 	}
 
-	private _onLocaleStatus(e: CustomEvent<{ status: string; readyLocale?: string }>): void {
+	private _onLocaleStatus(
+		e: CustomEvent<{ status: string; readyLocale?: string }>,
+	): void {
 		if (e.detail.status === "ready" && e.detail.readyLocale) {
 			this._locale = e.detail.readyLocale;
 		}
@@ -152,8 +163,9 @@ export class TopBarRightWidget extends LitElement {
 					<iconify-icon icon="lucide:languages" width="16" height="16" aria-hidden="true"></iconify-icon>
 					<span>${LOCALE_LABELS[this._locale] ?? this._locale}</span>
 				</button>
-				${this._localeOpen
-					? html`
+				${
+					this._localeOpen
+						? html`
 							<div class="locale-dropdown" role="menu">
 								${allLocales.map(
 									(locale) =>
@@ -170,7 +182,8 @@ export class TopBarRightWidget extends LitElement {
 								)}
 							</div>
 						`
-					: null}
+						: null
+				}
 			</div>
 			<div class="system-icons" aria-hidden="true">
 				<iconify-icon icon="lucide:volume-2" width="16" height="16"></iconify-icon>
