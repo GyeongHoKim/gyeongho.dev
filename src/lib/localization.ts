@@ -4,15 +4,18 @@
  */
 
 import { configureLocalization } from "@lit/localize";
-import { allLocales, sourceLocale, targetLocales } from "../generated/locale-codes.ts";
+import {
+	allLocales,
+	sourceLocale,
+	targetLocales,
+} from "../generated/locale-codes.ts";
 
 const LOCALE_STORAGE_KEY = "gyeongho-dev-locale";
 
 export const { getLocale, setLocale } = configureLocalization({
 	sourceLocale,
 	targetLocales: [...targetLocales],
-	loadLocale: (locale: string) =>
-		import(`../generated/locales/${locale}.ts`),
+	loadLocale: (locale: string) => import(`../generated/locales/${locale}.ts`),
 });
 
 /**
