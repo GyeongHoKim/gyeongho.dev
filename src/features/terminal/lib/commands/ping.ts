@@ -7,8 +7,8 @@ import type {
 	ExecuteCommandContext,
 	ExecuteCommandResult,
 } from "../command-interpreter.ts";
-import { getNetwork } from "../../../../features/network-simulation/lib/network.ts";
-import { getDeviceByIp } from "../../../../features/network-simulation/model/types.ts";
+import { getNetwork } from "../../../network-simulation/lib/network.ts";
+import { getDeviceByIp } from "../../../network-simulation/model/types.ts";
 
 /**
  * Validates an IPv4 address format.
