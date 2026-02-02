@@ -18,6 +18,7 @@ dist-ssr
 .cursor/*
 .specify/
 specs/
+.serena/
 .idea
 .DS_Store
 *.suo

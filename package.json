@@ -17,17 +17,18 @@
 	"dependencies": {
 		"@lit/localize": "^0.10.0",
 		"@xterm/addon-fit": "^0.11.0",
-		"marked": "^15.0.0",
 		"@xterm/xterm": "^6.0.0",
 		"iconify-icon": "^3.0.2",
 		"lit": "^3.3.1",
-		"three": "^0.170.0"
+		"marked": "^15.0.0",
+		"three": "^0.170.0",
+		"zustand": "^5.0.11"
 	},
 	"devDependencies": {
-		"@lit/localize-tools": "^0.8.1",
-		"@types/three": "^0.170.0",
 		"@biomejs/biome": "2.3.13",
 		"@esm-bundle/chai": "^4.3.4-fix.0",
+		"@lit/localize-tools": "^0.8.1",
+		"@types/three": "^0.170.0",
 		"@web/test-runner": "^0.19.0",
 		"typescript": "~5.9.3",
 		"vite": "^7.2.4"

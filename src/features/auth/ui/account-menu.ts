@@ -9,8 +9,12 @@ import { LitElement, css, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { msg, updateWhenLocaleChanges } from "@lit/localize";
 import "iconify-icon";
-import { getCurrentUser, logout, subscribeAuth } from "../model/auth-state.js";
-import type { AuthState } from "../model/auth-state.js";
+import {
+	getCurrentUser,
+	logout,
+	subscribeAuth,
+	type AuthState,
+} from "../../../shared/lib/auth-store.js";
 
 @customElement("account-menu")
 export class AccountMenu extends LitElement {
