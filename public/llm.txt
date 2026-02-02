@@ -1,0 +1,38 @@
+# gyeongho.dev
+
+https://gyeongho.dev
+
+Personal portfolio and web experience site for GyeongHo Kim, full-stack video streaming engineer.
+
+## About
+
+GyeongHo Kim is a full-stack engineer specializing in end-to-end video streaming solutions: WebAssembly, video streaming protocols (RTSP, WebRTC, WebSocket, WebTransport, HTTP), and modern web technologies. Delivers high-performance media streaming systems and contributes to open-source communities.
+
+Contact: gyeongho.dev@proton.me | (+82) 010-3812-5469
+Site: https://gyeongho.dev | Blog: https://blog.gyeongho.dev
+
+## Core competencies
+
+- Video streaming: RTSP, HLS, LL-HLS, WebRTC, WebTransport, WebSocket
+- WebAssembly: custom decoders (AVC, HEVC) with x264, x265, AVCodec
+- Open source: RTSP client libraries (Yellowstone, VDK)
+- Frontend: Design systems (Storybook), automated regression testing
+- DevOps: CI/CD (npm), Jenkins, test orchestration
+
+## Experience
+
+Web Engineer at IDIS, Pangyo (July 2023 – Present). Foundation libraries and media infrastructure: design system (@ids/web-components), video player (@ids/inex-video-player), WebAssembly decoder (@ids/inex-wasm-decoder), media server (RTSP → WebSocket/WebTransport/HLS/WebRTC), map UI with NVR-synced tracking, authentication systems.
+
+## Projects
+
+- iNEX Video Player & WebAssembly Decoder (TypeScript, Go, WASM, C++): RTSP playback in browsers, custom AVC/HEVC decoders, 3-tier Web Worker pipeline, WebGPU/WebGL2 rendering, media server (HTTP/WebSocket/WebTransport).
+- Clip Archive Service (React, TanStack Query, Gin, VDK, FFmpeg): MVR footage management, dashboard, media server, Google Maps tracking.
+- GIS Tracking Service: real-time location for construction/infrastructure, domestic and international deployment.
+
+## Recognition
+
+Google Developer Students Clubs Hackathon – Grand Prize (Dec 2023). Full-stack AI interview prep platform: GCP (GCR, GKE, GCS), Nest.js APIs, Flask ML APIs, OpenAI, Google Speech-to-Text.
+
+## Education
+
+Hanyang University, Seoul – Bachelor’s (Mar 2018 – Feb 2024). Double major: Electronics Engineering & Big Data Analytics.
