@@ -7,14 +7,15 @@ import { LitElement, css, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { msg, updateWhenLocaleChanges } from "@lit/localize";
 import { getLocale } from "../../lib/localization.ts";
-import { subscribeAuth } from "../../features/auth/model/auth-state.js";
-import type { AuthState } from "../../features/auth/model/auth-state.js";
+import {
+	subscribeAuth,
+	type AuthState,
+} from "../../shared/lib/auth-store.js";
+import { briefingStore } from "../../shared/lib/briefing-store.js";
 import "../../features/mission-briefing/ui/mission-briefing.ts";
 import "../../pages/boot/ui/boot-page.ts";
 import "../../pages/login/ui/login-page.ts";
 import "../../pages/desktop/ui/desktop-page.ts";
-
-const BRIEFING_SEEN_KEY = "gyeongho-dev-briefing-seen";
 
 type Route = "boot" | "briefing" | "login" | "desktop";
 
@@ -39,9 +40,7 @@ export class AppRoot extends LitElement {
 
 	connectedCallback(): void {
 		super.connectedCallback();
-		const briefingSeen =
-			typeof localStorage !== "undefined" &&
-			localStorage.getItem(BRIEFING_SEEN_KEY);
+		const briefingSeen = briefingStore.getState().briefingSeen;
 		if (!briefingSeen) {
 			this.route = "briefing";
 			this._unsub = subscribeAuth((state: AuthState) => {
@@ -75,11 +74,7 @@ export class AppRoot extends LitElement {
 	}
 
 	private _onBriefingAccept(): void {
-		try {
-			localStorage.setItem(BRIEFING_SEEN_KEY, "1");
-		} catch {
-			// ignore
-		}
+		briefingStore.getState().setBriefingSeen(true);
 		// Do not setVisitor() here — let user see boot → login, then choose visitor on login page
 		this.route = "boot";
 		this._bootTimeoutId = setTimeout(() => {

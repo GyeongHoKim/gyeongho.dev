@@ -15,7 +15,7 @@ import {
 	clearError,
 	getAuthState,
 	subscribeAuth,
-} from "../../../features/auth/model/auth-state.js";
+} from "../../../shared/lib/auth-store.js";
 import { validateGyeonghokimPassword } from "../../../features/auth/lib/validate-password.js";
 import { USERS } from "../../../entities/user/model/types.js";
 import type { User } from "../../../entities/user/model/types.js";

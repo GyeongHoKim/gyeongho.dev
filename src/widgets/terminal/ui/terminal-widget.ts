@@ -10,7 +10,7 @@ import { customElement, state } from "lit/decorators.js";
 import { msg, str, updateWhenLocaleChanges } from "@lit/localize";
 import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
-import { setVisitor } from "../../../features/auth/model/auth-state.js";
+import { setVisitor } from "../../../shared/lib/auth-store.js";
 import { createSession } from "../../../entities/session/model/session.ts";
 import type { Session } from "../../../entities/session/model/session.ts";
 import { createDefaultFilesystem } from "../../../entities/virtual-filesystem/lib/create-default-fs.ts";
