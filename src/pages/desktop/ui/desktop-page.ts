@@ -14,6 +14,7 @@ import "../../../features/terminal/ui/terminal-app.ts";
 import "../../../widgets/top-bar-right/ui/top-bar-right-widget.ts";
 import "../../../widgets/dock/ui/dock-widget.ts";
 import "../../../widgets/desktop-icons/ui/desktop-icons-widget.ts";
+import "../../../widgets/desktop-background/ui/desktop-background.ts";
 import "../../../features/resume-viewer/ui/resume-viewer.ts";
 import {
 	openApp,
@@ -32,12 +33,19 @@ export class DesktopPage extends LitElement {
 			display: block;
 			width: 100%;
 			height: 100vh;
-			background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
 			overflow: hidden;
 			font-family: "Cantarell", "Segoe UI", sans-serif;
 		}
 
+		.desktop-root {
+			position: relative;
+			width: 100%;
+			height: 100%;
+		}
+
 		.top-bar {
+			position: relative;
+			z-index: 1;
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
@@ -87,6 +95,7 @@ export class DesktopPage extends LitElement {
 
 		.desktop-area {
 			position: relative;
+			z-index: 1;
 			width: 100%;
 			height: calc(100vh - 32px);
 		}
@@ -179,7 +188,9 @@ export class DesktopPage extends LitElement {
 
 	render() {
 		return html`
-			<div class="top-bar">
+			<div class="desktop-root">
+				<desktop-background></desktop-background>
+				<div class="top-bar">
 				<div class="top-bar-left">
 					<button class="activities-button" @click=${this.handleMenuToggle}>
 						${msg("Activities", { desc: "Top bar menu button" })}
@@ -220,10 +231,10 @@ export class DesktopPage extends LitElement {
 						</div>
 					`
 				}
-			</div>
+				</div>
 
-			${
-				this.resumeVisible
+				${
+					this.resumeVisible
 					? html`
 					<div class="resume-overlay" @click=${this.handleCloseResume}>
 						<resume-viewer @close=${this.handleCloseResume}></resume-viewer>
@@ -232,7 +243,8 @@ export class DesktopPage extends LitElement {
 					: null
 			}
 
-			<dock-widget></dock-widget>
+				<dock-widget></dock-widget>
+			</div>
 		`;
 	}
 }
