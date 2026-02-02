@@ -13,6 +13,7 @@ import "../../../widgets/menu/ui/menu-widget.ts";
 import "../../../features/terminal/ui/terminal-app.ts";
 import "../../../widgets/top-bar-right/ui/top-bar-right-widget.ts";
 import "../../../widgets/dock/ui/dock-widget.ts";
+import "../../../widgets/desktop-icons/ui/desktop-icons-widget.ts";
 import "../../../features/resume-viewer/ui/resume-viewer.ts";
 import {
 	openApp,
@@ -193,6 +194,7 @@ export class DesktopPage extends LitElement {
 			</div>
 
 			<div class="desktop-area">
+				<desktop-icons-widget></desktop-icons-widget>
 				${
 					this.menuOpen
 						? html`

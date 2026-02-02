@@ -36,6 +36,55 @@ pnpm run format && pnpm run lint && pnpm run typecheck
 pnpm run test
 ```
 
+### Adding a new app
+
+New desktop apps live under **features** and must use the **floating-window** widget for the window chrome. Follow these steps and rules.
+
+#### 1. Where to develop
+
+- **Path**: `src/features/<app-id>/`
+  - `ui/<app-id>-app.ts` — Lit component (your app content wrapped in floating-window).
+  - `lib/` — app-specific logic (optional).
+- **Example**: Terminal lives at `src/features/terminal/ui/terminal-app.ts`.
+
+#### 2. Use floating-window
+
+- Wrap your app UI in **`<floating-window>`** (from `src/widgets/floating-window/`).
+- Put the app’s main content in the **`content`** slot: `<div slot="content">...</div>`.
+- Set the window title via the **`title`** attribute on `<floating-window>`.
+- **Window events** (from floating-window): on **`window-minimize`** call `setMinimized("<app-id>", true)`; on **`window-close`** call `closeApp("<app-id>")` (both from `src/shared/lib/window-store.js`). This keeps the dock and desktop in sync.
+- Do not put an icon in the title bar; the dock and desktop icons show the app icon from the app registry.
+
+#### 3. Register the app
+
+- **Window store** (`src/shared/lib/window-store.ts`): Add the new app id to **`APP_IDS`** (e.g. `["terminal", "my-app"]`). This defines the `AppId` type.
+- **App registry** (`src/shared/lib/app-registry.ts`):
+  - Add an entry to **`APP_CONFIG`** with `label` and either **`icon`** (iconify name, e.g. `"lucide:terminal"`) or **`iconSvg`** (URL to an app-provided SVG).
+  - To show the app on the desktop grid, add its id to **`DESKTOP_APP_IDS`** (order = grid position, top-left first).
+- **Desktop page** (`src/pages/desktop/ui/desktop-page.ts`): In the render logic, add a branch: when `isAppVisible("<app-id>")` is true, render your app component (e.g. `<my-app></my-app>`). Import the app module at the top.
+
+#### 4. Rules summary
+
+| Rule | Description |
+|------|-------------|
+| **Location** | Implement the app under `src/features/<app-id>/`. |
+| **floating-window** | Use `<floating-window>` for the window chrome (title bar, close/minimize/maximize, drag). Put content in the `content` slot. |
+| **Window store** | On `window-minimize` call `setMinimized(id, true)`; on `window-close` call `closeApp(id)`. |
+| **App registry** | Register `label` and `icon` or `iconSvg` in `APP_CONFIG`; add to `DESKTOP_APP_IDS` if the app should appear on the desktop grid. |
+| **Desktop page** | Add a render branch for `isAppVisible("<app-id>")` that renders your app component. |
+
+#### App icon (dock and desktop)
+
+Dock and desktop icons use a **shared component** so app icons are defined in one place.
+
+- **Component**: `app-icon-widget` (`src/widgets/app-icon/ui/app-icon-widget.ts`)
+- **Data**: Reads from app-registry via `getAppConfig(appId)`. Supports **icon** (Iconify name, e.g. `"lucide:terminal"`) or **iconSvg** (app-provided SVG URL). If `iconSvg` is set it is used; otherwise `icon` is used.
+- **Props**:
+  - `appId` — app id (required)
+  - `size` — icon size in pixels (default 48; dock uses 24)
+  - `showLabel` — show app label below icon (default false; desktop grid uses true, dock uses false)
+- **Usage**: **dock-widget** and **desktop-icons-widget** both render `<app-icon-widget appId=... size=... [showLabel]></app-icon-widget>` inside their buttons. You do not change these widgets when adding an app; only register the app in app-registry and the same icon appears in the dock and on the desktop.
+
 ## 🌐 Localization (i18n)
 
 The app supports **English**, **Korean**, and **Japanese**. UI strings and the resume content are localized per locale.

@@ -5,7 +5,6 @@
 import { LitElement, css, html } from "lit";
 import { customElement } from "lit/decorators.js";
 import { msg, updateWhenLocaleChanges } from "@lit/localize";
-import "iconify-icon";
 import {
 	type AppId,
 	getOpenWindows,
@@ -13,6 +12,7 @@ import {
 	subscribeWindowStore,
 } from "../../../shared/lib/window-store.js";
 import { getAppConfig } from "../../../shared/lib/app-registry.js";
+import "../../app-icon/ui/app-icon-widget.ts";
 
 @customElement("dock-widget")
 export class DockWidget extends LitElement {
@@ -118,13 +118,7 @@ export class DockWidget extends LitElement {
 				aria-label=${ariaLabel}
 				@click=${() => restoreApp(appId)}
 			>
-				<iconify-icon
-					icon=${config.icon}
-					width="24"
-					height="24"
-					style="color: #4ec9b0"
-					aria-hidden="true"
-				></iconify-icon>
+				<app-icon-widget appId=${appId} size=${24}></app-icon-widget>
 			</button>
 		`;
 	}
