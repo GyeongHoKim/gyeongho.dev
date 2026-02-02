@@ -86,12 +86,14 @@ export class AppRoot extends LitElement {
 	render() {
 		if (this.route === "briefing") {
 			return html`
-				<mission-briefing @accept=${this._onBriefingAccept}></mission-briefing>
+				<div id="main" role="main" tabindex="-1">
+					<mission-briefing @accept=${this._onBriefingAccept}></mission-briefing>
+				</div>
 			`;
 		}
-		if (this.route === "boot") return html`<boot-page></boot-page>`;
-		if (this.route === "login") return html`<login-page></login-page>`;
-		return html`<desktop-page></desktop-page>`;
+		if (this.route === "boot") return html`<div id="main" role="main" tabindex="-1"><boot-page></boot-page></div>`;
+		if (this.route === "login") return html`<div id="main" role="main" tabindex="-1"><login-page></login-page></div>`;
+		return html`<div id="main" role="main" tabindex="-1"><desktop-page></desktop-page></div>`;
 	}
 }
 
