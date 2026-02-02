@@ -7,8 +7,8 @@ import type {
 	ExecuteCommandContext,
 	ExecuteCommandResult,
 } from "../command-interpreter.ts";
-import { getNetwork } from "../../../../features/network-simulation/lib/network.ts";
-import { listDevices } from "../../../../features/network-simulation/model/types.ts";
+import { getNetwork } from "../../../network-simulation/lib/network.ts";
+import { listDevices } from "../../../network-simulation/model/types.ts";
 
 /**
  * Executes the ARP command to display the network ARP table.

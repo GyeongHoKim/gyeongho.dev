@@ -10,9 +10,15 @@ import { customElement, state } from "lit/decorators.js";
 import { msg, updateWhenLocaleChanges } from "@lit/localize";
 import "iconify-icon";
 import "../../../widgets/menu/ui/menu-widget.ts";
-import "../../../widgets/terminal/ui/terminal-widget.ts";
+import "../../../features/terminal/ui/terminal-app.ts";
 import "../../../widgets/top-bar-right/ui/top-bar-right-widget.ts";
+import "../../../widgets/dock/ui/dock-widget.ts";
 import "../../../features/resume-viewer/ui/resume-viewer.ts";
+import {
+	openApp,
+	isAppVisible,
+	subscribeWindowStore,
+} from "../../../shared/lib/window-store.js";
 
 @customElement("desktop-page")
 export class DesktopPage extends LitElement {
@@ -124,69 +130,25 @@ export class DesktopPage extends LitElement {
 			justify-content: center;
 			z-index: 1000;
 		}
-
-		.dock {
-			position: fixed;
-			bottom: 8px;
-			left: 50%;
-			transform: translateX(-50%);
-			display: flex;
-			gap: 8px;
-			padding: 8px 12px;
-			background: rgba(40, 40, 40, 0.9);
-			border-radius: 12px;
-			box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-		}
-
-		.dock-item {
-			width: 48px;
-			height: 48px;
-			border-radius: 10px;
-			border: none;
-			background: rgba(255, 255, 255, 0.1);
-			cursor: pointer;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			transition: transform 0.15s ease, background 0.15s ease;
-		}
-
-		.dock-item:hover {
-			background: rgba(255, 255, 255, 0.2);
-			transform: scale(1.1);
-		}
-
-		.dock-item:focus-visible {
-			outline: 2px solid #3584e4;
-			outline-offset: 2px;
-		}
-
-		.dock-item.active {
-			background: rgba(53, 132, 228, 0.4);
-		}
-
-		.dock-item.minimized::after {
-			content: "";
-			position: absolute;
-			bottom: 4px;
-			width: 6px;
-			height: 6px;
-			background: #ffbd2e;
-			border-radius: 50%;
-		}
 	`;
-
-	@state()
-	private terminalOpen = false;
-
-	@state()
-	private terminalMinimized = false;
 
 	@state()
 	private menuOpen = false;
 
 	@state()
 	private resumeVisible = false;
+
+	private unsubscribe: (() => void) | null = null;
+
+	override connectedCallback() {
+		super.connectedCallback();
+		this.unsubscribe = subscribeWindowStore(() => this.requestUpdate());
+	}
+
+	override disconnectedCallback() {
+		this.unsubscribe?.();
+		super.disconnectedCallback();
+	}
 
 	private handleMenuToggle() {
 		this.menuOpen = !this.menuOpen;
@@ -197,22 +159,8 @@ export class DesktopPage extends LitElement {
 	}
 
 	private handleOpenTerminal() {
-		if (this.terminalMinimized) {
-			// Restore minimized terminal
-			this.terminalMinimized = false;
-		} else {
-			this.terminalOpen = true;
-		}
+		openApp("terminal");
 		this.menuOpen = false;
-	}
-
-	private handleCloseTerminal() {
-		this.terminalOpen = false;
-		this.terminalMinimized = false;
-	}
-
-	private handleMinimizeTerminal() {
-		this.terminalMinimized = true;
 	}
 
 	private handleResumeRevealed() {
@@ -257,14 +205,10 @@ export class DesktopPage extends LitElement {
 				}
 
 				${
-					this.terminalOpen && !this.terminalMinimized
+					isAppVisible("terminal")
 						? html`
 						<div class="window-container">
-							<terminal-widget
-								@close-terminal=${this.handleCloseTerminal}
-								@minimize-terminal=${this.handleMinimizeTerminal}
-								@resume-revealed=${this.handleResumeRevealed}
-							></terminal-widget>
+							<terminal-app @resume-revealed=${this.handleResumeRevealed}></terminal-app>
 						</div>
 					`
 						: html`
@@ -286,21 +230,7 @@ export class DesktopPage extends LitElement {
 					: null
 			}
 
-			${
-				this.terminalOpen
-					? html`
-					<div class="dock">
-						<button
-							class="dock-item ${this.terminalMinimized ? "minimized" : "active"}"
-							@click=${this.handleOpenTerminal}
-							aria-label="${this.terminalMinimized ? msg("Restore Terminal", { desc: "Dock button" }) : msg("Terminal is open", { desc: "Dock button" })}"
-						>
-							<iconify-icon icon="lucide:terminal" width="24" height="24" style="color: #4ec9b0" aria-hidden="true"></iconify-icon>
-						</button>
-					</div>
-				`
-					: null
-			}
+			<dock-widget></dock-widget>
 		`;
 	}
 }
