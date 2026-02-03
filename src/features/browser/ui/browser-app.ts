@@ -238,9 +238,9 @@ export class BrowserApp extends LitElement {
 		switch (this.pageData.type) {
 			case "login_form":
 				return html`
-					<h1>${msg("Sign in", { desc: "Login form heading" })}</h1>
+					<h1>${msg("Sign in", { id: "browser-login-heading", desc: "Login form heading" })}</h1>
 					<form class="login-form" @submit=${this.handleLoginSubmit}>
-						<label for="browser-username">${msg("Username", { desc: "Login field" })}</label>
+						<label for="browser-username">${msg("Username", { id: "browser-username-label", desc: "Login field" })}</label>
 						<input
 							id="browser-username"
 							type="text"
@@ -248,7 +248,7 @@ export class BrowserApp extends LitElement {
 							required
 							autocomplete="username"
 						/>
-						<label for="browser-password">${msg("Password", { desc: "Login field" })}</label>
+						<label for="browser-password">${msg("Password", { id: "browser-password-label", desc: "Login field" })}</label>
 						<input
 							id="browser-password"
 							type="password"
@@ -256,7 +256,7 @@ export class BrowserApp extends LitElement {
 							required
 							autocomplete="current-password"
 						/>
-						<button type="submit" class="btn">${msg("Sign in", { desc: "Login button" })}</button>
+						<button type="submit" class="btn">${msg("Sign in", { id: "browser-login-button", desc: "Login button" })}</button>
 					</form>
 				`;
 			case "user_list":
