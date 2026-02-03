@@ -1,26 +1,12 @@
-# gyeongho.dev
+# SYSTEM BREACHED
 
-It's me, gyeongho
+Your visit is the exploit.  
+GyeongHo Kim's resume is hidden across the network.  
+Hack other devices to retrieve it—or be traced.
 
-## 🎮 How to Play
+**Stuck?** The intended solution is documented in [ANSWER.md](ANSWER.md).
 
-1. **First visit**: See the mission briefing (target’s employee card), then click **Accept mission** → boot screen → login screen.
-2. **Login**: Choose **visitor** or **gyeonghokim** (gyeonghokim requires a password).
-3. **Desktop**: Click **Activities** and open the **Terminal** from the Applications menu.
-4. **Explore** the virtual filesystem (as visitor or gyeonghokim):
-   - `ls` - list directory contents
-   - `cd` - change directory
-   - `pwd` - print working directory
-   - `cat` - display file contents
-   - `whoami` - show current user
-   - `su [user]` - switch user (e.g. `su gyeonghokim`)
-   - `help` - show available commands
-5. **As visitor**: `resume` is hidden at root. Find the hint somewhere in the filesystem, then run `su gyeonghokim` and enter the password to switch to gyeonghokim.
-6. **Unlock the resume**: As **gyeonghokim**, from root (`/`) run `sudo ./resume` and enter the password.
-7. **Victory!** View the unlocked resume.
-8. **Sign out**: Click your name (top right) → **Sign out** to return to the login screen.
-
-## 🚀 Development
+## Development
 
 ```bash
 # Install dependencies
@@ -65,13 +51,13 @@ New desktop apps live under **features** and must use the **floating-window** wi
 
 #### 4. Rules summary
 
-| Rule | Description |
-|------|-------------|
-| **Location** | Implement the app under `src/features/<app-id>/`. |
-| **floating-window** | Use `<floating-window>` for the window chrome (title bar, close/minimize/maximize, drag). Put content in the `content` slot. |
-| **Window store** | On `window-minimize` call `setMinimized(id, true)`; on `window-close` call `closeApp(id)`. |
-| **App registry** | Register `label` and `icon` or `iconSvg` in `APP_CONFIG`; add to `DESKTOP_APP_IDS` if the app should appear on the desktop grid. |
-| **Desktop page** | Add a render branch for `isAppVisible("<app-id>")` that renders your app component. |
+| Rule                | Description                                                                                                                      |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| **Location**        | Implement the app under `src/features/<app-id>/`.                                                                                |
+| **floating-window** | Use `<floating-window>` for the window chrome (title bar, close/minimize/maximize, drag). Put content in the `content` slot.     |
+| **Window store**    | On `window-minimize` call `setMinimized(id, true)`; on `window-close` call `closeApp(id)`.                                       |
+| **App registry**    | Register `label` and `icon` or `iconSvg` in `APP_CONFIG`; add to `DESKTOP_APP_IDS` if the app should appear on the desktop grid. |
+| **Desktop page**    | Add a render branch for `isAppVisible("<app-id>")` that renders your app component.                                              |
 
 #### App icon (dock and desktop)
 
@@ -91,10 +77,10 @@ The app supports **English**, **Korean**, and **Japanese**. UI strings and the r
 
 ### Supported locales
 
-| Code | Language |
-|------|----------|
-| `en` | English (source) |
-| `ko` | 한국어 (Korean) |
+| Code | Language          |
+| ---- | ----------------- |
+| `en` | English (source)  |
+| `ko` | 한국어 (Korean)   |
 | `ja` | 日本語 (Japanese) |
 
 ### How it works
@@ -106,11 +92,14 @@ The app supports **English**, **Korean**, and **Japanese**. UI strings and the r
 ### Adding or updating translations
 
 1. **Extract** messages from source into XLIFF:
+
    ```bash
    pnpm run lit-localize:extract
    ```
+
 2. **Edit** `xliff/ko.xlf` and `xliff/ja.xlf`: add or update `<target>` inside each `<trans-unit>`.
 3. **Build** locale modules:
+
    ```bash
    pnpm run lit-localize:build
    ```

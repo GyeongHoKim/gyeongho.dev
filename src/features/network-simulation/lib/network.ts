@@ -21,20 +21,33 @@ function createVisitorDevice(): Device {
 
 You're currently connected to your local device.
 
-Available commands:
-  ls          - list directory contents
-  cd          - change directory
-  pwd         - print working directory
-  cat         - display file contents
-  clear       - clear the terminal screen
-  arp -a      - display ARP table (network neighbors)
-  ping <ip>   - check if a host is reachable
-  nmap [options] <ip> - scan for open ports on a host
-    -sV                 - probe open ports to determine service/version info
-    --script http-methods - enumerate supported HTTP methods and endpoints
-  ssh <user>@<ip> - connect to a remote host
+MISSION: Find and access the resume on the network.
 
-Try exploring the network!
+Available commands:
+  Filesystem:
+    ls, cd, pwd, cat, clear
+    echo 'text' > file  - write text to file
+    edit <file>         - open file in text editor
+
+  Network:
+    arp -a              - display ARP table (network neighbors)
+    ping <ip>           - check if a host is reachable
+    nmap [opts] <ip>    - scan for open ports
+      -sV               - probe service versions
+      --script http-enum - enumerate HTTP endpoints
+    ssh <user>@<ip>     - connect via SSH
+    curl <url>          - make HTTP requests
+      -X POST           - specify method
+      -F "file=@name"   - upload file
+
+HINTS:
+  1. Start by discovering other devices: arp -a
+  2. Scan discovered hosts for services: nmap -sV <ip>
+  3. Some services may have vulnerabilities...
+  4. Password hint: Check the README on the target machine
+  5. Multiple paths lead to the same destination
+
+Good luck, hacker!
 `.trim(),
 	});
 

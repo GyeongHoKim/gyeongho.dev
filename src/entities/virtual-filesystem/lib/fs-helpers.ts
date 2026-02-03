@@ -170,6 +170,95 @@ export function getDirectory(
 	return null;
 }
 
+/**
+ * Writes a file to the virtual filesystem.
+ * Creates the file if it doesn't exist, overwrites if it does.
+ * Returns an error message if the parent directory doesn't exist.
+ */
+export function writeFile(
+	fs: VirtualFilesystem,
+	absolutePath: string,
+	content: string,
+	executable = false,
+): { success: true } | { error: string } {
+	const normalizedPath = normalizePath(absolutePath);
+
+	// Cannot write to root
+	if (normalizedPath === "/") {
+		return { error: "Cannot write to root directory" };
+	}
+
+	// Get parent directory path and filename
+	const segments = normalizedPath.split("/").filter((s) => s !== "");
+	const filename = segments.pop();
+	if (!filename) {
+		return { error: "Invalid path" };
+	}
+	const parentPath = segments.length === 0 ? "/" : `/${segments.join("/")}`;
+
+	// Get parent directory
+	const parentDir = getDirectory(fs, parentPath);
+	if (!parentDir) {
+		return { error: `No such directory: ${parentPath}` };
+	}
+
+	// Check if file already exists
+	const existingNode = parentDir.children.get(filename);
+	if (existingNode && isVirtualDirectory(existingNode)) {
+		return { error: `Is a directory: ${normalizedPath}` };
+	}
+
+	// Create or update file
+	const file: VirtualFile = {
+		name: filename,
+		path: normalizedPath,
+		type: "file",
+		parent: parentDir,
+		content,
+		executable,
+	};
+
+	parentDir.children.set(filename, file);
+	return { success: true };
+}
+
+/**
+ * Deletes a file from the virtual filesystem.
+ * Returns an error if the path doesn't exist or is a directory.
+ */
+export function deleteFile(
+	fs: VirtualFilesystem,
+	absolutePath: string,
+): { success: true } | { error: string } {
+	const normalizedPath = normalizePath(absolutePath);
+
+	// Get parent directory path and filename
+	const segments = normalizedPath.split("/").filter((s) => s !== "");
+	const filename = segments.pop();
+	if (!filename) {
+		return { error: "Invalid path" };
+	}
+	const parentPath = segments.length === 0 ? "/" : `/${segments.join("/")}`;
+
+	// Get parent directory
+	const parentDir = getDirectory(fs, parentPath);
+	if (!parentDir) {
+		return { error: `No such file or directory: ${normalizedPath}` };
+	}
+
+	// Check if file exists
+	const existingNode = parentDir.children.get(filename);
+	if (!existingNode) {
+		return { error: `No such file or directory: ${normalizedPath}` };
+	}
+	if (isVirtualDirectory(existingNode)) {
+		return { error: `Is a directory: ${normalizedPath}` };
+	}
+
+	parentDir.children.delete(filename);
+	return { success: true };
+}
+
 // Re-export types and type guards for convenience
 export {
 	type VirtualDirectory,

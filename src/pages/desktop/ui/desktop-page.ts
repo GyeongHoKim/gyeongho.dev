@@ -11,6 +11,7 @@ import { msg, updateWhenLocaleChanges } from "@lit/localize";
 import "iconify-icon";
 import "../../../widgets/menu/ui/menu-widget.ts";
 import "../../../features/terminal/ui/terminal-app.ts";
+import "../../../features/text-editor/ui/text-editor-app.ts";
 import "../../../widgets/top-bar-right/ui/top-bar-right-widget.ts";
 import "../../../widgets/dock/ui/dock-widget.ts";
 import "../../../widgets/desktop-icons/ui/desktop-icons-widget.ts";
@@ -21,6 +22,9 @@ import {
 	isAppVisible,
 	subscribeWindowStore,
 } from "../../../shared/lib/window-store.js";
+import { getNetwork } from "../../../features/network-simulation/lib/network.ts";
+import { getDeviceByIp } from "../../../features/network-simulation/model/types.ts";
+import type { EditFileEvent } from "../../../features/terminal/lib/commands/edit.ts";
 
 @customElement("desktop-page")
 export class DesktopPage extends LitElement {
@@ -148,16 +152,40 @@ export class DesktopPage extends LitElement {
 	@state()
 	private resumeVisible = false;
 
+	@state()
+	private editorFile = "";
+
+	@state()
+	private editorCwd = "/";
+
 	private unsubscribe: (() => void) | null = null;
+
+	private handleOpenFileInEditor = (e: Event) => {
+		const detail = (e as CustomEvent<EditFileEvent>).detail;
+		this.editorFile = detail.path;
+		this.editorCwd = detail.cwd;
+		this.requestUpdate();
+	};
 
 	override connectedCallback() {
 		super.connectedCallback();
 		this.unsubscribe = subscribeWindowStore(() => this.requestUpdate());
+		window.addEventListener("open-file-in-editor", this.handleOpenFileInEditor);
 	}
 
 	override disconnectedCallback() {
 		this.unsubscribe?.();
+		window.removeEventListener(
+			"open-file-in-editor",
+			this.handleOpenFileInEditor,
+		);
 		super.disconnectedCallback();
+	}
+
+	private getVisitorFilesystem() {
+		const network = getNetwork();
+		const device = getDeviceByIp(network, "192.168.1.10");
+		return device?.fs ?? null;
 	}
 
 	private handleMenuToggle() {
@@ -224,12 +252,33 @@ export class DesktopPage extends LitElement {
 							<terminal-app @resume-revealed=${this.handleResumeRevealed}></terminal-app>
 						</div>
 					`
-						: html`
+						: null
+				}
+
+				${
+					isAppVisible("text-editor")
+						? html`
+						<div class="window-container" style="transform: translate(-40%, -40%);">
+							<text-editor-app
+								.filesystem=${this.getVisitorFilesystem()}
+								.cwd=${this.editorCwd}
+								.initialFile=${this.editorFile}
+								@resume-revealed=${this.handleResumeRevealed}
+							></text-editor-app>
+						</div>
+					`
+						: null
+				}
+
+				${
+					!isAppVisible("terminal") && !isAppVisible("text-editor")
+						? html`
 						<div class="welcome-text">
 							<h2>${msg("Welcome to gyeongho.dev", { desc: "Desktop welcome heading" })}</h2>
 							<p>${msg('Click "Activities" to open the terminal and start exploring', { desc: "Desktop welcome hint" })}</p>
 						</div>
 					`
+						: null
 				}
 				</div>
 
