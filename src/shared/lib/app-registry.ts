@@ -16,10 +16,11 @@ export interface AppConfig {
 export const APP_CONFIG: Record<AppId, AppConfig> = {
 	terminal: { label: "Terminal", icon: "lucide:terminal" },
 	"text-editor": { label: "Text Editor", icon: "lucide:file-text" },
+	browser: { label: "Browser", icon: "lucide:globe" },
 };
 
 /** App IDs shown on desktop as icons, in grid order (top-left first). */
-export const DESKTOP_APP_IDS: readonly AppId[] = ["terminal"];
+export const DESKTOP_APP_IDS: readonly AppId[] = ["terminal", "browser"];
 
 export function getAppConfig(id: AppId): AppConfig | undefined {
 	return APP_CONFIG[id];

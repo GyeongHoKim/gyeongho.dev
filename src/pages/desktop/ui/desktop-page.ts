@@ -12,15 +12,19 @@ import "iconify-icon";
 import "../../../widgets/menu/ui/menu-widget.ts";
 import "../../../features/terminal/ui/terminal-app.ts";
 import "../../../features/text-editor/ui/text-editor-app.ts";
+import "../../../features/browser/ui/browser-app.ts";
 import "../../../widgets/top-bar-right/ui/top-bar-right-widget.ts";
 import "../../../widgets/dock/ui/dock-widget.ts";
 import "../../../widgets/desktop-icons/ui/desktop-icons-widget.ts";
 import "../../../widgets/desktop-background/ui/desktop-background.ts";
 import "../../../features/resume-viewer/ui/resume-viewer.ts";
 import {
+	type AppId,
 	openApp,
 	isAppVisible,
 	subscribeWindowStore,
+	bringToFront,
+	getWindowZIndex,
 } from "../../../shared/lib/window-store.js";
 import { getNetwork } from "../../../features/network-simulation/lib/network.ts";
 import { getDeviceByIp } from "../../../features/network-simulation/model/types.ts";
@@ -201,6 +205,19 @@ export class DesktopPage extends LitElement {
 		this.menuOpen = false;
 	}
 
+	private handleOpenBrowser() {
+		openApp("browser");
+		this.menuOpen = false;
+	}
+
+	private handleWindowFocus(e: Event) {
+		const el = (e.target as HTMLElement).closest("[data-app-id]");
+		const id = el?.getAttribute("data-app-id") as AppId | null;
+		if (id && (["terminal", "text-editor", "browser"] as const).includes(id)) {
+			bringToFront(id);
+		}
+	}
+
 	private handleResumeRevealed() {
 		this.resumeVisible = true;
 	}
@@ -232,13 +249,14 @@ export class DesktopPage extends LitElement {
 				</div>
 			</div>
 
-			<div class="desktop-area">
+			<div class="desktop-area" @window-focus=${this.handleWindowFocus}>
 				<desktop-icons-widget></desktop-icons-widget>
 				${
 					this.menuOpen
 						? html`
 					<menu-widget
 						@open-terminal=${this.handleOpenTerminal}
+						@open-browser=${this.handleOpenBrowser}
 						@close-menu=${this.handleCloseMenu}
 					></menu-widget>
 					`
@@ -248,7 +266,11 @@ export class DesktopPage extends LitElement {
 				${
 					isAppVisible("terminal")
 						? html`
-						<div class="window-container">
+						<div
+							class="window-container"
+							data-app-id="terminal"
+							style="z-index: ${getWindowZIndex("terminal")}"
+						>
 							<terminal-app @resume-revealed=${this.handleResumeRevealed}></terminal-app>
 						</div>
 					`
@@ -258,7 +280,11 @@ export class DesktopPage extends LitElement {
 				${
 					isAppVisible("text-editor")
 						? html`
-						<div class="window-container" style="transform: translate(-40%, -40%);">
+						<div
+							class="window-container"
+							data-app-id="text-editor"
+							style="transform: translate(-40%, -40%); z-index: ${getWindowZIndex("text-editor")}"
+						>
 							<text-editor-app
 								.filesystem=${this.getVisitorFilesystem()}
 								.cwd=${this.editorCwd}
@@ -271,7 +297,23 @@ export class DesktopPage extends LitElement {
 				}
 
 				${
-					!isAppVisible("terminal") && !isAppVisible("text-editor")
+					isAppVisible("browser")
+						? html`
+						<div
+							class="window-container"
+							data-app-id="browser"
+							style="transform: translate(-30%, -50%); z-index: ${getWindowZIndex("browser")}"
+						>
+							<browser-app @resume-revealed=${this.handleResumeRevealed}></browser-app>
+						</div>
+					`
+						: null
+				}
+
+				${
+					!isAppVisible("terminal") &&
+					!isAppVisible("text-editor") &&
+					!isAppVisible("browser")
 						? html`
 						<div class="welcome-text">
 							<h2>${msg("Welcome to gyeongho.dev", { desc: "Desktop welcome heading" })}</h2>

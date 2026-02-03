@@ -318,6 +318,56 @@ function handleRoot(): HttpResponse {
 }
 
 /**
+ * Handles GET /login - returns page type for client to render with Lit
+ */
+function handleLoginPage(): HttpResponse {
+	return jsonResponse(200, { type: "login_form" });
+}
+
+/**
+ * Detects classic SQL injection patterns in a string (case-insensitive).
+ */
+function isSqlInjection(value: string): boolean {
+	const lower = value.toLowerCase().trim();
+	const patterns = [
+		"' or '1'='1",
+		'" or "1"="1',
+		"' or 1=1--",
+		'" or 1=1--',
+		"' or '1'='1'--",
+		"or 1=1",
+		"or '1'='1",
+		"admin'--",
+		"' or ''='",
+	];
+	return patterns.some((p) => lower.includes(p));
+}
+
+const LOGIN_USERS = ["admin", "gyeonghokim"] as const;
+
+/**
+ * Handles POST /login - validate credentials or detect SQLi (returns JSON for Lit to render)
+ */
+function handleLoginSubmit(request: HttpRequest): HttpResponse {
+	const body = request.body ?? "";
+	const params = new URLSearchParams(body);
+	const username = params.get("username") ?? "";
+	const password = params.get("password") ?? "";
+
+	if (isSqlInjection(username) || isSqlInjection(password)) {
+		return jsonResponse(200, {
+			type: "user_list",
+			users: [...LOGIN_USERS],
+		});
+	}
+
+	return jsonResponse(401, {
+		type: "error",
+		message: "Invalid username or password",
+	});
+}
+
+/**
  * Main HTTP request handler for simulated web server.
  */
 export function handleHttpRequest(
@@ -350,6 +400,12 @@ export function handleHttpRequest(
 	// Route requests
 	if (path === "/" || path === "") {
 		return handleRoot();
+	}
+
+	if (path === "/login") {
+		if (method === "GET") return handleLoginPage();
+		if (method === "POST") return handleLoginSubmit(request);
+		return jsonResponse(405, { error: "Method not allowed", allowed: ["GET", "POST"] });
 	}
 
 	if (path === "/api/files") {
