@@ -13,6 +13,8 @@ const WINDOW_MINIMIZE = "window-minimize";
 const WINDOW_MAXIMIZE = "window-maximize";
 const WINDOW_SHOW = "window-show";
 const WINDOW_HIDE = "window-hide";
+/** Fired when the user interacts with the title bar (e.g. click/drag) so the host can bring this window to front. */
+const WINDOW_FOCUS = "window-focus";
 
 function dispatchWindowEvent(
 	host: LitElement,
@@ -220,8 +222,8 @@ export class FloatingWindow extends LitElement {
 	}
 
 	private handleDragStart(e: MouseEvent) {
-		if (this.isMaximized) return;
 		if ((e.target as HTMLElement).closest(".window-controls")) return;
+		if (this.isMaximized) return;
 		this.isDragging = true;
 		this.dragStartX = e.clientX;
 		this.dragStartY = e.clientY;
@@ -232,13 +234,23 @@ export class FloatingWindow extends LitElement {
 		document.addEventListener("mouseup", this.handleDragEnd);
 	}
 
+	private handleWindowMouseDown(e: MouseEvent) {
+		// Bring to front when clicking anywhere on the window (title or content)
+		dispatchWindowEvent(this, WINDOW_FOCUS);
+		// Title bar drag is handled in handleDragStart
+		if ((e.target as HTMLElement).closest(".title-bar")) {
+			this.handleDragStart(e);
+		}
+	}
+
 	override render() {
 		return html`
 			<div
 				class="window ${this.isMaximized ? "maximized" : ""}"
 				style="${this.isMaximized ? "" : `transform: translate(${this.posX}px, ${this.posY}px)`}"
+				@mousedown=${this.handleWindowMouseDown}
 			>
-				<div class="title-bar" @mousedown=${this.handleDragStart}>
+				<div class="title-bar">
 					<div class="title-bar-left">
 						<div class="window-controls">
 							<button

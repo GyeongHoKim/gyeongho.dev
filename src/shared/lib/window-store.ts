@@ -5,7 +5,7 @@
 
 import { createStore } from "zustand/vanilla";
 
-export const APP_IDS = ["terminal", "text-editor"] as const;
+export const APP_IDS = ["terminal", "text-editor", "browser"] as const;
 export type AppId = (typeof APP_IDS)[number];
 
 export interface WindowState {
@@ -14,8 +14,13 @@ export interface WindowState {
 
 export type OpenWindows = Partial<Record<AppId, WindowState>>;
 
+/** Order of windows (front to back). Last item is topmost. */
+export type WindowZOrder = AppId[];
+
 interface WindowStoreState {
 	openWindows: OpenWindows;
+	/** Stack order for z-index; last element is on top. */
+	zOrder: WindowZOrder;
 }
 
 interface WindowStoreActions {
@@ -23,22 +28,32 @@ interface WindowStoreActions {
 	closeApp: (id: AppId) => void;
 	setMinimized: (id: AppId, minimized: boolean) => void;
 	restoreApp: (id: AppId) => void;
+	/** Bring the given app's window to front (highest z-index). */
+	bringToFront: (id: AppId) => void;
 }
 
 type WindowStore = WindowStoreState & WindowStoreActions;
 
+const BASE_Z = 10;
+
 const windowStore = createStore<WindowStore>()((set) => ({
 	openWindows: {},
+	zOrder: [],
 	openApp: (id: AppId) => {
-		set((state) => ({
-			openWindows: { ...state.openWindows, [id]: { minimized: false } },
-		}));
+		set((state) => {
+			const openWindows = { ...state.openWindows, [id]: { minimized: false } };
+			const zOrder = state.zOrder.includes(id)
+				? state.zOrder
+				: [...state.zOrder, id];
+			return { openWindows, zOrder };
+		});
 	},
 	closeApp: (id: AppId) => {
 		set((state) => {
 			const next = { ...state.openWindows };
 			delete next[id];
-			return { openWindows: next };
+			const zOrder = state.zOrder.filter((x) => x !== id);
+			return { openWindows: next, zOrder };
 		});
 	},
 	setMinimized: (id: AppId, minimized: boolean) => {
@@ -57,6 +72,13 @@ const windowStore = createStore<WindowStore>()((set) => ({
 			return {
 				openWindows: { ...state.openWindows, [id]: { ...entry, minimized: false } },
 			};
+		});
+	},
+	bringToFront: (id: AppId) => {
+		set((state) => {
+			if (!state.openWindows[id]) return state;
+			const zOrder = [...state.zOrder.filter((x) => x !== id), id];
+			return { zOrder };
 		});
 	},
 }));
@@ -84,6 +106,17 @@ export function setMinimized(id: AppId, minimized: boolean): void {
 
 export function restoreApp(id: AppId): void {
 	windowStore.getState().restoreApp(id);
+}
+
+export function bringToFront(id: AppId): void {
+	windowStore.getState().bringToFront(id);
+}
+
+/** Z-index for the given app (higher = on top). */
+export function getWindowZIndex(id: AppId): number {
+	const zOrder = windowStore.getState().zOrder;
+	const idx = zOrder.indexOf(id);
+	return idx === -1 ? 0 : BASE_Z + idx;
 }
 
 export function subscribeWindowStore(callback: () => void): () => void {

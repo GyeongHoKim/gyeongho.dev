@@ -107,9 +107,6 @@ export class TextEditorApp extends LitElement {
 	private currentFile = "";
 
 	@state()
-	private isModified = false;
-
-	@state()
 	private statusMessage = "";
 
 	@state()
@@ -148,13 +145,11 @@ export class TextEditorApp extends LitElement {
 			this.currentFile = absolutePath;
 			this.content = "";
 			this.originalContent = "";
-			this.isModified = false;
 			this.setStatus(`New file: ${filename}`);
 		} else {
 			this.currentFile = absolutePath;
 			this.content = result.content;
 			this.originalContent = result.content;
-			this.isModified = false;
 			this.setStatus(`Opened: ${filename}`);
 		}
 
@@ -164,7 +159,6 @@ export class TextEditorApp extends LitElement {
 	private handleContentChange(e: Event) {
 		const textarea = e.target as HTMLTextAreaElement;
 		this.content = textarea.value;
-		this.isModified = this.content !== this.originalContent;
 	}
 
 	private handleKeyDown(e: KeyboardEvent) {
@@ -184,7 +178,6 @@ export class TextEditorApp extends LitElement {
 			// Insert tab character
 			const newValue = `${this.content.substring(0, start)}\t${this.content.substring(end)}`;
 			this.content = newValue;
-			this.isModified = this.content !== this.originalContent;
 
 			// Move cursor after tab
 			this.updateComplete.then(() => {
@@ -210,7 +203,6 @@ export class TextEditorApp extends LitElement {
 			this.setStatus(`Error: ${result.error}`, true);
 		} else {
 			this.originalContent = this.content;
-			this.isModified = false;
 			this.setStatus(`Saved: ${this.currentFile.split("/").pop()}`);
 
 			// Dispatch event to notify parent
@@ -268,7 +260,9 @@ export class TextEditorApp extends LitElement {
 							${this.statusMessage}
 						</span>
 						<span>
-							${msg("Ctrl+S to save", { desc: "Save shortcut hint" })}
+							${this.content !== this.originalContent
+								? msg("Modified", { desc: "Status: file modified" })
+								: msg("Ctrl+S to save", { desc: "Save shortcut hint" })}
 						</span>
 					</div>
 				</div>

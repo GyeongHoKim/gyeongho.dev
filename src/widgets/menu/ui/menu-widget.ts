@@ -144,6 +144,10 @@ export class MenuWidget extends LitElement {
 		this.dispatchEvent(new CustomEvent("open-terminal"));
 	}
 
+	private handleOpenBrowser() {
+		this.dispatchEvent(new CustomEvent("open-browser"));
+	}
+
 	render() {
 		return html`
 			<div class="backdrop" @click=${this.handleBackdropClick}>
@@ -166,6 +170,13 @@ export class MenuWidget extends LitElement {
 								<iconify-icon icon="lucide:terminal" width="28" height="28" style="color: #4ec9b0" aria-hidden="true"></iconify-icon>
 							</div>
 							<span class="app-name">Terminal</span>
+						</button>
+
+						<button class="app-item" @click=${this.handleOpenBrowser} aria-label="Open Browser">
+							<div class="app-icon">
+								<iconify-icon icon="lucide:globe" width="28" height="28" style="color: #3584e4" aria-hidden="true"></iconify-icon>
+							</div>
+							<span class="app-name">Browser</span>
 						</button>
 
 						<button class="app-item" disabled aria-label="Files (disabled)">
