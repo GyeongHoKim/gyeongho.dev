@@ -1,13 +1,18 @@
 # How to Find the Resume (Intended Solution)
 
-This document describes the **intended path** to reveal GyeongHo Kim's resume in the portfolio simulation.
+This document describes the **intended paths** to reveal GyeongHo Kim's resume in the portfolio simulation. Multiple paths lead to the same destination.
 
 ## Prerequisites
 
 - You have booted the desktop, (optionally) seen the mission briefing, and logged in as **visitor**.
-- You have the **Terminal** and **Text Editor** apps available (dock or desktop).
+- **Path A (Webshell):** Terminal and Text Editor (or echo) for creating/uploading a script.
+- **Path B (SQL injection):** Browser app (and optionally Terminal for discovery).
 
-## Step-by-Step Solution
+---
+
+## Path A: Webshell (file upload + RCE)
+
+### Step-by-step
 
 ### 1. Discover the network
 
@@ -95,14 +100,42 @@ When the server processes `cmd=cat /resume` (or equivalent), it triggers the res
 
 ---
 
+## Path B: SQL injection (login bypass)
+
+The same host (`192.168.1.20:8080`) serves a **login page**. The login form is vulnerable to SQL injection: you can bypass authentication and be treated as an admin, then open the target user’s resume from the user list.
+
+### Step-by-step
+
+1. **Open the Browser**  
+   From the desktop or the **Activities** menu, open **Browser**. It loads `http://192.168.1.20:8080/login` (fixed address).
+
+2. **Submit a SQL injection payload on the login form**  
+   In the **Username** (or **Password**) field, enter a classic SQLi payload so the backend condition is always true, for example:
+   - `' OR '1'='1`
+   - `" OR "1"="1`
+   - `' OR 1=1--`
+   - `admin'--`  
+   The other field can be anything. Click **Sign in**.
+
+3. **Use the user list**  
+   After a successful bypass, you are “Logged in as admin” and see a **user list**: `admin`, `gyeonghokim`.
+
+4. **Open the resume**  
+   Click **gyeonghokim** in the list. The **Resume viewer** overlay opens with GyeongHo Kim’s resume.  
+   (Clicking **admin** only shows “No resume for this user.”)
+
+### Why this works (conceptually)
+
+- The app builds a login query from your input. With a payload like `' OR '1'='1`, the condition becomes always true, so the server treats you as authenticated (e.g. first user / admin).
+- You are then shown an internal “user list” and can choose **gyeonghokim** to view that profile’s resume.
+
+---
+
 ## Summary
 
-| Step | Action |
+| Path | Steps |
 |------|--------|
-| 1 | `arp -a` → find target IP (e.g. 192.168.1.20) |
-| 2 | `nmap -sV <ip>` → confirm HTTP on 8080 |
-| 3 | Create `shell.php`, `shell.jsp`, or `shell.js` (PHP / JSP / Node webshell with `?cmd=`) |
-| 4 | `curl -X POST -F "file=@shell.xxx"` to `http://<ip>:8080/api/upload` |
-| 5 | `curl "http://<ip>:8080/uploads/shell.xxx?cmd=cat%20/resume"` → Resume viewer opens |
+| **A – Webshell** | `arp -a` → `nmap -sV <ip>` → create `shell.php` / `shell.jsp` / `shell.js` → `curl -X POST -F "file=@shell.xxx"` to `/api/upload` → `curl "http://<ip>:8080/uploads/shell.xxx?cmd=cat%20/resume"` → Resume viewer opens |
+| **B – SQL injection** | Open **Browser** → at `http://192.168.1.20:8080/login` enter e.g. `' OR '1'='1` in username → Sign in → click **gyeonghokim** in the user list → Resume viewer opens |
 
 For more context, see the project [README](README.md).
