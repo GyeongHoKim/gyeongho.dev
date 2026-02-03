@@ -8,11 +8,12 @@
 import { LitElement, css, html } from "lit";
 import { customElement } from "lit/decorators.js";
 import { msg, updateWhenLocaleChanges } from "@lit/localize";
-import { createEmployeeCardScene } from "../lib/employee-card-scene.js";
-import type { EmployeeCardScene } from "../lib/employee-card-scene.js";
+import { EmployeeCardSceneController } from "../lib/employee-card-scene-controller.js";
 
 @customElement("mission-briefing")
 export class MissionBriefing extends LitElement {
+	private readonly _scene = new EmployeeCardSceneController(this);
+
 	constructor() {
 		super();
 		updateWhenLocaleChanges(this);
@@ -100,18 +101,9 @@ export class MissionBriefing extends LitElement {
 		}
 	`;
 
-	private sceneApi: EmployeeCardScene | null = null;
-
-	disconnectedCallback(): void {
-		this.sceneApi?.dispose();
-		this.sceneApi = null;
-		super.disconnectedCallback();
-	}
-
 	protected firstUpdated(): void {
 		const canvas = this.shadowRoot?.querySelector("canvas");
-		if (!canvas) return;
-		this.sceneApi = createEmployeeCardScene(canvas);
+		if (canvas) this._scene.init(canvas as HTMLCanvasElement);
 	}
 
 	private handleAccept(): void {
