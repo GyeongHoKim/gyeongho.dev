@@ -77,16 +77,6 @@
   <note from="lit-localize">Desktop welcome hint</note>
   <target>「アクティビティ」をクリックしてターミナルを開き、探索を始めましょう</target>
 </trans-unit>
-<trans-unit id="s4ab135eb7b24619f">
-  <source>Restore Terminal</source>
-  <note from="lit-localize">Dock button</note>
-  <target>ターミナルを復元</target>
-</trans-unit>
-<trans-unit id="sd01767740a556219">
-  <source>Terminal is open</source>
-  <note from="lit-localize">Dock button</note>
-  <target>ターミナルが開いています</target>
-</trans-unit>
 <trans-unit id="sabefc3b7ab9272cb">
   <source>Sorry, try again.</source>
   <note from="lit-localize">Error message</note>
@@ -221,45 +211,10 @@
   <note from="lit-localize">sudo error</note>
   <target>sudo: パスワード入力が利用できません</target>
 </trans-unit>
-<trans-unit id="sc9371c269fbff96e">
-  <source>Available commands:
-  ls [path]     List directory contents
-  cd [path]     Change directory
-  pwd           Print working directory
-  cat &lt;file&gt;    Display file contents
-  clear         Clear the terminal
-  whoami        Display current user
-  echo [text]   Display text
-  help          Show this help message
-  su [user]     Switch user (e.g. su gyeonghokim)
-  sudo &lt;cmd&gt;    Run command with elevated privileges</source>
-  <note from="lit-localize">Terminal help output</note>
-  <target>使用可能なコマンド:
-  ls [path]     ディレクトリの内容を一覧表示
-  cd [path]     ディレクトリを変更
-  pwd           現在の作業ディレクトリを表示
-  cat &lt;file&gt;    ファイルの内容を表示
-  clear         ターミナルをクリア
-  whoami        現在のユーザーを表示
-  echo [text]   テキストを表示
-  help          このヘルプメッセージを表示
-  su [user]     ユーザーを切り替え (例: su gyeonghokim)
-  sudo &lt;cmd&gt;    権限を昇格してコマンドを実行</target>
-</trans-unit>
 <trans-unit id="s2475d481c33f5e02">
   <source>Type "help" for available commands.</source>
   <note from="lit-localize">Terminal hint</note>
   <target>「help」と入力すると使用可能なコマンドを表示します。</target>
-</trans-unit>
-<trans-unit id="se64f6881ee7eb7b2">
-  <source>Password: </source>
-  <note from="lit-localize">Terminal password prompt</note>
-  <target>パスワード: </target>
-</trans-unit>
-<trans-unit id="s409df89e7cac3365">
-  <source>su: Authentication failure</source>
-  <note from="lit-localize">Terminal su error</note>
-  <target>su: 認証に失敗しました</target>
 </trans-unit>
 <trans-unit id="s6962301278aea9a8">
   <source>[sudo] password for <x id="0" equiv-text="${this.session.currentUser}"/>: </source>
@@ -281,26 +236,6 @@
   <note from="lit-localize">Unlock/login button</note>
   <target>ロック解除</target>
 </trans-unit>
-<trans-unit id="s42d2086bb72fa84d">
-  <source>Close terminal</source>
-  <note from="lit-localize">Window control</note>
-  <target>ターミナルを閉じる</target>
-</trans-unit>
-<trans-unit id="seef94b5599e827bb">
-  <source>Minimize terminal</source>
-  <note from="lit-localize">Window control</note>
-  <target>ターミナルを最小化</target>
-</trans-unit>
-<trans-unit id="sacb5c06adce56a7f">
-  <source>Restore terminal</source>
-  <note from="lit-localize">Window control</note>
-  <target>ターミナルを復元</target>
-</trans-unit>
-<trans-unit id="s68725a8f12b94b09">
-  <source>Maximize terminal</source>
-  <note from="lit-localize">Window control</note>
-  <target>ターミナルを最大化</target>
-</trans-unit>
 <trans-unit id="s62c75c025c5c6db1">
   <source>Terminal</source>
   <note from="lit-localize">Window title</note>
@@ -315,6 +250,214 @@
   <source>gyeongho.dev</source>
   <note from="lit-localize">Page title</note>
   <target>gyeongho.dev</target>
+</trans-unit>
+<trans-unit id="s20eea2fc59b33d57">
+  <source>Usage: arp -a</source>
+  <note from="lit-localize">arp usage error</note>
+</trans-unit>
+<trans-unit id="s93c8f5aaa2f14fb6">
+  <source>Back to login</source>
+  <note from="lit-localize">Back link</note>
+  <target>ログインに戻る</target>
+</trans-unit>
+<trans-unit id="sfcb4fe3f94ea3aad">
+  <source>curl: no URL specified</source>
+  <note from="lit-localize">curl error</note>
+</trans-unit>
+<trans-unit id="s96171049eaa460e3">
+  <source>curl: invalid URL: <x id="0" equiv-text="${url}"/></source>
+  <note from="lit-localize">curl error</note>
+</trans-unit>
+<trans-unit id="s9e049af6eee1e9b2">
+  <source>curl: cannot read file '<x id="0" equiv-text="${value.filename}"/>': <x id="1" equiv-text="${fileResult.error}"/></source>
+  <note from="lit-localize">curl error</note>
+</trans-unit>
+<trans-unit id="s59887305ce2cb468">
+  <source>Usage: curl [options] &lt;url&gt;
+Options:
+  -X, --request &lt;method&gt;   Specify request method (GET, POST, PUT, DELETE)
+  -F, --form &lt;key=value&gt;   Send form data (use @filename for file upload)
+  -d, --data &lt;data&gt;        Send raw data
+  -v, --verbose            Verbose output
+  -s, --silent             Silent mode
+
+Examples:
+  curl http://192.168.1.20:8080/api/files
+  curl -X POST -F "file=@shell.php" http://192.168.1.20:8080/api/upload
+  curl "http://192.168.1.20:8080/uploads/shell.php?cmd=whoami"</source>
+  <note from="lit-localize">curl usage</note>
+</trans-unit>
+<trans-unit id="s61e7a7f1b3bb176d">
+  <source>Window is open</source>
+  <note from="lit-localize">Dock button</note>
+</trans-unit>
+<trans-unit id="s26f91b6796e33111">
+  <source>Restore</source>
+  <note from="lit-localize">Dock button restore</note>
+</trans-unit>
+<trans-unit id="s81e260c26823868d">
+  <source>Opening <x id="0" equiv-text="${filename}"/> in editor...</source>
+  <note from="lit-localize">edit success</note>
+</trans-unit>
+<trans-unit id="s94190ea006256313">
+  <source>Usage: edit &lt;filename&gt;</source>
+  <note from="lit-localize">edit usage</note>
+</trans-unit>
+<trans-unit id="sec7b97c2e906c8fc">
+  <source>Start typing...</source>
+  <note from="lit-localize">Editor placeholder</note>
+</trans-unit>
+<trans-unit id="sd55918925bc5de22">
+  <source>find: <x id="0" equiv-text="${startPath}"/>: No such file or directory</source>
+  <note from="lit-localize">find error</note>
+</trans-unit>
+<trans-unit id="sf389259e3f06113e">
+  <source>Usage: find [path] -name &lt;pattern&gt;</source>
+  <note from="lit-localize">find usage error</note>
+</trans-unit>
+<trans-unit id="browser-login-button">
+  <source>Sign in</source>
+  <note from="lit-localize">Login button</note>
+  <target>サインイン</target>
+</trans-unit>
+<trans-unit id="browser-username-label">
+  <source>Username</source>
+  <note from="lit-localize">Login field</note>
+  <target>ユーザー名</target>
+</trans-unit>
+<trans-unit id="browser-password-label">
+  <source>Password</source>
+  <note from="lit-localize">Login field</note>
+  <target>パスワード</target>
+</trans-unit>
+<trans-unit id="browser-login-heading">
+  <source>Sign in</source>
+  <note from="lit-localize">Login form heading</note>
+  <target>サインイン</target>
+</trans-unit>
+<trans-unit id="s5212ee150e3786e1">
+  <source>nmap: invalid IP address: <x id="0" equiv-text="${targetIp}"/></source>
+  <note from="lit-localize">nmap error</note>
+</trans-unit>
+<trans-unit id="s7f7fe7989d701d24">
+  <source>nmap: <x id="0" equiv-text="${targetIp}"/>: Host seems down</source>
+  <note from="lit-localize">nmap host down</note>
+</trans-unit>
+<trans-unit id="sc46f7bfa4af98db3">
+  <source>Usage: nmap [options] &lt;ip&gt;</source>
+  <note from="lit-localize">nmap usage error</note>
+</trans-unit>
+<trans-unit id="s57a3138d69daff5d">
+  <source>No resume for this user.</source>
+  <note from="lit-localize">No resume message</note>
+  <target>このユーザーには履歴書がありません。</target>
+</trans-unit>
+<trans-unit id="s3a249b7dbb7dbcc5">
+  <source>ping: invalid IP address: <x id="0" equiv-text="${targetIp}"/></source>
+  <note from="lit-localize">ping error</note>
+</trans-unit>
+<trans-unit id="s8a1349f6ef1878f1">
+  <source>Request timeout for icmp_seq 0
+ping: <x id="0" equiv-text="${targetIp}"/>: Host is down</source>
+  <note from="lit-localize">ping timeout</note>
+</trans-unit>
+<trans-unit id="sf931ffb7f5ca9a9b">
+  <source>Usage: ping &lt;ip&gt;</source>
+  <note from="lit-localize">ping usage error</note>
+</trans-unit>
+<trans-unit id="s3a8530a6d85d966d">
+  <source>Logged in as admin</source>
+  <note from="lit-localize">Post-login heading</note>
+  <target>管理者としてログインしました</target>
+</trans-unit>
+<trans-unit id="s10d182dc4edf4966">
+  <source><x id="0" equiv-text="${command}"/>: cannot write to <x id="1" equiv-text="${redirect.target}"/>: <x id="2" equiv-text="${writeResult.error}"/></source>
+  <note from="lit-localize">redirect error</note>
+</trans-unit>
+<trans-unit id="s90a93096c21cb36c">
+  <source>Ctrl+S to save</source>
+  <note from="lit-localize">Save shortcut hint</note>
+</trans-unit>
+<trans-unit id="sd1585b27c10d680b">
+  <source><x id="0" equiv-text="${command}"/>: async commands not supported in sync mode</source>
+  <note from="lit-localize">shell error</note>
+</trans-unit>
+<trans-unit id="s759cced27a13c84b">
+  <source><x id="0" equiv-text="${user}"/>@<x id="1" equiv-text="${ip}"/>: Permission denied (publickey,password).</source>
+  <note from="lit-localize">ssh auth error</note>
+</trans-unit>
+<trans-unit id="seecc66a7669c5c2c">
+  <source><x id="0" equiv-text="${user}"/>@<x id="1" equiv-text="${ip}"/>: Permission denied, please try again.</source>
+  <note from="lit-localize">SSH auth error</note>
+</trans-unit>
+<trans-unit id="sbfa81a880e300444">
+  <source>ssh: connect to host <x id="0" equiv-text="${ip}"/> port 22: No route to host</source>
+  <note from="lit-localize">ssh connection error</note>
+</trans-unit>
+<trans-unit id="s711b0b019006b763">
+  <source>ssh: connect to host <x id="0" equiv-text="${ip}"/> port 22: Connection refused</source>
+  <note from="lit-localize">ssh connection error</note>
+</trans-unit>
+<trans-unit id="sba05337283eb6521">
+  <source>ssh: invalid connection string: <x id="0" equiv-text="${connectionString}"/></source>
+  <note from="lit-localize">ssh error</note>
+</trans-unit>
+<trans-unit id="s6bd6cbfc3de35add">
+  <source>ssh: invalid IP address: <x id="0" equiv-text="${ip}"/></source>
+  <note from="lit-localize">ssh error</note>
+</trans-unit>
+<trans-unit id="s64ef7ab9cbb07cd2">
+  <source>password: </source>
+  <note from="lit-localize">SSH password prompt</note>
+</trans-unit>
+<trans-unit id="s090317059d6aebb8">
+  <source>Usage: ssh &lt;user&gt;@&lt;ip&gt;</source>
+  <note from="lit-localize">ssh usage error</note>
+</trans-unit>
+<trans-unit id="s7f47cec3e840a432">
+  <source>Modified</source>
+  <note from="lit-localize">Status: file modified</note>
+</trans-unit>
+<trans-unit id="sadeacb7a9dbf8443">
+  <source>Available commands:
+  Filesystem:
+    ls [path]        List directory contents
+    cd [path]        Change directory
+    pwd              Print working directory
+    cat &lt;file&gt;       Display file contents
+    find [path] -name &lt;pattern&gt;  Search for files
+    echo &lt;text&gt; &gt; &lt;file&gt;  Write text to file
+    edit &lt;file&gt;      Open file in text editor
+
+  Network:
+    arp -a           Display ARP table
+    ping &lt;ip&gt;        Check host reachability
+    nmap &lt;ip&gt;        Scan for open ports
+    ssh &lt;user&gt;@&lt;ip&gt;  Connect to remote host
+    curl &lt;url&gt;       Transfer data from URL
+
+  System:
+    clear            Clear the terminal
+    whoami           Display current user
+    id               Display user identity
+    echo [text]      Display text
+    help             Show this help message
+    sudo &lt;cmd&gt;       Run command with elevated privileges</source>
+  <note from="lit-localize">Terminal help output</note>
+</trans-unit>
+<trans-unit id="sb4cee2f9eb898744">
+  <source>Select a user to view profile.</source>
+  <note from="lit-localize">User list hint</note>
+  <target>プロフィールを表示するユーザーを選択してください。</target>
+</trans-unit>
+<trans-unit id="s6607f3c90e5c7daf">
+  <source>Browser</source>
+  <note from="lit-localize">Window title</note>
+  <target>ブラウザ</target>
+</trans-unit>
+<trans-unit id="s50c4ef816b27424b">
+  <source>Text Editor</source>
+  <note from="lit-localize">Window title</note>
 </trans-unit>
 </body>
 </file>
