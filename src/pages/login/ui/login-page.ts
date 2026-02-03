@@ -2,27 +2,24 @@
  * Login page — GDM (GNOME Display Manager) style.
  * Full-screen Adwaita dark, horizontal user row (avatar + name below), bottom bar.
  * Password inline below user row when gyeonghokim selected (no modal).
+ * Auth state and form logic are in AuthFormController.
  */
 
 import { LitElement, css, html } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { customElement } from "lit/decorators.js";
 import { msg, str, updateWhenLocaleChanges } from "@lit/localize";
-import {
-	setVisitor,
-	startGyeonghokimLogin,
-	setGyeonghokimSuccess,
-	setGyeonghokimError,
-	clearError,
-	getAuthState,
-	subscribeAuth,
-} from "../../../shared/lib/auth-store.js";
-import { validateGyeonghokimPassword } from "../../../features/auth/lib/validate-password.js";
+import { AuthFormController } from "../../../features/auth/lib/auth-form-controller.js";
 import { USERS } from "../../../entities/user/model/types.js";
 import type { User } from "../../../entities/user/model/types.js";
 import "../../../entities/user/ui/user-tile.ts";
 
 @customElement("login-page")
 export class LoginPage extends LitElement {
+	private readonly _authForm = new AuthFormController(this, {
+		getWrongPasswordMessage: () =>
+			msg("Wrong password. Please try again.", { desc: "Login error" }),
+	});
+
 	constructor() {
 		super();
 		updateWhenLocaleChanges(this);
@@ -164,26 +161,10 @@ export class LoginPage extends LitElement {
 		}
 	`;
 
-	@state() private _passwordUser: User | null = null;
-	@state() private _password = "";
-	@state() private _authState = getAuthState();
-	private _unsub?: () => void;
-
-	connectedCallback(): void {
-		super.connectedCallback();
-		this._unsub = subscribeAuth((s) => {
-			this._authState = s;
-		});
-	}
-
-	disconnectedCallback(): void {
-		this._unsub?.();
-		super.disconnectedCallback();
-	}
-
 	render() {
-		const authState = this._authState;
-		const showPassword = this._passwordUser !== null;
+		const auth = this._authForm;
+		const authState = auth.authState;
+		const showPassword = auth.showPassword;
 		return html`
 			<div class="main" role="main" aria-label="${msg("Select user to sign in", { desc: "Login page main area" })}">
 				${
@@ -196,7 +177,7 @@ export class LoginPage extends LitElement {
 						(user) =>
 							html`<user-tile
 								.user=${user}
-								@user-select=${this._onUserSelect}
+								@user-select=${(e: CustomEvent<User>) => auth.onUserSelect(e.detail)}
 								role="listitem"
 							></user-tile>`,
 					)}
@@ -204,7 +185,7 @@ export class LoginPage extends LitElement {
 				${
 					showPassword
 						? html`
-							<div class="password-bar" role="form" aria-label="${msg(str`Password for ${this._passwordUser?.displayName ?? ""}`, { desc: "Password form for user" })}">
+							<div class="password-bar" role="form" aria-label="${msg(str`Password for ${auth.passwordUser?.displayName ?? ""}`, { desc: "Password form for user" })}">
 								${
 									authState.errorMessage
 										? html`<p class="error-msg" role="alert">${authState.errorMessage}</p>`
@@ -214,14 +195,17 @@ export class LoginPage extends LitElement {
 									type="password"
 									placeholder="${msg("Password", { desc: "Password field" })}"
 									autocomplete="current-password"
-									.value=${this._password}
-									@input=${this._onPasswordInput}
-									@keydown=${this._onPasswordKeydown}
+									.value=${auth.password}
+									@input=${(e: Event) => auth.setPassword((e.target as HTMLInputElement).value)}
+									@keydown=${(e: KeyboardEvent) => {
+										if (e.key === "Enter") auth.submit();
+										if (e.key === "Escape") auth.cancel();
+									}}
 									aria-label="${msg("Password", { desc: "Password field" })}"
 								/>
 								<div class="password-actions">
-									<button type="button" @click=${this._onPasswordCancel}>${msg("Cancel", { desc: "Cancel button" })}</button>
-									<button type="button" class="unlock" @click=${this._onPasswordSubmit}>
+									<button type="button" @click=${() => auth.cancel()}>${msg("Cancel", { desc: "Cancel button" })}</button>
+									<button type="button" class="unlock" @click=${() => auth.submit()}>
 										${msg("Unlock", { desc: "Unlock/login button" })}
 									</button>
 								</div>
@@ -240,48 +224,6 @@ export class LoginPage extends LitElement {
 				</div>
 			</footer>
 		`;
-	}
-
-	private _onUserSelect(e: CustomEvent<User>): void {
-		const user = e.detail;
-		if (user.role === "visitor") {
-			setVisitor();
-			return;
-		}
-		if (user.role === "authenticated") {
-			clearError();
-			this._passwordUser = user;
-			this._password = "";
-			startGyeonghokimLogin();
-		}
-	}
-
-	private _onPasswordInput(e: Event): void {
-		this._password = (e.target as HTMLInputElement).value;
-		clearError();
-	}
-
-	private _onPasswordKeydown(e: KeyboardEvent): void {
-		if (e.key === "Enter") this._onPasswordSubmit();
-		if (e.key === "Escape") this._onPasswordCancel();
-	}
-
-	private _onPasswordSubmit(): void {
-		if (validateGyeonghokimPassword(this._password)) {
-			setGyeonghokimSuccess();
-			this._passwordUser = null;
-			this._password = "";
-		} else {
-			setGyeonghokimError(
-				msg("Wrong password. Please try again.", { desc: "Login error" }),
-			);
-		}
-	}
-
-	private _onPasswordCancel(): void {
-		this._passwordUser = null;
-		this._password = "";
-		clearError();
 	}
 }
 

@@ -2,11 +2,11 @@
  * Desktop Page
  *
  * Gnome Fedora Workstation-style desktop with top bar, desktop area,
- * and terminal window support.
+ * and terminal window support. State and subscriptions are in DesktopStateController.
  */
 
 import { LitElement, css, html } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { customElement } from "lit/decorators.js";
 import { msg, updateWhenLocaleChanges } from "@lit/localize";
 import "iconify-icon";
 import "../../../widgets/menu/ui/menu-widget.ts";
@@ -19,19 +19,16 @@ import "../../../widgets/desktop-icons/ui/desktop-icons-widget.ts";
 import "../../../widgets/desktop-background/ui/desktop-background.ts";
 import "../../../features/resume-viewer/ui/resume-viewer.ts";
 import {
-	type AppId,
-	openApp,
 	isAppVisible,
-	subscribeWindowStore,
-	bringToFront,
 	getWindowZIndex,
 } from "../../../shared/lib/window-store.js";
-import { getNetwork } from "../../../features/network-simulation/lib/network.ts";
-import { getDeviceByIp } from "../../../features/network-simulation/model/types.ts";
-import type { EditFileEvent } from "../../../features/terminal/lib/commands/edit.ts";
+import { getVisitorFilesystem } from "../../../features/network-simulation/lib/network.ts";
+import { DesktopStateController } from "../lib/desktop-state-controller.js";
 
 @customElement("desktop-page")
 export class DesktopPage extends LitElement {
+	private readonly _state = new DesktopStateController(this);
+
 	constructor() {
 		super();
 		updateWhenLocaleChanges(this);
@@ -150,114 +147,34 @@ export class DesktopPage extends LitElement {
 		}
 	`;
 
-	@state()
-	private menuOpen = false;
-
-	@state()
-	private resumeVisible = false;
-
-	@state()
-	private editorFile = "";
-
-	@state()
-	private editorCwd = "/";
-
-	private unsubscribe: (() => void) | null = null;
-
-	private handleOpenFileInEditor = (e: Event) => {
-		const detail = (e as CustomEvent<EditFileEvent>).detail;
-		this.editorFile = detail.path;
-		this.editorCwd = detail.cwd;
-		this.requestUpdate();
-	};
-
-	override connectedCallback() {
-		super.connectedCallback();
-		this.unsubscribe = subscribeWindowStore(() => this.requestUpdate());
-		window.addEventListener("open-file-in-editor", this.handleOpenFileInEditor);
-	}
-
-	override disconnectedCallback() {
-		this.unsubscribe?.();
-		window.removeEventListener(
-			"open-file-in-editor",
-			this.handleOpenFileInEditor,
-		);
-		super.disconnectedCallback();
-	}
-
-	private getVisitorFilesystem() {
-		const network = getNetwork();
-		const device = getDeviceByIp(network, "192.168.1.10");
-		return device?.fs ?? null;
-	}
-
-	private handleMenuToggle() {
-		this.menuOpen = !this.menuOpen;
-	}
-
-	private handleCloseMenu() {
-		this.menuOpen = false;
-	}
-
-	private handleOpenTerminal() {
-		openApp("terminal");
-		this.menuOpen = false;
-	}
-
-	private handleOpenBrowser() {
-		openApp("browser");
-		this.menuOpen = false;
-	}
-
-	private handleWindowFocus(e: Event) {
-		const el = (e.target as HTMLElement).closest("[data-app-id]");
-		const id = el?.getAttribute("data-app-id") as AppId | null;
-		if (id && (["terminal", "text-editor", "browser"] as const).includes(id)) {
-			bringToFront(id);
-		}
-	}
-
-	private handleResumeRevealed() {
-		this.resumeVisible = true;
-	}
-
-	private handleCloseResume() {
-		this.resumeVisible = false;
-	}
-
-	private getCurrentTime(): string {
-		const now = new Date();
-		return now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-	}
-
 	render() {
+		const s = this._state;
 		return html`
 			<div class="desktop-root">
 				<desktop-background></desktop-background>
 				<div class="top-bar">
 				<div class="top-bar-left">
-					<button class="activities-button" @click=${this.handleMenuToggle}>
+					<button class="activities-button" @click=${() => s.toggleMenu()}>
 						${msg("Activities", { desc: "Top bar menu button" })}
 					</button>
 				</div>
 				<div class="top-bar-center">
-					${this.getCurrentTime()}
+					${s.getCurrentTime()}
 				</div>
 				<div class="top-bar-right">
 					<top-bar-right-widget></top-bar-right-widget>
 				</div>
 			</div>
 
-			<div class="desktop-area" @window-focus=${this.handleWindowFocus}>
+			<div class="desktop-area" @window-focus=${(e: Event) => s.handleWindowFocus(e)}>
 				<desktop-icons-widget></desktop-icons-widget>
 				${
-					this.menuOpen
+					s.menuOpen
 						? html`
 					<menu-widget
-						@open-terminal=${this.handleOpenTerminal}
-						@open-browser=${this.handleOpenBrowser}
-						@close-menu=${this.handleCloseMenu}
+						@open-terminal=${() => s.openTerminal()}
+						@open-browser=${() => s.openBrowser()}
+						@close-menu=${() => s.closeMenu()}
 					></menu-widget>
 					`
 						: null
@@ -271,7 +188,7 @@ export class DesktopPage extends LitElement {
 							data-app-id="terminal"
 							style="z-index: ${getWindowZIndex("terminal")}"
 						>
-							<terminal-app @resume-revealed=${this.handleResumeRevealed}></terminal-app>
+							<terminal-app @resume-revealed=${() => s.setResumeRevealed()}></terminal-app>
 						</div>
 					`
 						: null
@@ -286,10 +203,10 @@ export class DesktopPage extends LitElement {
 							style="transform: translate(-40%, -40%); z-index: ${getWindowZIndex("text-editor")}"
 						>
 							<text-editor-app
-								.filesystem=${this.getVisitorFilesystem()}
-								.cwd=${this.editorCwd}
-								.initialFile=${this.editorFile}
-								@resume-revealed=${this.handleResumeRevealed}
+								.filesystem=${getVisitorFilesystem()}
+								.cwd=${s.editorCwd}
+								.initialFile=${s.editorFile}
+								@resume-revealed=${() => s.setResumeRevealed()}
 							></text-editor-app>
 						</div>
 					`
@@ -304,7 +221,7 @@ export class DesktopPage extends LitElement {
 							data-app-id="browser"
 							style="transform: translate(-30%, -50%); z-index: ${getWindowZIndex("browser")}"
 						>
-							<browser-app @resume-revealed=${this.handleResumeRevealed}></browser-app>
+							<browser-app @resume-revealed=${() => s.setResumeRevealed()}></browser-app>
 						</div>
 					`
 						: null
@@ -325,10 +242,10 @@ export class DesktopPage extends LitElement {
 				</div>
 
 				${
-					this.resumeVisible
+					s.resumeVisible
 					? html`
-					<div class="resume-overlay" @click=${this.handleCloseResume}>
-						<resume-viewer @close=${this.handleCloseResume}></resume-viewer>
+					<div class="resume-overlay" @click=${() => s.closeResume()}>
+						<resume-viewer @close=${() => s.closeResume()}></resume-viewer>
 					</div>
 				`
 					: null
