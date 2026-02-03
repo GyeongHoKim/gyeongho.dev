@@ -2,26 +2,29 @@
  * Text Editor App
  *
  * Simple text editor for creating and editing files in the virtual filesystem.
- * Used for writing scripts (like webshells) in the hacking simulation.
+ * File open/save and status are in TextEditorController.
  */
 
 import { LitElement, css, html } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import { msg, updateWhenLocaleChanges } from "@lit/localize";
 import "../../../widgets/floating-window/ui/floating-window.ts";
 import {
 	setMinimized,
 	closeApp,
 } from "../../../shared/lib/window-store.js";
-import {
-	readFile,
-	writeFile,
-	resolvePath,
-} from "../../../entities/virtual-filesystem/lib/fs-helpers.ts";
 import type { VirtualFilesystem } from "../../../entities/virtual-filesystem/lib/fs-helpers.ts";
+import { TextEditorController } from "../lib/text-editor-controller.ts";
 
 @customElement("text-editor-app")
 export class TextEditorApp extends LitElement {
+	private readonly _editor = new TextEditorController(this);
+
+	constructor() {
+		super();
+		updateWhenLocaleChanges(this);
+	}
+
 	static styles = css`
 		:host {
 			display: block;
@@ -83,11 +86,6 @@ export class TextEditorApp extends LitElement {
 		}
 	`;
 
-	constructor() {
-		super();
-		updateWhenLocaleChanges(this);
-	}
-
 	/** The virtual filesystem to read/write files */
 	@property({ attribute: false })
 	filesystem: VirtualFilesystem | null = null;
@@ -100,155 +98,67 @@ export class TextEditorApp extends LitElement {
 	@property({ type: String })
 	initialFile = "";
 
-	@state()
-	private content = "";
-
-	@state()
-	private currentFile = "";
-
-	@state()
-	private statusMessage = "";
-
-	@state()
-	private statusIsError = false;
-
-	private originalContent = "";
-
-	override connectedCallback() {
+	override connectedCallback(): void {
 		super.connectedCallback();
-		if (this.initialFile && this.filesystem) {
-			this.openFile(this.initialFile);
-		}
+		this._editor.setOptions({
+			filesystem: this.filesystem,
+			cwd: this.cwd,
+			initialFile: this.initialFile,
+		});
 	}
 
-	override updated(changedProperties: Map<string, unknown>) {
+	override updated(changedProperties: Map<string, unknown>): void {
 		if (
-			changedProperties.has("initialFile") &&
-			this.initialFile &&
-			this.filesystem
+			changedProperties.has("initialFile") ||
+			changedProperties.has("filesystem") ||
+			changedProperties.has("cwd")
 		) {
-			this.openFile(this.initialFile);
+			this._editor.setOptions({
+				filesystem: this.filesystem,
+				cwd: this.cwd,
+				initialFile: this.initialFile,
+			});
 		}
 	}
 
-	private openFile(filename: string) {
-		if (!this.filesystem) {
-			this.setStatus("No filesystem available", true);
-			return;
-		}
-
-		const absolutePath = resolvePath(this.cwd, filename);
-		const result = readFile(this.filesystem, absolutePath);
-
-		if ("error" in result) {
-			// File doesn't exist - create new
-			this.currentFile = absolutePath;
-			this.content = "";
-			this.originalContent = "";
-			this.setStatus(`New file: ${filename}`);
-		} else {
-			this.currentFile = absolutePath;
-			this.content = result.content;
-			this.originalContent = result.content;
-			this.setStatus(`Opened: ${filename}`);
-		}
-
-		this.requestUpdate();
+	private _onContentChange(e: Event): void {
+		this._editor.setContent((e.target as HTMLTextAreaElement).value);
 	}
 
-	private handleContentChange(e: Event) {
-		const textarea = e.target as HTMLTextAreaElement;
-		this.content = textarea.value;
-	}
-
-	private handleKeyDown(e: KeyboardEvent) {
-		// Handle Ctrl+S to save
+	private _onKeyDown(e: KeyboardEvent): void {
 		if ((e.ctrlKey || e.metaKey) && e.key === "s") {
 			e.preventDefault();
-			this.saveFile();
+			this._editor.save();
+			return;
 		}
-
-		// Handle Tab key for indentation
 		if (e.key === "Tab") {
 			e.preventDefault();
 			const textarea = e.target as HTMLTextAreaElement;
 			const start = textarea.selectionStart;
 			const end = textarea.selectionEnd;
-
-			// Insert tab character
-			const newValue = `${this.content.substring(0, start)}\t${this.content.substring(end)}`;
-			this.content = newValue;
-
-			// Move cursor after tab
+			const newValue =
+				`${this._editor.content.substring(0, start)}\t${this._editor.content.substring(end)}`;
+			this._editor.setContent(newValue);
 			this.updateComplete.then(() => {
 				textarea.selectionStart = textarea.selectionEnd = start + 1;
 			});
 		}
 	}
 
-	private saveFile() {
-		if (!this.filesystem) {
-			this.setStatus("No filesystem available", true);
-			return;
-		}
-
-		if (!this.currentFile) {
-			this.setStatus("No file to save", true);
-			return;
-		}
-
-		const result = writeFile(this.filesystem, this.currentFile, this.content);
-
-		if ("error" in result) {
-			this.setStatus(`Error: ${result.error}`, true);
-		} else {
-			this.originalContent = this.content;
-			this.setStatus(`Saved: ${this.currentFile.split("/").pop()}`);
-
-			// Dispatch event to notify parent
-			this.dispatchEvent(
-				new CustomEvent("file-saved", {
-					detail: { path: this.currentFile, content: this.content },
-					bubbles: true,
-					composed: true,
-				}),
-			);
-		}
-	}
-
-	private setStatus(message: string, isError = false) {
-		this.statusMessage = message;
-		this.statusIsError = isError;
-
-		// Clear status after 3 seconds
-		setTimeout(() => {
-			if (this.statusMessage === message) {
-				this.statusMessage = "";
-			}
-		}, 3000);
-	}
-
-	private handleClose() {
-		closeApp("text-editor");
-	}
-
-	private handleMinimize() {
-		setMinimized("text-editor", true);
-	}
-
 	override render() {
+		const ed = this._editor;
 		return html`
 			<floating-window
 				title=${msg("Text Editor", { desc: "Window title" })}
-				@window-minimize=${this.handleMinimize}
-				@window-close=${this.handleClose}
+				@window-minimize=${() => setMinimized("text-editor", true)}
+				@window-close=${() => closeApp("text-editor")}
 			>
 				<div slot="content" class="editor-content">
 					<div class="editor-area">
 						<textarea
-							.value=${this.content}
-							@input=${this.handleContentChange}
-							@keydown=${this.handleKeyDown}
+							.value=${ed.content}
+							@input=${this._onContentChange}
+							@keydown=${this._onKeyDown}
 							placeholder=${msg("Start typing...", {
 								desc: "Editor placeholder",
 							})}
@@ -256,11 +166,11 @@ export class TextEditorApp extends LitElement {
 						></textarea>
 					</div>
 					<div class="status-bar">
-						<span class="status-message ${this.statusIsError ? "error" : ""}">
-							${this.statusMessage}
+						<span class="status-message ${ed.statusIsError ? "error" : ""}">
+							${ed.statusMessage}
 						</span>
 						<span>
-							${this.content !== this.originalContent
+							${ed.content !== ed.originalContent
 								? msg("Modified", { desc: "Status: file modified" })
 								: msg("Ctrl+S to save", { desc: "Save shortcut hint" })}
 						</span>

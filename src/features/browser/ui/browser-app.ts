@@ -2,32 +2,31 @@
  * Browser App
  *
  * Simulated browser that loads the login page at 192.168.1.20:8080/login.
- * Users can attempt SQL injection to unlock the resume.
- * All UI is rendered with Lit templates; server returns JSON only.
+ * URL, request/response, and page state are in BrowserSimulationController.
  */
 
 import { LitElement, css, html } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { customElement } from "lit/decorators.js";
 import { msg, updateWhenLocaleChanges } from "@lit/localize";
 import "../../../widgets/floating-window/ui/floating-window.ts";
 import {
 	setMinimized,
 	closeApp,
 } from "../../../shared/lib/window-store.js";
-import { getNetwork } from "../../network-simulation/lib/network.ts";
-import { handleHttpRequest } from "../../network-simulation/lib/http-handler.ts";
-import type { HttpRequest } from "../../network-simulation/model/types.ts";
-
-const LOGIN_URL = "http://192.168.1.20:8080/login";
-
-type LoginPageData =
-	| { type: "login_form" }
-	| { type: "user_list"; users: string[] }
-	| { type: "error"; message: string }
-	| { type: "user_profile"; user: string; hasResume: boolean };
+import {
+	BrowserSimulationController,
+	type LoginPageData,
+} from "../lib/browser-simulation-controller.ts";
 
 @customElement("browser-app")
 export class BrowserApp extends LitElement {
+	private readonly _browser = new BrowserSimulationController(this);
+
+	constructor() {
+		super();
+		updateWhenLocaleChanges(this);
+	}
+
 	static styles = css`
 		:host {
 			display: block;
@@ -159,87 +158,29 @@ export class BrowserApp extends LitElement {
 		}
 	`;
 
-	constructor() {
-		super();
-		updateWhenLocaleChanges(this);
+	override firstUpdated(): void {
+		this._browser.loadLoginPage();
 	}
 
-	@state()
-	private pageData: LoginPageData = { type: "login_form" };
-
-	override firstUpdated() {
-		this.loadLoginPage();
-	}
-
-	private loadLoginPage() {
-		const network = getNetwork();
-		const request: HttpRequest = {
-			method: "GET",
-			path: "/login",
-			queryParams: {},
-		};
-		const response = handleHttpRequest(network, "192.168.1.20", 8080, request);
-		this.pageData = this.parseLoginResponse(response);
-	}
-
-	private parseLoginResponse(response: { status: number; body: string }): LoginPageData {
-		try {
-			const data = JSON.parse(response.body) as LoginPageData;
-			if (data.type === "login_form" || data.type === "user_list" || data.type === "error") {
-				return data;
-			}
-		} catch {
-			// ignore
-		}
-		return { type: "login_form" };
-	}
-
-	private handleLoginSubmit(e: Event) {
+	private _onLoginSubmit(e: Event): void {
 		e.preventDefault();
 		const form = e.target as HTMLFormElement;
-		const username = (form.querySelector('[name="username"]') as HTMLInputElement)?.value ?? "";
-		const password = (form.querySelector('[name="password"]') as HTMLInputElement)?.value ?? "";
-
-		const body = new URLSearchParams({ username, password }).toString();
-		const network = getNetwork();
-		const request: HttpRequest = {
-			method: "POST",
-			path: "/login",
-			queryParams: {},
-			body,
-		};
-		const response = handleHttpRequest(network, "192.168.1.20", 8080, request);
-		this.pageData = this.parseLoginResponse(response);
+		const username =
+			(form.querySelector('[name="username"]') as HTMLInputElement)?.value ??
+			"";
+		const password =
+			(form.querySelector('[name="password"]') as HTMLInputElement)?.value ??
+			"";
+		this._browser.submitLogin(username, password);
 	}
 
-	private handleUserClick(user: string) {
-		if (user === "gyeonghokim") {
-			this.dispatchEvent(
-				new CustomEvent("resume-revealed", { bubbles: true, composed: true }),
-			);
-		} else {
-			this.pageData = { type: "user_profile", user, hasResume: false };
-		}
-	}
-
-	private handleBackToLogin() {
-		this.pageData = { type: "login_form" };
-	}
-
-	private handleClose() {
-		closeApp("browser");
-	}
-
-	private handleMinimize() {
-		setMinimized("browser", true);
-	}
-
-	private renderPageContent() {
-		switch (this.pageData.type) {
+	private _renderPageContent(): ReturnType<typeof html> {
+		const pageData: LoginPageData = this._browser.pageData;
+		switch (pageData.type) {
 			case "login_form":
 				return html`
 					<h1>${msg("Sign in", { id: "browser-login-heading", desc: "Login form heading" })}</h1>
-					<form class="login-form" @submit=${this.handleLoginSubmit}>
+					<form class="login-form" @submit=${this._onLoginSubmit}>
 						<label for="browser-username">${msg("Username", { id: "browser-username-label", desc: "Login field" })}</label>
 						<input
 							id="browser-username"
@@ -264,10 +205,10 @@ export class BrowserApp extends LitElement {
 					<h1>${msg("Logged in as admin", { desc: "Post-login heading" })}</h1>
 					<p>${msg("Select a user to view profile.", { desc: "User list hint" })}</p>
 					<ul class="user-list">
-						${this.pageData.users.map(
+						${pageData.users.map(
 							(user) => html`
 								<li>
-									<button type="button" @click=${() => this.handleUserClick(user)}>
+									<button type="button" @click=${() => this._browser.onUserClick(user)}>
 										${user}
 									</button>
 								</li>
@@ -277,16 +218,16 @@ export class BrowserApp extends LitElement {
 				`;
 			case "error":
 				return html`
-					<h1 class="error-msg">${this.pageData.message}</h1>
-					<button type="button" class="btn btn-link" @click=${this.handleBackToLogin}>
+					<h1 class="error-msg">${pageData.message}</h1>
+					<button type="button" class="btn btn-link" @click=${() => this._browser.backToLogin()}>
 						${msg("Back to login", { desc: "Back link" })}
 					</button>
 				`;
 			case "user_profile":
 				return html`
-					<h1>${this.pageData.user}</h1>
+					<h1>${pageData.user}</h1>
 					<p>${msg("No resume for this user.", { desc: "No resume message" })}</p>
-					<button type="button" class="btn btn-link" @click=${this.handleBackToLogin}>
+					<button type="button" class="btn btn-link" @click=${() => this._browser.backToLogin()}>
 						${msg("Back to login", { desc: "Back link" })}
 					</button>
 				`;
@@ -297,20 +238,20 @@ export class BrowserApp extends LitElement {
 		return html`
 			<floating-window
 				title=${msg("Browser", { desc: "Window title" })}
-				@window-minimize=${this.handleMinimize}
-				@window-close=${this.handleClose}
+				@window-minimize=${() => setMinimized("browser", true)}
+				@window-close=${() => closeApp("browser")}
 			>
 				<div slot="content" class="browser-content-wrap">
 					<div class="address-bar">
 						<input
 							type="text"
 							readonly
-							value=${LOGIN_URL}
+							value=${this._browser.loginUrl}
 							aria-label="Address"
 						/>
 					</div>
 					<div class="content-area">
-						${this.renderPageContent()}
+						${this._renderPageContent()}
 					</div>
 				</div>
 			</floating-window>
