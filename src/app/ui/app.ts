@@ -1,26 +1,23 @@
 /**
  * App Entry — first visit: briefing → desktop; else boot → login → desktop.
  * Returning users always see boot then login (no skip to desktop).
+ * Routing and flow are handled by AppRouterController.
  */
 
 import { LitElement, css, html } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { customElement } from "lit/decorators.js";
 import { msg, updateWhenLocaleChanges } from "@lit/localize";
 import { getLocale } from "../../lib/localization.ts";
-import {
-	subscribeAuth,
-	type AuthState,
-} from "../../shared/lib/auth-store.js";
-import { briefingStore } from "../../shared/lib/briefing-store.js";
+import { AppRouterController } from "../lib/app-router-controller.js";
 import "../../features/mission-briefing/ui/mission-briefing.ts";
 import "../../pages/boot/ui/boot-page.ts";
 import "../../pages/login/ui/login-page.ts";
 import "../../pages/desktop/ui/desktop-page.ts";
 
-type Route = "boot" | "briefing" | "login" | "desktop";
-
 @customElement("app-root")
 export class AppRoot extends LitElement {
+	private readonly _router = new AppRouterController(this);
+
 	constructor() {
 		super();
 		updateWhenLocaleChanges(this);
@@ -34,65 +31,28 @@ export class AppRoot extends LitElement {
 		}
 	`;
 
-	@state() private route: Route = "boot";
-	private _unsub?: () => void;
-	private _bootTimeoutId?: ReturnType<typeof setTimeout>;
-
-	connectedCallback(): void {
-		super.connectedCallback();
-		const briefingSeen = briefingStore.getState().briefingSeen;
-		if (!briefingSeen) {
-			this.route = "briefing";
-			this._unsub = subscribeAuth((state: AuthState) => {
-				if (state.user) this.route = "desktop";
-				else if (this.route === "desktop") this.route = "login";
-			});
-			return;
-		}
-		// Returning users: always show boot then login (do not skip to desktop)
-		this.route = "boot";
-		setTimeout(() => {
-			if (this.route === "boot") this.route = "login";
-		}, 1500);
-		this._unsub = subscribeAuth((state: AuthState) => {
-			if (state.user) this.route = "desktop";
-			else if (this.route === "desktop") this.route = "login";
-		});
-	}
-
-	disconnectedCallback(): void {
-		if (this._bootTimeoutId !== undefined) {
-			clearTimeout(this._bootTimeoutId);
-		}
-		this._unsub?.();
-		super.disconnectedCallback();
-	}
-
 	protected updated(_changedProperties: Map<string, unknown>): void {
 		document.title = msg("gyeongho.dev", { desc: "Page title" });
 		document.documentElement.lang = getLocale();
 	}
 
 	private _onBriefingAccept(): void {
-		briefingStore.getState().setBriefingSeen(true);
-		// Do not setVisitor() here — let user see boot → login, then choose visitor on login page
-		this.route = "boot";
-		this._bootTimeoutId = setTimeout(() => {
-			this._bootTimeoutId = undefined;
-			if (this.route === "boot") this.route = "login";
-		}, 1500);
+		this._router.acceptBriefing();
 	}
 
 	render() {
-		if (this.route === "briefing") {
+		const route = this._router.route;
+		if (route === "briefing") {
 			return html`
 				<div id="main" role="main" tabindex="-1">
 					<mission-briefing @accept=${this._onBriefingAccept}></mission-briefing>
 				</div>
 			`;
 		}
-		if (this.route === "boot") return html`<div id="main" role="main" tabindex="-1"><boot-page></boot-page></div>`;
-		if (this.route === "login") return html`<div id="main" role="main" tabindex="-1"><login-page></login-page></div>`;
+		if (route === "boot")
+			return html`<div id="main" role="main" tabindex="-1"><boot-page></boot-page></div>`;
+		if (route === "login")
+			return html`<div id="main" role="main" tabindex="-1"><login-page></login-page></div>`;
 		return html`<div id="main" role="main" tabindex="-1"><desktop-page></desktop-page></div>`;
 	}
 }
