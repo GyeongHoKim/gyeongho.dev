@@ -15,6 +15,7 @@ export interface AppConfig {
 
 export const APP_CONFIG: Record<AppId, AppConfig> = {
 	terminal: { label: "Terminal", icon: "lucide:terminal" },
+	"text-editor": { label: "Text Editor", icon: "lucide:file-text" },
 };
 
 /** App IDs shown on desktop as icons, in grid order (top-left first). */

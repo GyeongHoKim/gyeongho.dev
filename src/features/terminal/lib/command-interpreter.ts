@@ -13,6 +13,7 @@ import {
 	listChildren,
 	readFile,
 	resolvePath,
+	writeFile,
 } from "../../../entities/virtual-filesystem/lib/fs-helpers.ts";
 import type { CommandResult } from "../../../entities/session/model/session.ts";
 import { CommandRegistry } from "./command-registry.ts";
@@ -22,22 +23,67 @@ import { executeNmap } from "./commands/nmap.ts";
 import { executeSsh } from "./commands/ssh.ts";
 import { executeFind } from "./commands/find.ts";
 import { executeId } from "./commands/id.ts";
+import { executeCurl } from "./commands/curl.ts";
+import { executeEdit } from "./commands/edit.ts";
 
 const SUDO_PASSWORD = "1116";
 
 /**
- * Parses a command line into command name and arguments.
+ * Parses a command line into command name, arguments, and optional redirection.
+ * Handles quoted strings (single and double quotes).
  */
-function parseCommandLine(line: string): { command: string; args: string[] } {
+function parseCommandLine(line: string): {
+	command: string;
+	args: string[];
+	redirect?: { type: ">" | ">>"; target: string };
+} {
 	const trimmed = line.trim();
 	if (!trimmed) {
 		return { command: "", args: [] };
 	}
 
-	const parts = trimmed.split(/\s+/);
+	// Tokenize handling quoted strings
+	const tokens: string[] = [];
+	let current = "";
+	let inSingleQuote = false;
+	let inDoubleQuote = false;
+
+	for (let i = 0; i < trimmed.length; i++) {
+		const char = trimmed[i];
+
+		if (char === "'" && !inDoubleQuote) {
+			inSingleQuote = !inSingleQuote;
+		} else if (char === '"' && !inSingleQuote) {
+			inDoubleQuote = !inDoubleQuote;
+		} else if (char === " " && !inSingleQuote && !inDoubleQuote) {
+			if (current) {
+				tokens.push(current);
+				current = "";
+			}
+		} else {
+			current += char;
+		}
+	}
+	if (current) {
+		tokens.push(current);
+	}
+
+	// Check for redirection (> or >>)
+	let redirect: { type: ">" | ">>"; target: string } | undefined;
+	const redirectIndex = tokens.findIndex((t) => t === ">" || t === ">>");
+	if (redirectIndex !== -1 && redirectIndex < tokens.length - 1) {
+		redirect = {
+			type: tokens[redirectIndex] as ">" | ">>",
+			target: tokens[redirectIndex + 1],
+		};
+		// Remove redirect and target from tokens
+		tokens.splice(redirectIndex, 2);
+	}
+
 	return {
-		command: parts[0],
-		args: parts.slice(1),
+		command: tokens[0] || "",
+		args: tokens.slice(1),
+		redirect,
 	};
 }
 
@@ -230,13 +276,16 @@ function executeHelp(): CommandResult {
     pwd              Print working directory
     cat <file>       Display file contents
     find [path] -name <pattern>  Search for files
-    
+    echo <text> > <file>  Write text to file
+    edit <file>      Open file in text editor
+
   Network:
     arp -a           Display ARP table
     ping <ip>        Check host reachability
     nmap <ip>        Scan for open ports
     ssh <user>@<ip>  Connect to remote host
-    
+    curl <url>       Transfer data from URL
+
   System:
     clear            Clear the terminal
     whoami           Display current user
@@ -398,6 +447,20 @@ function initializeCommandRegistry(): void {
 		usage: "id",
 		handler: executeId,
 	});
+
+	commandRegistry.register({
+		name: "curl",
+		description: "Transfer data from URL",
+		usage: "curl [options] <url>",
+		handler: executeCurl,
+	});
+
+	commandRegistry.register({
+		name: "edit",
+		description: "Open file in text editor",
+		usage: "edit <filename>",
+		handler: executeEdit,
+	});
 }
 
 initializeCommandRegistry();
@@ -416,12 +479,67 @@ export async function executeCommand(
 	line: string,
 	context: ExecuteCommandContext,
 ): Promise<ExecuteCommandResult> {
-	const { fs, session, promptPassword } = context;
-	const { command, args } = parseCommandLine(line);
+	const { fs, session } = context;
+	const { command, args, redirect } = parseCommandLine(line);
 
 	if (!command) {
 		return { result: createSuccessResult("") };
 	}
+
+	// Handle redirection: execute command and write output to file
+	if (redirect) {
+		// First execute the command normally
+		const cmdResult = await executeCommandWithoutRedirect(
+			command,
+			args,
+			context,
+		);
+
+		if (cmdResult.result.exitCode !== 0) {
+			return cmdResult;
+		}
+
+		// Write stdout to file
+		const targetPath = resolvePath(session.cwd, redirect.target);
+		let content = cmdResult.result.stdout;
+
+		// For append mode (>>), read existing content first
+		if (redirect.type === ">>") {
+			const existingFile = readFile(fs, targetPath);
+			if ("content" in existingFile) {
+				content = existingFile.content + content;
+			}
+		}
+
+		const writeResult = writeFile(fs, targetPath, content);
+		if ("error" in writeResult) {
+			return {
+				result: createErrorResult(
+					msg(str`${command}: cannot write to ${redirect.target}: ${writeResult.error}`, {
+						desc: "redirect error",
+					}),
+				),
+			};
+		}
+
+		return {
+			result: createSuccessResult(""),
+			sessionUpdates: cmdResult.sessionUpdates,
+		};
+	}
+
+	return executeCommandWithoutRedirect(command, args, context);
+}
+
+/**
+ * Internal: executes command without handling redirection.
+ */
+async function executeCommandWithoutRedirect(
+	command: string,
+	args: string[],
+	context: ExecuteCommandContext,
+): Promise<ExecuteCommandResult> {
+	const { fs, session, promptPassword } = context;
 
 	if (command === "sudo") {
 		if (args.length === 0) {
@@ -556,12 +674,59 @@ export function executeCommandSync(
 	fs: VirtualFilesystem,
 	session: Session,
 ): ExecuteCommandResult {
-	const { command, args } = parseCommandLine(line);
+	const { command, args, redirect } = parseCommandLine(line);
 
 	if (!command) {
 		return { result: createSuccessResult("") };
 	}
 
+	// Handle redirection in sync mode
+	if (redirect) {
+		const cmdResult = executeCommandSyncInternal(command, args, fs, session);
+
+		if (cmdResult.result.exitCode !== 0) {
+			return cmdResult;
+		}
+
+		const targetPath = resolvePath(session.cwd, redirect.target);
+		let content = cmdResult.result.stdout;
+
+		if (redirect.type === ">>") {
+			const existingFile = readFile(fs, targetPath);
+			if ("content" in existingFile) {
+				content = existingFile.content + content;
+			}
+		}
+
+		const writeResult = writeFile(fs, targetPath, content);
+		if ("error" in writeResult) {
+			return {
+				result: createErrorResult(
+					msg(str`${command}: cannot write to ${redirect.target}: ${writeResult.error}`, {
+						desc: "redirect error",
+					}),
+				),
+			};
+		}
+
+		return {
+			result: createSuccessResult(""),
+			sessionUpdates: cmdResult.sessionUpdates,
+		};
+	}
+
+	return executeCommandSyncInternal(command, args, fs, session);
+}
+
+/**
+ * Internal sync command execution without redirection handling.
+ */
+function executeCommandSyncInternal(
+	command: string,
+	args: string[],
+	fs: VirtualFilesystem,
+	session: Session,
+): ExecuteCommandResult {
 	if (command === "./resume") {
 		if (session.currentUser === "visitor") {
 			return {

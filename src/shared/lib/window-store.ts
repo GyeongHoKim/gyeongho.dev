@@ -5,7 +5,7 @@
 
 import { createStore } from "zustand/vanilla";
 
-export const APP_IDS = ["terminal"] as const;
+export const APP_IDS = ["terminal", "text-editor"] as const;
 export type AppId = (typeof APP_IDS)[number];
 
 export interface WindowState {
