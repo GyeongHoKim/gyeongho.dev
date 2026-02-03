@@ -8,7 +8,9 @@ import {
 	type NetworkState,
 	addDevice,
 	createNetworkState,
+	getDeviceByIp,
 } from "../model/types.ts";
+import type { VirtualFilesystem } from "../../../entities/virtual-filesystem/lib/fs-helpers.ts";
 
 /**
  * Creates the visitor device with minimal filesystem.
@@ -121,4 +123,16 @@ export function getNetwork(): NetworkState {
  */
 export function resetNetwork(): void {
 	networkInstance = null;
+}
+
+const VISITOR_IP = "192.168.1.10";
+
+/**
+ * Returns the visitor device's filesystem, or null if network not initialized.
+ * Used by desktop/text-editor to open files from the visitor context.
+ */
+export function getVisitorFilesystem(): VirtualFilesystem | null {
+	const network = getNetwork();
+	const device = getDeviceByIp(network, VISITOR_IP);
+	return device?.fs ?? null;
 }
