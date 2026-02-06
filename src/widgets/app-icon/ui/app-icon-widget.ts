@@ -66,10 +66,11 @@ export class AppIconWidget extends LitElement {
 				aria-hidden="true"
 				style="width: ${size}px; height: ${size}px"
 			>
-				${useSvg
-					? html`<img src=${svgUrl} alt="" width=${size} height=${size} />`
-					: iconName
-						? html`
+				${
+					useSvg
+						? html`<img src=${svgUrl} alt="" width=${size} height=${size} />`
+						: iconName
+							? html`
 								<iconify-icon
 									icon=${iconName}
 									width=${size}
@@ -77,7 +78,8 @@ export class AppIconWidget extends LitElement {
 									style="color: #4ec9b0"
 								></iconify-icon>
 							`
-						: null}
+							: null
+				}
 			</div>
 			${this.showLabel ? html`<span class="label">${config.label}</span>` : null}
 		`;

@@ -7,7 +7,7 @@ import type { LitElement } from "lit";
 import {
 	createEmployeeCardScene,
 	type EmployeeCardScene,
-} from "./employee-card-scene.js";
+} from "./employee-card-scene.ts";
 
 export class EmployeeCardSceneController implements ReactiveController {
 	private _sceneApi: EmployeeCardScene | null = null;

@@ -70,7 +70,10 @@ const windowStore = createStore<WindowStore>()((set) => ({
 			const entry = state.openWindows[id];
 			if (!entry) return state;
 			return {
-				openWindows: { ...state.openWindows, [id]: { ...entry, minimized: false } },
+				openWindows: {
+					...state.openWindows,
+					[id]: { ...entry, minimized: false },
+				},
 			};
 		});
 	},

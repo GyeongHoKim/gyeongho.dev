@@ -243,13 +243,13 @@ export class DesktopPage extends LitElement {
 
 				${
 					s.resumeVisible
-					? html`
+						? html`
 					<div class="resume-overlay" @click=${() => s.closeResume()}>
 						<resume-viewer @close=${() => s.closeResume()}></resume-viewer>
 					</div>
 				`
-					: null
-			}
+						: null
+				}
 
 				<dock-widget></dock-widget>
 			</div>

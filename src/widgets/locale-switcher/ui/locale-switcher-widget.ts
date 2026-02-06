@@ -151,8 +151,9 @@ export class LocaleSwitcherWidget extends LitElement {
 				></iconify-icon>
 				<span>${LOCALE_LABELS[this._locale] ?? this._locale}</span>
 			</button>
-			${this._localeOpen
-				? html`
+			${
+				this._localeOpen
+					? html`
 						<div class="locale-dropdown" role="menu">
 							${allLocales.map(
 								(locale) =>
@@ -169,7 +170,8 @@ export class LocaleSwitcherWidget extends LitElement {
 							)}
 						</div>
 					`
-				: null}
+					: null
+			}
 		`;
 	}
 }

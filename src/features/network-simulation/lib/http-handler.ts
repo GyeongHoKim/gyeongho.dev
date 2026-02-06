@@ -259,12 +259,11 @@ The resume viewer will now open.`,
 			return textResponse(200, output);
 		}
 		// Script without cmd parameter - show the source and hint
-		const lang =
-			filename.endsWith(".php")
-				? "PHP"
-				: filename.endsWith(".jsp")
-					? "JSP (Java)"
-					: "JavaScript";
+		const lang = filename.endsWith(".php")
+			? "PHP"
+			: filename.endsWith(".jsp")
+				? "JSP (Java)"
+				: "JavaScript";
 		return htmlResponse(
 			200,
 			`<pre>${fileData.content}</pre>
@@ -405,12 +404,18 @@ export function handleHttpRequest(
 	if (path === "/login") {
 		if (method === "GET") return handleLoginPage();
 		if (method === "POST") return handleLoginSubmit(request);
-		return jsonResponse(405, { error: "Method not allowed", allowed: ["GET", "POST"] });
+		return jsonResponse(405, {
+			error: "Method not allowed",
+			allowed: ["GET", "POST"],
+		});
 	}
 
 	if (path === "/api/files") {
 		if (method !== "GET") {
-			return jsonResponse(405, { error: "Method not allowed", allowed: ["GET"] });
+			return jsonResponse(405, {
+				error: "Method not allowed",
+				allowed: ["GET"],
+			});
 		}
 		return handleListFiles(serviceState);
 	}
@@ -427,7 +432,10 @@ export function handleHttpRequest(
 
 	if (path.startsWith("/uploads/")) {
 		if (method !== "GET") {
-			return jsonResponse(405, { error: "Method not allowed", allowed: ["GET"] });
+			return jsonResponse(405, {
+				error: "Method not allowed",
+				allowed: ["GET"],
+			});
 		}
 		return handleGetUpload(path, queryParams, serviceState);
 	}

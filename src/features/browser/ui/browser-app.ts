@@ -9,10 +9,7 @@ import { LitElement, css, html } from "lit";
 import { customElement } from "lit/decorators.js";
 import { msg, updateWhenLocaleChanges } from "@lit/localize";
 import "../../../widgets/floating-window/ui/floating-window.ts";
-import {
-	setMinimized,
-	closeApp,
-} from "../../../shared/lib/window-store.js";
+import { setMinimized, closeApp } from "../../../shared/lib/window-store.js";
 import {
 	BrowserSimulationController,
 	type LoginPageData,

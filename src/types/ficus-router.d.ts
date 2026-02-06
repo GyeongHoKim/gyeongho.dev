@@ -2,8 +2,9 @@ declare module "@ficusjs/router" {
 	type RouteOrOutletHTMLResult = string | HTMLElement;
 
 	interface Outlets {
-		[outletName: string]:
-			| (() => RouteOrOutletHTMLResult | Promise<RouteOrOutletHTMLResult>);
+		[outletName: string]: () =>
+			| RouteOrOutletHTMLResult
+			| Promise<RouteOrOutletHTMLResult>;
 	}
 
 	interface QueryParams {
@@ -27,9 +28,7 @@ declare module "@ficusjs/router" {
 		| RouteOrOutletHTMLResult
 		| Promise<RouteOrOutletHTMLResult>
 		| {
-				template:
-					| RouteOrOutletHTMLResult
-					| Promise<RouteOrOutletHTMLResult>;
+				template: RouteOrOutletHTMLResult | Promise<RouteOrOutletHTMLResult>;
 				outlets?: Outlets;
 		  };
 

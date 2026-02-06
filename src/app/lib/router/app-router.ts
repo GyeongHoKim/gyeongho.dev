@@ -67,50 +67,61 @@ function buildRoutes() {
 		{ path: "/mobile", action: () => ({ redirect: getInitialMobilePath() }) },
 		{
 			path: "/desktop/briefing",
-			action: lazyRoute("mission-briefing", () =>
-				import("../../../features/mission-briefing/ui/mission-briefing.ts"),
+			action: lazyRoute(
+				"mission-briefing",
+				() =>
+					import("../../../features/mission-briefing/ui/mission-briefing.ts"),
 			),
 		},
 		{
 			path: "/desktop/boot",
-			action: lazyRoute("boot-page", () =>
-				import("../../../pages/boot/ui/boot-page.ts"),
+			action: lazyRoute(
+				"boot-page",
+				() => import("../../../pages/boot/ui/boot-page.ts"),
 			),
 		},
 		{
 			path: "/desktop/login",
-			action: lazyRoute("login-page", () =>
-				import("../../../pages/login/ui/login-page.ts"),
+			action: lazyRoute(
+				"login-page",
+				() => import("../../../pages/login/ui/login-page.ts"),
 			),
 		},
 		{
 			path: "/desktop/desktop",
-			action: lazyRoute("desktop-page", () =>
-				import("../../../pages/desktop/ui/desktop-page.ts"),
+			action: lazyRoute(
+				"desktop-page",
+				() => import("../../../pages/desktop/ui/desktop-page.ts"),
 			),
 		},
 		{
 			path: "/mobile/briefing",
-			action: lazyRoute("mission-briefing", () =>
-				import("../../../features/mission-briefing/ui/mission-briefing.ts"),
+			action: lazyRoute(
+				"mission-briefing",
+				() =>
+					import("../../../features/mission-briefing/ui/mission-briefing.ts"),
 			),
 		},
 		{
 			path: "/mobile/lock",
-			action: lazyRoute("mobile-lock-page", () =>
-				import("../../../pages/mobile-lock/ui/mobile-lock-page.ts"),
+			action: lazyRoute(
+				"mobile-lock-page",
+				() => import("../../../pages/mobile-lock/ui/mobile-lock-page.ts"),
 			),
 		},
 		{
 			path: "/mobile/passcode",
-			action: lazyRoute("mobile-passcode-page", () =>
-				import("../../../pages/mobile-passcode/ui/mobile-passcode-page.ts"),
+			action: lazyRoute(
+				"mobile-passcode-page",
+				() =>
+					import("../../../pages/mobile-passcode/ui/mobile-passcode-page.ts"),
 			),
 		},
 		{
 			path: "/mobile/home",
-			action: lazyRoute("mobile-home-page", () =>
-				import("../../../pages/mobile-home/ui/mobile-home-page.ts"),
+			action: lazyRoute(
+				"mobile-home-page",
+				() => import("../../../pages/mobile-home/ui/mobile-home-page.ts"),
 			),
 		},
 	];
@@ -141,7 +152,10 @@ function setupDesktopFlows(router: RouterInstance): () => void {
 	};
 }
 
-function setupRouteEvents(root: HTMLElement, router: RouterInstance): () => void {
+function setupRouteEvents(
+	root: HTMLElement,
+	router: RouterInstance,
+): () => void {
 	const onAccept = () => {
 		setBriefingSeen(true);
 		const device = getDeviceFromPath(getHashPathname());

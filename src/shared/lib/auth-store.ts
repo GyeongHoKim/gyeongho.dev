@@ -62,7 +62,7 @@ const authStore = createStore<AuthStore>()((set) => ({
 
 function getAuthStateFromStore(): AuthState {
 	const { userId, status, errorMessage } = authStore.getState();
-	const user = userId ? getUserById(userId) ?? null : null;
+	const user = userId ? (getUserById(userId) ?? null) : null;
 	return { user, status, errorMessage };
 }
 
@@ -72,7 +72,7 @@ export function getAuthState(): AuthState {
 
 export function getCurrentUser(): User | null {
 	const { userId } = authStore.getState();
-	return userId ? getUserById(userId) ?? null : null;
+	return userId ? (getUserById(userId) ?? null) : null;
 }
 
 export function setVisitor(): void {
@@ -99,7 +99,9 @@ export function logout(): void {
 	authStore.getState().logout();
 }
 
-export function subscribeAuth(callback: (state: AuthState) => void): () => void {
+export function subscribeAuth(
+	callback: (state: AuthState) => void,
+): () => void {
 	return authStore.subscribe(() => {
 		callback(getAuthStateFromStore());
 	});

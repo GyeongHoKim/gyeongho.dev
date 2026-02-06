@@ -10,10 +10,7 @@ import { customElement } from "lit/decorators.js";
 import { msg, updateWhenLocaleChanges } from "@lit/localize";
 import { TerminalController } from "../lib/terminal-controller.ts";
 import "../../../widgets/floating-window/ui/floating-window.ts";
-import {
-	setMinimized,
-	closeApp,
-} from "../../../shared/lib/window-store.js";
+import { setMinimized, closeApp } from "../../../shared/lib/window-store.js";
 
 @customElement("terminal-app")
 export class TerminalApp extends LitElement {
