@@ -37,6 +37,8 @@ export class MobilePasscodePage extends LitElement {
 			align-items: center;
 			height: 100%;
 			font-family: -apple-system, "SF Pro Text", "Helvetica Neue", sans-serif;
+			padding-bottom: calc(24px + env(safe-area-inset-bottom));
+			box-sizing: border-box;
 		}
 
 		.title {
@@ -143,12 +145,6 @@ export class MobilePasscodePage extends LitElement {
 			opacity: 0.5;
 		}
 
-		/* Cancel at bottom */
-		.cancel-row {
-			margin-top: auto;
-			padding-bottom: 48px;
-		}
-
 		.cancel-btn {
 			background: none;
 			border: none;
@@ -158,6 +154,12 @@ export class MobilePasscodePage extends LitElement {
 			cursor: pointer;
 			-webkit-tap-highlight-color: transparent;
 			padding: 8px 16px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			justify-self: center;
+			width: 78px;
+			height: 78px;
 		}
 
 		.cancel-btn:active {
@@ -246,16 +248,12 @@ export class MobilePasscodePage extends LitElement {
 						`,
 					)}
 
-					<div></div>
+					<button class="cancel-btn" @click=${this._onCancel}>
+						${msg("Cancel", { desc: "Passcode cancel button" })}
+					</button>
 					<button class="num-btn" @click=${() => this._onDigit("0")}>0</button>
 					<button class="text-btn" @click=${this._onDelete}>
 						${msg("Delete", { desc: "Passcode delete button" })}
-					</button>
-				</div>
-
-				<div class="cancel-row">
-					<button class="cancel-btn" @click=${this._onCancel}>
-						${msg("Cancel", { desc: "Passcode cancel button" })}
 					</button>
 				</div>
 			</div>
