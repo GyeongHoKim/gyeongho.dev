@@ -7,12 +7,46 @@ import { LitElement, css, html } from "lit";
 import { customElement } from "lit/decorators.js";
 import { msg, updateWhenLocaleChanges } from "@lit/localize";
 
+const BOOT_DELAY_MS = 1500;
+
 @customElement("boot-page")
 export class BootPage extends LitElement {
+	private _bootTimeoutId?: number;
+
 	constructor() {
 		super();
 		updateWhenLocaleChanges(this);
 	}
+
+	connectedCallback(): void {
+		super.connectedCallback();
+		this.startBootTimer();
+	}
+
+	disconnectedCallback(): void {
+		super.disconnectedCallback();
+		this.clearBootTimer();
+	}
+
+	private startBootTimer(): void {
+		this.clearBootTimer();
+		this._bootTimeoutId = window.setTimeout(() => {
+			this._bootTimeoutId = undefined;
+			this.dispatchEvent(
+				new CustomEvent("boot-complete", {
+					bubbles: true,
+					composed: true,
+				}),
+			);
+		}, BOOT_DELAY_MS);
+	}
+
+	private clearBootTimer(): void {
+		if (this._bootTimeoutId === undefined) return;
+		clearTimeout(this._bootTimeoutId);
+		this._bootTimeoutId = undefined;
+	}
+
 	static styles = css`
 		:host {
 			display: block;
