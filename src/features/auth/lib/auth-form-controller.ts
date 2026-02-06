@@ -31,10 +31,7 @@ export class AuthFormController implements ReactiveController {
 	private _unsub?: () => void;
 	private _getWrongPasswordMessage: () => string;
 
-	constructor(
-		host: LitElement,
-		options: AuthFormControllerOptions,
-	) {
+	constructor(host: LitElement, options: AuthFormControllerOptions) {
 		this._host = host;
 		this._getWrongPasswordMessage = options.getWrongPasswordMessage;
 		host.addController(this);

@@ -515,9 +515,12 @@ export async function executeCommand(
 		if ("error" in writeResult) {
 			return {
 				result: createErrorResult(
-					msg(str`${command}: cannot write to ${redirect.target}: ${writeResult.error}`, {
-						desc: "redirect error",
-					}),
+					msg(
+						str`${command}: cannot write to ${redirect.target}: ${writeResult.error}`,
+						{
+							desc: "redirect error",
+						},
+					),
 				),
 			};
 		}
@@ -702,9 +705,12 @@ export function executeCommandSync(
 		if ("error" in writeResult) {
 			return {
 				result: createErrorResult(
-					msg(str`${command}: cannot write to ${redirect.target}: ${writeResult.error}`, {
-						desc: "redirect error",
-					}),
+					msg(
+						str`${command}: cannot write to ${redirect.target}: ${writeResult.error}`,
+						{
+							desc: "redirect error",
+						},
+					),
 				),
 			};
 		}

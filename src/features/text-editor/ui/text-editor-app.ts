@@ -9,10 +9,7 @@ import { LitElement, css, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { msg, updateWhenLocaleChanges } from "@lit/localize";
 import "../../../widgets/floating-window/ui/floating-window.ts";
-import {
-	setMinimized,
-	closeApp,
-} from "../../../shared/lib/window-store.js";
+import { setMinimized, closeApp } from "../../../shared/lib/window-store.js";
 import type { VirtualFilesystem } from "../../../entities/virtual-filesystem/lib/fs-helpers.ts";
 import { TextEditorController } from "../lib/text-editor-controller.ts";
 
@@ -136,8 +133,7 @@ export class TextEditorApp extends LitElement {
 			const textarea = e.target as HTMLTextAreaElement;
 			const start = textarea.selectionStart;
 			const end = textarea.selectionEnd;
-			const newValue =
-				`${this._editor.content.substring(0, start)}\t${this._editor.content.substring(end)}`;
+			const newValue = `${this._editor.content.substring(0, start)}\t${this._editor.content.substring(end)}`;
 			this._editor.setContent(newValue);
 			this.updateComplete.then(() => {
 				textarea.selectionStart = textarea.selectionEnd = start + 1;
@@ -170,9 +166,11 @@ export class TextEditorApp extends LitElement {
 							${ed.statusMessage}
 						</span>
 						<span>
-							${ed.content !== ed.originalContent
-								? msg("Modified", { desc: "Status: file modified" })
-								: msg("Ctrl+S to save", { desc: "Save shortcut hint" })}
+							${
+								ed.content !== ed.originalContent
+									? msg("Modified", { desc: "Status: file modified" })
+									: msg("Ctrl+S to save", { desc: "Save shortcut hint" })
+							}
 						</span>
 					</div>
 				</div>

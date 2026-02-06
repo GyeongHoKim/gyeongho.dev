@@ -48,7 +48,10 @@ export function createSpaceScene(
 	const composer = new EffectComposer(renderer);
 	composer.addPass(new RenderPass(scene, camera));
 	const bloomPass = new UnrealBloomPass(
-		new THREE.Vector2(canvas.clientWidth * pixelRatio, canvas.clientHeight * pixelRatio),
+		new THREE.Vector2(
+			canvas.clientWidth * pixelRatio,
+			canvas.clientHeight * pixelRatio,
+		),
 		0.6, // strength
 		0.35, // radius – less spread
 		0.25, // threshold
@@ -96,7 +99,10 @@ export function createSpaceScene(
 					rgb[i * 3 + 1] = src[i * 4 + 1];
 					rgb[i * 3 + 2] = src[i * 4 + 2];
 				}
-				(geom as THREE.BufferGeometry).setAttribute("color", new THREE.Float32BufferAttribute(rgb, 3));
+				(geom as THREE.BufferGeometry).setAttribute(
+					"color",
+					new THREE.Float32BufferAttribute(rgb, 3),
+				);
 				colorAttr = (geom as THREE.BufferGeometry).attributes.color;
 			}
 
@@ -106,16 +112,30 @@ export function createSpaceScene(
 				const linear = new Float32Array(count * 3);
 				const c = new THREE.Color();
 				for (let i = 0; i < count; i++) {
-					c.setRGB(src[i * 3], src[i * 3 + 1], src[i * 3 + 2], THREE.SRGBColorSpace);
+					c.setRGB(
+						src[i * 3],
+						src[i * 3 + 1],
+						src[i * 3 + 2],
+						THREE.SRGBColorSpace,
+					);
 					linear[i * 3] = c.r;
 					linear[i * 3 + 1] = c.g;
 					linear[i * 3 + 2] = c.b;
 				}
-				(geom as THREE.BufferGeometry).setAttribute("color", new THREE.Float32BufferAttribute(linear, 3));
+				(geom as THREE.BufferGeometry).setAttribute(
+					"color",
+					new THREE.Float32BufferAttribute(linear, 3),
+				);
 			}
 
-			if (mesh.type === "Points" && geom && (geom as THREE.BufferGeometry).attributes?.color) {
-				const oldMat = Array.isArray(mat) ? (mat as THREE.PointsMaterial[])[0] : (mat as THREE.PointsMaterial);
+			if (
+				mesh.type === "Points" &&
+				geom &&
+				(geom as THREE.BufferGeometry).attributes?.color
+			) {
+				const oldMat = Array.isArray(mat)
+					? (mat as THREE.PointsMaterial[])[0]
+					: (mat as THREE.PointsMaterial);
 				mesh.material = new THREE.PointsMaterial({
 					vertexColors: true,
 					color: 0xffffff,

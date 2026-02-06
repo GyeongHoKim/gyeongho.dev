@@ -8,7 +8,7 @@
 import { LitElement, css, html } from "lit";
 import { customElement } from "lit/decorators.js";
 import { msg, updateWhenLocaleChanges } from "@lit/localize";
-import { EmployeeCardSceneController } from "../lib/employee-card-scene-controller.js";
+import { EmployeeCardSceneController } from "../lib/employee-card-scene-controller.ts";
 
 @customElement("mission-briefing")
 export class MissionBriefing extends LitElement {

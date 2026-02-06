@@ -208,17 +208,19 @@ Examples:
 	for (const [key, value] of Object.entries(formData)) {
 		if (typeof value === "object" && "filename" in value) {
 			// Read file from virtual filesystem
-			const filePath =
-				value.filename.startsWith("/")
-					? value.filename
-					: `${context.session.cwd}/${value.filename}`;
+			const filePath = value.filename.startsWith("/")
+				? value.filename
+				: `${context.session.cwd}/${value.filename}`;
 			const fileResult = readFile(context.fs, filePath);
 			if ("error" in fileResult) {
 				return {
 					result: createErrorResult(
-						msg(str`curl: cannot read file '${value.filename}': ${fileResult.error}`, {
-							desc: "curl error",
-						}),
+						msg(
+							str`curl: cannot read file '${value.filename}': ${fileResult.error}`,
+							{
+								desc: "curl error",
+							},
+						),
 					),
 				};
 			}
