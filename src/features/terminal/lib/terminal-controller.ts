@@ -54,8 +54,10 @@ export class TerminalController implements ReactiveController {
 	/**
 	 * Initializes the terminal with the given container element.
 	 * Call from the host's firstUpdated after the container is in the DOM.
+	 * @param container DOM element to mount xterm into.
+	 * @param options Optional overrides (e.g. fontSize for mobile).
 	 */
-	init(container: HTMLElement): void {
+	init(container: HTMLElement, options?: { fontSize?: number }): void {
 		initializeNetwork();
 
 		const baseSession = createSession();
@@ -79,7 +81,7 @@ export class TerminalController implements ReactiveController {
 				white: "#d4d4d4",
 			},
 			fontFamily: '"Cascadia Code", "Fira Code", monospace',
-			fontSize: 14,
+			fontSize: options?.fontSize ?? 14,
 			lineHeight: 1.2,
 		});
 
@@ -308,6 +310,13 @@ export class TerminalController implements ReactiveController {
 		this._updateFilesystem();
 		this._pendingSshConnection = null;
 		this._writePrompt();
+	}
+
+	/** Programmatically send input data (for quick-command buttons on mobile). */
+	sendInput(data: string): void {
+		for (const ch of data) {
+			this._handleInput(ch);
+		}
 	}
 
 	hostDisconnected(): void {
