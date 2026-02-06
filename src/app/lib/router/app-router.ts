@@ -12,8 +12,6 @@ import {
 import { isMobile } from "../../../shared/lib/device-store.js";
 import { subscribeAuth } from "../../../shared/lib/auth-store.js";
 
-const BOOT_DELAY_MS = 1500;
-
 type RouterInstance = ReturnType<typeof createRouter>;
 
 type DeviceSegment = "desktop" | "mobile";
@@ -23,8 +21,13 @@ function getHashPathname(): string {
 	const hash = window.location.hash ?? "";
 	if (!hash) return "";
 	const raw = hash.startsWith("#") ? hash.slice(1) : hash;
-	const [pathname] = raw.split("?");
-	return pathname || "";
+	const cleaned = raw.startsWith("!") ? raw.slice(1) : raw;
+	const [pathname] = cleaned.split("?");
+	if (!pathname) return "";
+	if (pathname.length > 1) {
+		return pathname.replace(/\/+$/, "");
+	}
+	return pathname;
 }
 
 function getDeviceFromPath(pathname: string): DeviceSegment {
@@ -121,34 +124,6 @@ function ensureInitialRoute(router: RouterInstance): void {
 }
 
 function setupDesktopFlows(router: RouterInstance): () => void {
-	let bootTimeoutId: ReturnType<typeof setTimeout> | undefined;
-
-	const clearBootTimeout = () => {
-		if (bootTimeoutId !== undefined) {
-			clearTimeout(bootTimeoutId);
-			bootTimeoutId = undefined;
-		}
-	};
-
-	const scheduleBoot = () => {
-		clearBootTimeout();
-		bootTimeoutId = setTimeout(() => {
-			bootTimeoutId = undefined;
-			if (getHashPathname() === "/desktop/boot") {
-				router.push("/desktop/login");
-			}
-		}, BOOT_DELAY_MS);
-	};
-
-	const onHashChange = () => {
-		const pathname = getHashPathname();
-		if (pathname === "/desktop/boot") {
-			scheduleBoot();
-			return;
-		}
-		clearBootTimeout();
-	};
-
 	const unsubscribeAuth = subscribeAuth((state: AuthState) => {
 		const pathname = getHashPathname();
 		if (!pathname.startsWith("/desktop")) return;
@@ -161,13 +136,8 @@ function setupDesktopFlows(router: RouterInstance): () => void {
 		}
 	});
 
-	window.addEventListener("hashchange", onHashChange);
-	onHashChange();
-
 	return () => {
-		window.removeEventListener("hashchange", onHashChange);
 		unsubscribeAuth();
-		clearBootTimeout();
 	};
 }
 
@@ -194,16 +164,24 @@ function setupRouteEvents(root: HTMLElement, router: RouterInstance): () => void
 		router.push("/mobile/lock");
 	};
 
+	const onBootComplete = () => {
+		if (getHashPathname() === "/desktop/boot") {
+			router.push("/desktop/login");
+		}
+	};
+
 	root.addEventListener("accept", onAccept);
 	root.addEventListener("show-passcode", onShowPasscode);
 	root.addEventListener("unlock", onUnlock);
 	root.addEventListener("cancel-passcode", onCancelPasscode);
+	root.addEventListener("boot-complete", onBootComplete as EventListener);
 
 	return () => {
 		root.removeEventListener("accept", onAccept);
 		root.removeEventListener("show-passcode", onShowPasscode);
 		root.removeEventListener("unlock", onUnlock);
 		root.removeEventListener("cancel-passcode", onCancelPasscode);
+		root.removeEventListener("boot-complete", onBootComplete as EventListener);
 	};
 }
 
