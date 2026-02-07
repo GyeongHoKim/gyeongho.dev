@@ -10,7 +10,11 @@ import { customElement } from "lit/decorators.js";
 import { msg, updateWhenLocaleChanges } from "@lit/localize";
 import { TerminalController } from "../lib/terminal-controller.ts";
 import "../../../widgets/floating-window/ui/floating-window.ts";
-import { setMinimized, closeApp } from "../../../shared/lib/window-store.js";
+import {
+	setMinimized,
+	closeApp,
+	setWindowPosition,
+} from "../../../shared/lib/window-store.js";
 
 @customElement("terminal-app")
 export class TerminalApp extends LitElement {
@@ -65,6 +69,9 @@ export class TerminalApp extends LitElement {
 				title=${msg("Terminal", { desc: "Window title" })}
 				@window-minimize=${() => setMinimized("terminal", true)}
 				@window-close=${() => closeApp("terminal")}
+				@window-drag=${(
+					e: CustomEvent<{ x: number; y: number }>,
+				) => setWindowPosition("terminal", e.detail)}
 			>
 				<div slot="content" class="terminal-content">
 					<div class="terminal-container"></div>

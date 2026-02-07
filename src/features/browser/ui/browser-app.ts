@@ -9,7 +9,11 @@ import { LitElement, css, html } from "lit";
 import { customElement } from "lit/decorators.js";
 import { msg, updateWhenLocaleChanges } from "@lit/localize";
 import "../../../widgets/floating-window/ui/floating-window.ts";
-import { setMinimized, closeApp } from "../../../shared/lib/window-store.js";
+import {
+	setMinimized,
+	closeApp,
+	setWindowPosition,
+} from "../../../shared/lib/window-store.js";
 import {
 	BrowserSimulationController,
 	type LoginPageData,
@@ -237,6 +241,9 @@ export class BrowserApp extends LitElement {
 				title=${msg("Browser", { desc: "Window title" })}
 				@window-minimize=${() => setMinimized("browser", true)}
 				@window-close=${() => closeApp("browser")}
+				@window-drag=${(
+					e: CustomEvent<{ x: number; y: number }>,
+				) => setWindowPosition("browser", e.detail)}
 			>
 				<div slot="content" class="browser-content-wrap">
 					<div class="address-bar">

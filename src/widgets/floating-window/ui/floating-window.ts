@@ -15,6 +15,8 @@ const WINDOW_SHOW = "window-show";
 const WINDOW_HIDE = "window-hide";
 /** Fired when the user interacts with the title bar (e.g. click/drag) so the host can bring this window to front. */
 const WINDOW_FOCUS = "window-focus";
+/** Fired while dragging so the host can update external positioning. */
+const WINDOW_DRAG = "window-drag";
 
 function dispatchWindowEvent(
 	host: LitElement,
@@ -35,6 +37,7 @@ export class FloatingWindow extends LitElement {
 	static styles = css`
 		:host {
 			display: block;
+			pointer-events: none;
 		}
 
 		:host([hidden]) .window {
@@ -50,6 +53,7 @@ export class FloatingWindow extends LitElement {
 			height: 500px;
 			display: flex;
 			flex-direction: column;
+			pointer-events: auto;
 			transition: width 0.2s ease, height 0.2s ease, border-radius 0.2s ease;
 		}
 
@@ -157,6 +161,7 @@ export class FloatingWindow extends LitElement {
 	@state() private isMaximized = false;
 	@state() private posX = 0;
 	@state() private posY = 0;
+	private usesExternalPositioning = false;
 
 	private isDragging = false;
 	private dragStartX = 0;
@@ -170,6 +175,9 @@ export class FloatingWindow extends LitElement {
 		const deltaY = e.clientY - this.dragStartY;
 		this.posX = this.dragStartPosX + deltaX;
 		this.posY = this.dragStartPosY + deltaY;
+		if (this.usesExternalPositioning) {
+			dispatchWindowEvent(this, WINDOW_DRAG, { x: this.posX, y: this.posY });
+		}
 	};
 
 	private handleDragEnd = () => {
@@ -180,6 +188,19 @@ export class FloatingWindow extends LitElement {
 	};
 
 	private _hasInitiallyShown = false;
+
+	private resolveExternalPositioning(): boolean {
+		const root = this.getRootNode();
+		if (root instanceof ShadowRoot && root.host instanceof HTMLElement) {
+			if (root.host.closest("[data-app-id]")) return true;
+		}
+		return Boolean(this.closest("[data-app-id]"));
+	}
+
+	override connectedCallback() {
+		super.connectedCallback();
+		this.usesExternalPositioning = this.resolveExternalPositioning();
+	}
 
 	override updated(changed: Map<string, unknown>) {
 		if (changed.has("hidden")) {
@@ -217,6 +238,9 @@ export class FloatingWindow extends LitElement {
 		if (this.isMaximized) {
 			this.posX = 0;
 			this.posY = 0;
+			if (this.usesExternalPositioning) {
+				dispatchWindowEvent(this, WINDOW_DRAG, { x: 0, y: 0 });
+			}
 		}
 		dispatchWindowEvent(this, WINDOW_MAXIMIZE, { maximized: this.isMaximized });
 	}
@@ -247,7 +271,11 @@ export class FloatingWindow extends LitElement {
 		return html`
 			<div
 				class="window ${this.isMaximized ? "maximized" : ""}"
-				style="${this.isMaximized ? "" : `transform: translate(${this.posX}px, ${this.posY}px)`}"
+				style="${
+					this.isMaximized || this.usesExternalPositioning
+						? ""
+						: `transform: translate(${this.posX}px, ${this.posY}px)`
+				}"
 				@mousedown=${this.handleWindowMouseDown}
 			>
 				<div class="title-bar">
