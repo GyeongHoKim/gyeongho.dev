@@ -9,7 +9,11 @@ import { LitElement, css, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { msg, updateWhenLocaleChanges } from "@lit/localize";
 import "../../../widgets/floating-window/ui/floating-window.ts";
-import { setMinimized, closeApp } from "../../../shared/lib/window-store.js";
+import {
+	setMinimized,
+	closeApp,
+	setWindowPosition,
+} from "../../../shared/lib/window-store.js";
 import type { VirtualFilesystem } from "../../../entities/virtual-filesystem/lib/fs-helpers.ts";
 import { TextEditorController } from "../lib/text-editor-controller.ts";
 
@@ -148,6 +152,9 @@ export class TextEditorApp extends LitElement {
 				title=${msg("Text Editor", { desc: "Window title" })}
 				@window-minimize=${() => setMinimized("text-editor", true)}
 				@window-close=${() => closeApp("text-editor")}
+				@window-drag=${(
+					e: CustomEvent<{ x: number; y: number }>,
+				) => setWindowPosition("text-editor", e.detail)}
 			>
 				<div slot="content" class="editor-content">
 					<div class="editor-area">

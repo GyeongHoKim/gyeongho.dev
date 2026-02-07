@@ -21,6 +21,7 @@ import "../../../features/resume-viewer/ui/resume-viewer.ts";
 import {
 	isAppVisible,
 	getWindowZIndex,
+	getWindowPosition,
 } from "../../../shared/lib/window-store.js";
 import { getVisitorFilesystem } from "../../../features/network-simulation/lib/network.ts";
 import { DesktopStateController } from "../lib/desktop-state-controller.js";
@@ -147,9 +148,14 @@ export class DesktopPage extends LitElement {
 		}
 	`;
 
-	render() {
-		const s = this._state;
-		return html`
+		render() {
+			const s = this._state;
+			const getTransform = (id: string, base: string): string => {
+				const pos = getWindowPosition(id as never);
+				const offset = pos.x || pos.y ? ` translate(${pos.x}px, ${pos.y}px)` : "";
+				return `${base}${offset}`;
+			};
+			return html`
 			<div class="desktop-root">
 				<desktop-background></desktop-background>
 				<div class="top-bar">
@@ -183,47 +189,47 @@ export class DesktopPage extends LitElement {
 				${
 					isAppVisible("terminal")
 						? html`
-						<div
-							class="window-container"
-							data-app-id="terminal"
-							style="z-index: ${getWindowZIndex("terminal")}"
-						>
-							<terminal-app @resume-revealed=${() => s.setResumeRevealed()}></terminal-app>
-						</div>
-					`
+							<div
+								class="window-container"
+								data-app-id="terminal"
+								style="transform: ${getTransform("terminal", "translate(-50%, -50%)")}; z-index: ${getWindowZIndex("terminal")}" 
+							>
+								<terminal-app @resume-revealed=${() => s.setResumeRevealed()}></terminal-app>
+							</div>
+						`
 						: null
 				}
 
 				${
 					isAppVisible("text-editor")
 						? html`
-						<div
-							class="window-container"
-							data-app-id="text-editor"
-							style="transform: translate(-40%, -40%); z-index: ${getWindowZIndex("text-editor")}"
-						>
-							<text-editor-app
-								.filesystem=${getVisitorFilesystem()}
-								.cwd=${s.editorCwd}
-								.initialFile=${s.editorFile}
-								@resume-revealed=${() => s.setResumeRevealed()}
-							></text-editor-app>
-						</div>
-					`
+							<div
+								class="window-container"
+								data-app-id="text-editor"
+								style="transform: ${getTransform("text-editor", "translate(-40%, -40%)")}; z-index: ${getWindowZIndex("text-editor")}" 
+							>
+								<text-editor-app
+									.filesystem=${getVisitorFilesystem()}
+									.cwd=${s.editorCwd}
+									.initialFile=${s.editorFile}
+									@resume-revealed=${() => s.setResumeRevealed()}
+								></text-editor-app>
+							</div>
+						`
 						: null
 				}
 
 				${
 					isAppVisible("browser")
 						? html`
-						<div
-							class="window-container"
-							data-app-id="browser"
-							style="transform: translate(-30%, -50%); z-index: ${getWindowZIndex("browser")}"
-						>
-							<browser-app @resume-revealed=${() => s.setResumeRevealed()}></browser-app>
-						</div>
-					`
+							<div
+								class="window-container"
+								data-app-id="browser"
+								style="transform: ${getTransform("browser", "translate(-30%, -50%)")}; z-index: ${getWindowZIndex("browser")}" 
+							>
+								<browser-app @resume-revealed=${() => s.setResumeRevealed()}></browser-app>
+							</div>
+						`
 						: null
 				}
 
