@@ -1,12 +1,13 @@
 ---
-import { type Locale, localePath, t } from "../i18n";
+import { LOCALES, type Locale, localePath, t } from "../i18n";
 import LangSwitch from "./LangSwitch.astro";
 
 interface Props {
 	locale: Locale;
+	alternates?: readonly Locale[];
 }
 
-const { locale } = Astro.props;
+const { locale, alternates = LOCALES } = Astro.props;
 ---
 
 <footer class="no-print site-footer">
@@ -47,7 +48,7 @@ const { locale } = Astro.props;
 			>
 		</div>
 	</div>
-	<LangSwitch locale={locale} />
+	<LangSwitch locale={locale} alternates={alternates} />
 </footer>
 
 <style>

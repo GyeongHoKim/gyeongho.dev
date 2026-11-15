@@ -1,11 +1,13 @@
 ---
-import { LOCALES, type Locale, switchLocalePath, t } from "../i18n";
+import { LOCALES, type Locale, localePath, switchLocalePath, t } from "../i18n";
 
 interface Props {
 	locale: Locale;
+	/** Locales the current page exists in; others link to their blog index. */
+	alternates?: readonly Locale[];
 }
 
-const { locale } = Astro.props;
+const { locale, alternates = LOCALES } = Astro.props;
 const names: Record<Locale, string> = { ko: "한국어", en: "English" };
 ---
 
@@ -19,7 +21,11 @@ const names: Record<Locale, string> = { ko: "한국어", en: "English" };
 				</span>
 			) : (
 				<a
-					href={switchLocalePath(Astro.url.pathname, code)}
+					href={
+						alternates.includes(code)
+							? switchLocalePath(Astro.url.pathname, code)
+							: localePath(code, "blog")
+					}
 					hreflang={code}
 					lang={code}
 				>

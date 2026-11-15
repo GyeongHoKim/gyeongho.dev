@@ -16,9 +16,17 @@ interface Props {
 	title: string;
 	description: string;
 	current?: "about" | "portfolio" | "talks" | "resume" | "blog" | "rss";
+	/** Locales this page exists in; defaults to all of them. */
+	alternates?: readonly Locale[];
 }
 
-const { locale, title, description, current } = Astro.props;
+const {
+	locale,
+	title,
+	description,
+	current,
+	alternates = LOCALES,
+} = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogLocale = locale === "ko" ? "ko_KR" : "en_US";
 ---
@@ -34,7 +42,7 @@ const ogLocale = locale === "ko" ? "ko_KR" : "en_US";
 		<link rel="icon" href="/favicon.png" type="image/png" sizes="96x96">
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 		<link rel="canonical" href={canonical}>
-		{LOCALES.map((code) => (
+		{alternates.map((code) => (
 			<link
 				rel="alternate"
 				hreflang={code}
@@ -64,7 +72,7 @@ const ogLocale = locale === "ko" ? "ko_KR" : "en_US";
 			<main>
 				<slot />
 			</main>
-			<Footer locale={locale} />
+			<Footer locale={locale} alternates={alternates} />
 		</div>
 		<MobileMenu locale={locale} current={current} />
 		<script>

@@ -1,0 +1,285 @@
+---
+import PostList from "../../../components/PostList.astro";
+import {
+	getLocaleStaticPaths,
+	type Locale,
+	localePath,
+	t,
+} from "../../../i18n";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { getPosts, groupBySeries, groupByYear } from "../../../lib/posts";
+import { SERIES_LABELS } from "../../../lib/series";
+
+export const getStaticPaths = getLocaleStaticPaths;
+
+const locale = Astro.params.lang as Locale;
+const posts = await getPosts(locale);
+const years = groupByYear(posts);
+const series = groupBySeries(posts);
+const tags = [...new Set(posts.flatMap((post) => post.data.tags))];
+const feed = localePath(locale, "feed.xml").replace(/\/$/, "");
+---
+
+<BaseLayout
+	locale={locale}
+	title={`${t(locale, "blog.title")} — GyeongHo Kim`}
+	description={t(locale, "blog.description")}
+	current="blog"
+>
+	<section class="container head" aria-labelledby="blog-h">
+		<div class="head-text">
+			<h1 id="blog-h" class="hand">{t(locale, "blog.title")}</h1>
+			<p class="lead">{t(locale, "blog.lead")}</p>
+		</div>
+		<a class="more" href={feed}>
+			{t(locale, "blog.subscribe")}
+			<gh-icon name="arrow-right" size="sm"></gh-icon>
+		</a>
+	</section>
+
+	<div class="container layout" data-blog>
+		<div class="main">
+			{posts.length === 0 ? (
+				<p class="empty" data-testid="blog-empty">
+					{t(locale, "blog.empty")}
+				</p>
+			) : (
+				<>
+					{tags.length > 0 && (
+						<fieldset
+							aria-label={t(locale, "blog.filter.label")}
+							class="filters"
+						>
+							<gh-toggle pressed data-tag-filter="all">
+								{t(locale, "blog.filter.all")}
+							</gh-toggle>
+							{tags.map((tag) => (
+								<gh-toggle data-tag-filter={tag}>{tag}</gh-toggle>
+							))}
+						</fieldset>
+					)}
+					{years.map((group) => (
+						<section data-year aria-labelledby={`year-${group.year}`}>
+							<h2 id={`year-${group.year}`} class="hand year">
+								{group.year}
+							</h2>
+							<PostList posts={group.posts} locale={locale} />
+						</section>
+					))}
+					<gh-alert variant="info" data-filter-none hidden>
+						{t(locale, "blog.filter.none")}
+					</gh-alert>
+				</>
+			)}
+		</div>
+
+		<aside
+			class="aside"
+			aria-label={t(
+				locale,
+				series.length > 0 ? "blog.series.title" : "blog.rss.title",
+			)}
+		>
+			{series.length > 0 && (
+				<gh-card
+					variant="sticky"
+					tone="warning"
+					tilt="right"
+					fastener="tape"
+					class="series"
+				>
+					<div class="series-body">
+						<h2 class="hand">{t(locale, "blog.series.title")}</h2>
+						<p>{t(locale, "blog.series.text")}</p>
+						<ul>
+							{series.map((group) => (
+								<li>
+									<button
+										type="button"
+										aria-pressed="false"
+										data-series-filter={group.series}
+									>
+										<span class="name">
+											{SERIES_LABELS[group.series][locale]}
+										</span>
+										<span class="mono count">
+											{group.posts.length}
+											{t(locale, "blog.series.count")}
+										</span>
+									</button>
+								</li>
+							))}
+						</ul>
+					</div>
+				</gh-card>
+			)}
+			<gh-card class="rss">
+				<div class="rss-body">
+					<h2 class="hand">{t(locale, "blog.rss.title")}</h2>
+					<p>{t(locale, "blog.rss.text")}</p>
+					<a class="more" href={localePath(locale, "rss")}>
+						{t(locale, "blog.rss.first")}
+						<gh-icon name="arrow-right" size="sm"></gh-icon>
+					</a>
+				</div>
+			</gh-card>
+		</aside>
+	</div>
+</BaseLayout>
+
+<script>
+import { initBlogFilter } from "../../../scripts/blog";
+
+const root = document.querySelector<HTMLElement>("[data-blog]");
+if (root) initBlogFilter(root);
+</script>
+
+<style>
+.head {
+	padding-block: var(--sys-spacing-3xl) var(--sys-spacing-lg);
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: var(--sys-spacing-xl);
+}
+.head-text {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-sm);
+	max-width: 40em;
+}
+h1 {
+	margin: 0;
+	font-size: calc(var(--sys-typography-heading-fontSize) * 1.3);
+	line-height: var(--sys-typography-heading-lineHeight);
+}
+.lead {
+	margin: 0;
+	font-size: calc(var(--sys-typography-body-fontSize) * 1.125);
+	color: var(--sys-color-text-secondary);
+}
+.more {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--sys-spacing-xs);
+	min-height: 44px;
+	font-weight: var(--sys-typography-label-fontWeight);
+}
+.layout {
+	padding-block: 0 var(--sys-spacing-3xl);
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--sys-spacing-2xl);
+	align-items: flex-start;
+}
+.main {
+	flex: 999 1 560px;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-xl);
+}
+.filters {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	min-width: 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--sys-spacing-sm);
+}
+.year {
+	margin: 0 0 var(--sys-spacing-xs);
+	font-size: var(--sys-typography-heading-fontSize);
+	line-height: var(--sys-typography-heading-lineHeight);
+	color: var(--sys-color-text-secondary);
+}
+[data-year][hidden],
+[data-filter-none][hidden] {
+	display: none;
+}
+.empty {
+	margin: 0;
+	padding: var(--sys-spacing-lg) 0;
+	border-bottom: var(--sys-border-width-default) dashed
+		var(--sys-color-border-default);
+	color: var(--sys-color-text-secondary);
+}
+.aside {
+	flex: 1 1 300px;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-xl);
+}
+gh-card {
+	display: block;
+}
+.series-body,
+.rss-body {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-sm);
+}
+.series-body h2,
+.rss-body h2 {
+	margin: 0;
+	font-size: var(--sys-typography-title-fontSize);
+	line-height: var(--sys-typography-title-lineHeight);
+}
+.series-body p,
+.rss-body p {
+	margin: 0;
+	font-size: var(--sys-typography-label-fontSize);
+	color: var(--sys-color-text-secondary);
+}
+.series-body ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-xs);
+}
+.series-body button {
+	width: 100%;
+	min-height: 44px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--sys-spacing-sm);
+	padding: var(--sys-spacing-xs) var(--sys-spacing-sm);
+	font: inherit;
+	color: var(--sys-color-text-primary);
+	text-align: left;
+	cursor: pointer;
+	background: transparent;
+	border: var(--sys-border-width-thick) solid transparent;
+	border-radius: var(--sys-radius-md);
+}
+.series-body button[aria-pressed="true"] {
+	background: var(--sys-color-bg-surface);
+	border-color: var(--sys-color-text-primary);
+}
+.name {
+	font-weight: var(--sys-typography-heading-fontWeight);
+}
+.count {
+	font-size: var(--sys-typography-caption-fontSize);
+	color: var(--sys-color-text-secondary);
+	white-space: nowrap;
+}
+@media (max-width: 760px) {
+	.aside {
+		display: contents;
+	}
+	.series {
+		order: -1;
+		flex: 1 1 100%;
+	}
+	.rss {
+		flex: 1 1 100%;
+	}
+}
+</style>

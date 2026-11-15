@@ -1,0 +1,306 @@
+---
+import { render } from "astro:content";
+import Toc from "../../../components/Toc.astro";
+import { LOCALES, type Locale, localePath, t } from "../../../i18n";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { fullDate } from "../../../lib/format";
+import { getPosts, type Post, postSlug } from "../../../lib/posts";
+
+export async function getStaticPaths() {
+	const byLocale = await Promise.all(
+		LOCALES.map(async (locale) => ({ locale, posts: await getPosts(locale) })),
+	);
+	return byLocale.flatMap(({ locale, posts }) =>
+		posts.map((post, index) => ({
+			params: { lang: locale, slug: postSlug(post.id) },
+			props: {
+				post,
+				// Posts are newest first: the next index is the older post.
+				newer: posts[index - 1],
+				older: posts[index + 1],
+				alternates: byLocale
+					.filter((other) =>
+						other.posts.some((p) => postSlug(p.id) === postSlug(post.id)),
+					)
+					.map((other) => other.locale),
+			},
+		})),
+	);
+}
+
+interface Props {
+	post: Post;
+	newer?: Post;
+	older?: Post;
+	alternates: Locale[];
+}
+
+const locale = Astro.params.lang as Locale;
+const { post, newer, older, alternates } = Astro.props;
+const { Content, headings } = await render(post);
+const url = new URL(Astro.url.pathname, Astro.site);
+const href = (target: Post) =>
+	localePath(locale, `blog/${postSlug(target.id)}`);
+---
+
+<BaseLayout
+	locale={locale}
+	title={`${post.data.title} — GyeongHo Kim`}
+	description={post.data.description}
+	current="blog"
+	alternates={alternates}
+>
+	<div class="container layout">
+		<article class="post h-entry">
+			<nav class="crumb" aria-label={t(locale, "post.crumb")}>
+				<a href={localePath(locale, "blog")}>{t(locale, "nav.blog")}</a>{" "}
+				/ {t(locale, "post.crumbPost")}
+			</nav>
+			<h1 class="hand p-name">{post.data.title}</h1>
+			<div class="meta">
+				<a class="u-url mono" href={url}>
+					<time class="dt-published" datetime={post.data.pubDate.toISOString()}>
+						{fullDate(post.data.pubDate)}
+					</time>
+				</a>
+				{post.data.tags.map((tag) => (
+					<gh-badge variant="neutral" class="p-category">
+						{tag}
+					</gh-badge>
+				))}
+			</div>
+
+			<div class="prose e-content">
+				<Content />
+			</div>
+
+			<div class="after">
+				<section id="webmentions"></section>
+				{(older || newer) && (
+					<nav class="pager" aria-label={t(locale, "post.nav")}>
+						{older ? (
+							<a class="prev" href={href(older)} rel="prev">
+								<span class="dir">
+									<gh-icon name="arrow-left" size="sm"></gh-icon>
+									{t(locale, "post.prev")}
+								</span>
+								<span class="name">{older.data.title}</span>
+							</a>
+						) : (
+							<span></span>
+						)}
+						{newer ? (
+							<a class="next" href={href(newer)} rel="next">
+								<span class="dir">
+									{t(locale, "post.next")}
+									<gh-icon name="arrow-right" size="sm"></gh-icon>
+								</span>
+								<span class="name">{newer.data.title}</span>
+							</a>
+						) : (
+							<span></span>
+						)}
+					</nav>
+				)}
+			</div>
+		</article>
+
+		<aside class="side" aria-label={t(locale, "post.aside")}>
+			<Toc headings={headings} locale={locale} />
+			<div class="links">
+				{post.data.series === "FishEye" && (
+					<>
+						<span>{t(locale, "post.demo")}</span>
+						<a href={`${localePath(locale, "")}#demo`}>
+							{t(locale, "post.demoLink")}
+							<gh-icon name="arrow-right" size="sm"></gh-icon>
+						</a>
+					</>
+				)}
+				<a href={localePath(locale, "rss")}>
+					{t(locale, "post.subscribe")}
+					<gh-icon name="arrow-right" size="sm"></gh-icon>
+				</a>
+			</div>
+		</aside>
+	</div>
+</BaseLayout>
+
+<style>
+.layout {
+	padding-block: var(--sys-spacing-2xl) var(--sys-spacing-3xl);
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--sys-spacing-3xl);
+	align-items: flex-start;
+}
+.post {
+	flex: 999 1 600px;
+	min-width: 0;
+	max-width: 720px;
+}
+.crumb {
+	margin-bottom: var(--sys-spacing-md);
+	font-size: var(--sys-typography-label-fontSize);
+	color: var(--sys-color-text-secondary);
+}
+h1 {
+	margin: 0 0 var(--sys-spacing-md);
+	font-size: calc(var(--sys-typography-heading-fontSize) * 1.3);
+	line-height: var(--sys-typography-heading-lineHeight);
+}
+.meta {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--sys-spacing-sm);
+	margin-bottom: var(--sys-spacing-xl);
+	font-size: var(--sys-typography-label-fontSize);
+}
+.meta a {
+	display: inline-flex;
+	align-items: center;
+	min-height: 44px;
+	color: var(--sys-color-text-secondary);
+}
+.prose {
+	font-size: calc(var(--sys-typography-body-fontSize) * 1.125);
+	line-height: 1.8;
+}
+.prose :global(h2) {
+	margin: var(--sys-spacing-2xl) 0 var(--sys-spacing-sm);
+	font-family: var(--sys-typography-heading-fontFamily);
+	font-size: var(--sys-typography-heading-fontSize);
+	line-height: var(--sys-typography-heading-lineHeight);
+	scroll-margin-top: var(--sys-spacing-xl);
+}
+.prose :global(h3) {
+	margin: var(--sys-spacing-xl) 0 var(--sys-spacing-xs);
+	font-family: var(--sys-typography-heading-fontFamily);
+	font-size: var(--sys-typography-title-fontSize);
+	scroll-margin-top: var(--sys-spacing-xl);
+}
+.prose :global(p),
+.prose :global(ul),
+.prose :global(ol),
+.prose :global(blockquote),
+.prose :global(pre),
+.prose :global(table) {
+	margin: 0 0 var(--sys-spacing-lg);
+}
+.prose :global(blockquote) {
+	padding: var(--sys-spacing-xs) var(--sys-spacing-lg);
+	border-left: var(--sys-border-width-thick) solid
+		var(--sys-color-border-default);
+	color: var(--sys-color-text-secondary);
+}
+.prose :global(blockquote > :last-child) {
+	margin-bottom: 0;
+}
+.prose :global(code) {
+	padding: 0.1em 0.35em;
+	font-family: var(--sys-typography-code-fontFamily);
+	font-size: 0.9em;
+	background: var(--sys-color-bg-muted);
+	border-radius: var(--sys-radius-xs);
+}
+.prose :global(pre) {
+	padding: var(--sys-spacing-lg);
+	overflow-x: auto;
+	line-height: 1.6;
+	border: var(--sys-border-width-default) solid var(--sys-color-border-default);
+	border-radius: var(--sys-radius-md);
+}
+.prose :global(pre code) {
+	padding: 0;
+	font-size: var(--sys-typography-code-fontSize);
+	background: none;
+}
+.prose :global(table) {
+	display: block;
+	max-width: 100%;
+	overflow-x: auto;
+	border-collapse: collapse;
+}
+.prose :global(th),
+.prose :global(td) {
+	padding: var(--sys-spacing-xs) var(--sys-spacing-md);
+	text-align: left;
+	border: var(--sys-border-width-default) solid var(--sys-color-border-default);
+}
+.prose :global(th) {
+	background: var(--sys-color-bg-subtle);
+}
+.prose :global(img) {
+	max-width: 100%;
+	height: auto;
+}
+.after {
+	margin-top: var(--sys-spacing-3xl);
+	padding-top: var(--sys-spacing-xl);
+	border-top: var(--sys-border-width-thick) dashed
+		var(--sys-color-border-default);
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-xl);
+}
+.after #webmentions:empty {
+	display: none;
+}
+.pager {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--sys-spacing-lg);
+}
+.pager a {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-xs);
+	min-height: 44px;
+	padding: var(--sys-spacing-lg);
+	background: var(--sys-color-bg-surface);
+	border: var(--sys-border-width-thick) solid var(--sys-color-border-default);
+	border-radius: var(--sys-radius-lg);
+}
+.pager .next {
+	align-items: flex-end;
+	text-align: right;
+}
+.dir {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--sys-spacing-xs);
+	font-size: var(--sys-typography-caption-fontSize);
+	color: var(--sys-color-text-secondary);
+}
+.name {
+	font-weight: var(--sys-typography-heading-fontWeight);
+}
+.side {
+	flex: 1 1 220px;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-xl);
+}
+.links {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-sm);
+	font-size: var(--sys-typography-label-fontSize);
+	color: var(--sys-color-text-secondary);
+}
+.links a {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--sys-spacing-xs);
+	min-height: 44px;
+	font-weight: var(--sys-typography-label-fontWeight);
+}
+@media (max-width: 760px) {
+	.side {
+		order: -1;
+		flex: 1 1 100%;
+	}
+}
+</style>

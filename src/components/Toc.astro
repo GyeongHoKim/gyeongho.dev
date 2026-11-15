@@ -1,0 +1,55 @@
+---
+import type { MarkdownHeading } from "astro";
+import { type Locale, t } from "../i18n";
+
+interface Props {
+	headings: MarkdownHeading[];
+	locale: Locale;
+}
+
+const { headings, locale } = Astro.props;
+const items = headings.filter((heading) => heading.depth <= 3);
+---
+
+{items.length > 0 && (
+	<gh-card variant="lined" fastener="pin" tilt="right">
+		<div class="toc">
+			<h2 class="hand">{t(locale, "post.toc")}</h2>
+			<ol>
+				{items.map((heading) => (
+					<li class:list={{ sub: heading.depth === 3 }}>
+						<a href={`#${heading.slug}`}>{heading.text}</a>
+					</li>
+				))}
+			</ol>
+		</div>
+	</gh-card>
+)}
+
+<style>
+gh-card {
+	display: block;
+}
+.toc {
+	padding-left: var(--sys-spacing-xl);
+}
+h2 {
+	margin: 0;
+	font-size: var(--sys-typography-title-fontSize);
+	line-height: 28px;
+}
+ol {
+	margin: 0;
+	padding-left: var(--sys-spacing-lg);
+	font-size: var(--sys-typography-label-fontSize);
+	line-height: 28px;
+}
+.sub {
+	margin-left: var(--sys-spacing-md);
+	list-style-type: circle;
+}
+a {
+	display: inline-block;
+	min-height: 28px;
+}
+</style>

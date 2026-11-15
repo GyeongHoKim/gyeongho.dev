@@ -2,14 +2,17 @@
 import { Image } from "astro:assets";
 import portrait from "../../assets/home/portrait.jpg";
 import FisheyeDemo from "../../components/FisheyeDemo.astro";
+import PostList from "../../components/PostList.astro";
 import ProjectNote from "../../components/ProjectNote.astro";
 import { getLocaleStaticPaths, type Locale, localePath, t } from "../../i18n";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getPosts } from "../../lib/posts";
 import { homeProjects as projects } from "../../lib/projects";
 
 export const getStaticPaths = getLocaleStaticPaths;
 
 const locale = Astro.params.lang as Locale;
+const posts = await getPosts(locale);
 ---
 
 <BaseLayout
@@ -62,9 +65,13 @@ const locale = Astro.params.lang as Locale;
 				<gh-icon name="arrow-right" size="sm"></gh-icon>
 			</a>
 		</div>
-		<p class="empty" data-testid="lately-empty">
-			{t(locale, "home.lately.empty")}
-		</p>
+		{posts.length > 0 ? (
+			<PostList posts={posts} locale={locale} limit={3} />
+		) : (
+			<p class="empty" data-testid="lately-empty">
+				{t(locale, "home.lately.empty")}
+			</p>
+		)}
 	</section>
 </BaseLayout>
 

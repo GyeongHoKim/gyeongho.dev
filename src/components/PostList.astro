@@ -1,0 +1,91 @@
+---
+import { type Locale, localePath, t } from "../i18n";
+import { monthDay } from "../lib/format";
+import { type Post, postSlug } from "../lib/posts";
+
+interface Props {
+	posts: Post[];
+	locale: Locale;
+	limit?: number;
+}
+
+const { posts, locale, limit } = Astro.props;
+const shown = limit === undefined ? posts : posts.slice(0, limit);
+---
+
+<ul class="posts">
+	{shown.map((post) => (
+		<li
+			data-post
+			data-tags={JSON.stringify(post.data.tags)}
+			data-series={post.data.series}
+		>
+			<time class="mono date" datetime={post.data.pubDate.toISOString()}>
+				{monthDay(post.data.pubDate)}
+			</time>
+			<a class="title" href={localePath(locale, `blog/${postSlug(post.id)}`)}>
+				{post.data.title}
+			</a>
+			<p class="excerpt">{post.data.description}</p>
+			{post.data.tags.length > 0 && (
+				<ul class="tags" aria-label={t(locale, "home.tags")}>
+					{post.data.tags.map((tag) => (
+						<li>
+							<gh-badge variant="neutral">{tag}</gh-badge>
+						</li>
+					))}
+				</ul>
+			)}
+		</li>
+	))}
+</ul>
+
+<style>
+.posts {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+}
+.posts > li {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-xs);
+	padding-block: var(--sys-spacing-lg);
+	border-bottom: var(--sys-border-width-default) dashed
+		var(--sys-color-border-default);
+}
+.posts > li[hidden] {
+	display: none;
+}
+.date {
+	font-size: var(--sys-typography-label-fontSize);
+	color: var(--sys-color-text-secondary);
+}
+.title {
+	display: inline-flex;
+	align-items: center;
+	min-height: 44px;
+	font-size: calc(var(--sys-typography-body-fontSize) * 1.375);
+	font-weight: var(--sys-typography-heading-fontWeight);
+	line-height: 1.3;
+}
+.excerpt {
+	margin: 0;
+	color: var(--sys-color-text-secondary);
+}
+.tags {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--sys-spacing-xs);
+}
+.tags > li {
+	display: contents;
+	padding: 0;
+	border: 0;
+}
+</style>
