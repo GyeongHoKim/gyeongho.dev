@@ -1,0 +1,22 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.6.8/schema.json",
+	"vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
+	"files": {
+		"includes": [
+			"**",
+			"!docs/design",
+			"!.claude",
+			"!.serena",
+			"!skills-lock.json",
+			"!mise.lock",
+			"!pnpm-lock.yaml"
+		]
+	},
+	"html": {
+		"experimentalFullSupportEnabled": true,
+		"formatter": { "enabled": true }
+	},
+	"formatter": { "indentStyle": "tab" },
+	"javascript": { "formatter": { "quoteStyle": "double" } },
+	"linter": { "enabled": true, "rules": { "preset": "recommended" } }
+}

@@ -1,0 +1,31 @@
+{
+	"auto_install_extensions": {
+		"astro": true,
+		"biome": true,
+		"terraform": true,
+		"toml": true
+	},
+	"format_on_save": "on",
+	"formatter": { "language_server": { "name": "biome" } },
+	"code_actions_on_format": {
+		"source.fixAll.biome": true,
+		"source.organizeImports.biome": true
+	},
+	"languages": {
+		"Astro": {
+			"language_servers": ["astro-language-server", "biome", "..."],
+			"formatter": { "language_server": { "name": "biome" } }
+		},
+		"Terraform": {
+			"formatter": { "language_server": { "name": "terraform-ls" } }
+		}
+	},
+	"lsp": {
+		"astro-language-server": {
+			"initialization_options": {
+				"typescript": { "tsdk": "node_modules/typescript/lib" }
+			}
+		}
+	},
+	"file_scan_exclusions": ["**/.git", "**/node_modules", "**/dist", "**/.astro"]
+}

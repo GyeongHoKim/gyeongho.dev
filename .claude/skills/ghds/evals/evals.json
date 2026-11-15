@@ -1,0 +1,91 @@
+[
+  {
+    "id": 1,
+    "skills": ["ghds"],
+    "query": "Add a confirmation dialog on the Web Components version of our app that shows a title 'Delete item?' when the user clicks delete.",
+    "expected_output": "Uses <gh-modal heading=\"Delete item?\"> — not `title`, since Web Components' Modal uses the `heading` attribute while `title` is the React/React Native prop name for the identical concept.",
+    "files": [],
+    "expected_behavior": [
+      "Uses the `heading` attribute on <gh-modal>, not `title`",
+      "Does not rely on the native HTML `title` attribute for the dialog's accessible name"
+    ]
+  },
+  {
+    "id": 2,
+    "skills": ["ghds"],
+    "query": "Add a Checkbox to our React Native screen that toggles a 'subscribe' boolean in state.",
+    "expected_output": "Uses <Checkbox onCheckedChange={(checked) => setSubscribe(checked)} /> — React Native's Checkbox uses onCheckedChange with a bare boolean, not onChange with an event object.",
+    "files": [],
+    "expected_behavior": [
+      "Uses `onCheckedChange`, not `onChange`",
+      "The callback receives a bare boolean, not an event object"
+    ]
+  },
+  {
+    "id": 3,
+    "skills": ["ghds"],
+    "query": "Style a custom banner component to match our GHDS primary brand background and text color.",
+    "expected_output": "Uses var(--sys-color-bg-primary) / var(--sys-color-text-onPrimary) (or the equivalent tokens.sys.* JS access on React Native) rather than a hardcoded hex value, preserving the WCAG contrast guarantee.",
+    "files": [],
+    "expected_behavior": [
+      "No hardcoded hex/rgb color values",
+      "References sys.* or comp.* tokens, not ref.* tokens"
+    ]
+  },
+  {
+    "id": 4,
+    "skills": ["ghds"],
+    "query": "After a user saves a settings form successfully, show a brief confirmation and let them keep working on the page.",
+    "expected_output": "Uses Toast (auto-dismissing, non-blocking) rather than Modal or a persistent Alert, since this is a user-initiated action where the result doesn't need to stay pinned to the screen.",
+    "files": [],
+    "expected_behavior": [
+      "Recommends or implements Toast, not Modal",
+      "Does not block user interaction or require an explicit dismiss action"
+    ]
+  },
+  {
+    "id": 5,
+    "skills": ["ghds"],
+    "query": "Add an email input with a label, helper text explaining the required format, and an inline error shown when validation fails.",
+    "expected_output": "Wraps a single Input in FormField with label/helperText/error props, rather than hand-rolling a label and manually wiring aria-describedby/aria-invalid.",
+    "files": [],
+    "expected_behavior": [
+      "Uses FormField wrapping exactly one Input",
+      "Does not manually set aria-describedby/aria-invalid alongside FormField — FormField owns that wiring"
+    ]
+  },
+  {
+    "id": 6,
+    "skills": ["ghds"],
+    "query": "Add a neutral/tertiary 'Cancel' button on our React Native screen, matching the neutral button style used on our React web app.",
+    "expected_output": "Recognizes that React Native's Button variant union only supports 'primary' | 'danger' (no 'neutral') and does not pass variant=\"neutral\" to the React Native Button — uses 'primary' with a note about the platform gap, or an alternative approach.",
+    "files": [],
+    "expected_behavior": [
+      "Does not set variant=\"neutral\" on the React Native Button",
+      "Surfaces or works around the missing 'neutral' variant on React Native rather than silently misusing the prop"
+    ]
+  },
+  {
+    "id": 7,
+    "skills": ["ghds"],
+    "query": "Build a product list screen that shows a loading state before any data has ever been fetched, plus a lighter loading indicator on subsequent refetches.",
+    "expected_output": "Uses Skeleton for the first-paint loading state (no existing content on screen) and Spinner for subsequent refetches (existing content remains visible), per the Skeleton-vs-Spinner decision rule.",
+    "files": [],
+    "expected_behavior": [
+      "Uses Skeleton for the initial load with no prior content",
+      "Uses Spinner for subsequent loads where content is already visible",
+      "Does not use Spinner for the first-paint case"
+    ]
+  },
+  {
+    "id": 8,
+    "skills": ["ghds"],
+    "query": "Add a search input that filters a list as the user types, without hammering the backend on every keystroke.",
+    "expected_output": "Debounces the search callback roughly 300-400ms rather than calling the search function directly inside onChange.",
+    "files": [],
+    "expected_behavior": [
+      "Applies a debounce (~300-400ms) before invoking the search/filter function",
+      "Does not call the search function synchronously on every onChange event"
+    ]
+  }
+]

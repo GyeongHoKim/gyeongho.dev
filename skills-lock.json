@@ -1,0 +1,59 @@
+{
+  "version": 2,
+  "skills": {
+    "astro": {
+      "source": "astrolicious/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/astro/SKILL.md",
+      "computedHash": "125dee2aaf517f986de72356842011af0b1641a13bf8c71f226dee2e41c38fe6"
+    },
+    "deployments-cicd": {
+      "source": "vercel/vercel-plugin",
+      "sourceType": "github",
+      "skillPath": "skills/deployments-cicd/SKILL.md",
+      "computedHash": "d312a670cbe5dd86e2a0d076a4b255d3271a0f5d9651cbf4231153fc4d6d5816"
+    },
+    "env-vars": {
+      "source": "vercel/vercel-plugin",
+      "sourceType": "github",
+      "skillPath": "skills/env-vars/SKILL.md",
+      "computedHash": "1db73916d215540f2cdea85d72c9017bc1625b1b04a9d9e7943a9cf1318366fa"
+    },
+    "find-docs": {
+      "source": "upstash/context7",
+      "sourceType": "github",
+      "skillPath": "skills/find-docs/SKILL.md",
+      "computedHash": "2f042e7e9711a2a720b595083eb13c7f06380e6557f2eb689ce3182d4380e39d"
+    },
+    "ghds": {
+      "source": "GyeongHoKim/gyeongho-design-system",
+      "sourceType": "github",
+      "skillPath": "skills/ghds/SKILL.md",
+      "computedHash": "3af89de8d91385d8fdbdb2e5a7f5c8e85c5432f3e9b3baa66083f658f9c158ae"
+    },
+    "modern-web-guidance": {
+      "source": "GoogleChrome/modern-web-guidance",
+      "sourceType": "github",
+      "skillPath": "skills/modern-web-guidance/SKILL.md",
+      "computedHash": "9e69ce00dc314b64f6664031b70295ea46c7de93ac682c624808df6e48e08b66"
+    },
+    "terraform-search-import": {
+      "source": "hashicorp/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/terraform/skills/terraform-search-import/SKILL.md",
+      "computedHash": "7108fbb27c4cf308b4b01c1ca00d20d10c61a0efb9b2d0d4eeea24f0b3255a0e"
+    },
+    "terraform-style-guide": {
+      "source": "hashicorp/agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/terraform/skills/terraform-style-guide/SKILL.md",
+      "computedHash": "39a686ad7d71d99e5fbead0a5cbd666c096af8d38d152f7597eb314e5b2b622c"
+    },
+    "vercel-cli": {
+      "source": "vercel/vercel-plugin",
+      "sourceType": "github",
+      "skillPath": "skills/vercel-cli/SKILL.md",
+      "computedHash": "407edba925a15c76524d92b51647ac72573ddb85d6106c6cf4879d8ea6216a52"
+    }
+  }
+}

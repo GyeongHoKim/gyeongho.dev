@@ -1,0 +1,42 @@
+{
+	"name": "gyeongho.dev",
+	"private": true,
+	"type": "module",
+	"packageManager": "pnpm@12.21.0",
+	"engines": {
+		"node": ">=26"
+	},
+	"scripts": {
+		"dev": "astro dev",
+		"build": "astro build",
+		"preview": "astro preview",
+		"check": "astro check",
+		"lint": "biome check .",
+		"format": "biome check --write .",
+		"test": "vitest run",
+		"e2e": "playwright test --pass-with-no-tests"
+	},
+	"dependencies": {
+		"@astrojs/rss": "4.0.19",
+		"@astrojs/sitemap": "3.7.5",
+		"@fontsource-variable/noto-sans-kr": "5.3.1",
+		"@fontsource-variable/nunito-sans": "5.3.0",
+		"@fontsource/gaegu": "5.3.0",
+		"@fontsource/gochi-hand": "5.3.0",
+		"@ghds/tokens": "0.13.0",
+		"@ghds/web-components": "0.12.0",
+		"@gyeonghokim/fisheye.js": "2.2.0",
+		"astro": "7.4.12",
+		"motion": "14.14.0",
+		"pdfjs-dist": "6.5.438"
+	},
+	"devDependencies": {
+		"@astrojs/check": "0.9.12",
+		"@astrojs/language-server": "2.17.3",
+		"@biomejs/biome": "2.6.8",
+		"@playwright/test": "1.65.1",
+		"typescript": "6.0.3",
+		"typescript-language-server": "6.1.0",
+		"vitest": "5.1.0"
+	}
+}

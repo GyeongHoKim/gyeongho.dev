@@ -1,0 +1,60 @@
+[language-server.astro-ls]
+command = "astro-ls"
+args = ["--stdio"]
+config = { typescript = { tsdk = "node_modules/typescript/lib" }, environment = "node" }
+
+[language-server.biome]
+command = "biome"
+args = ["lsp-proxy"]
+
+[language-server.typescript-language-server]
+command = "typescript-language-server"
+args = ["--stdio"]
+
+[language-server.terraform-ls]
+command = "terraform-ls"
+args = ["serve"]
+
+[[language]]
+name = "astro"
+language-servers = ["astro-ls", "biome"]
+formatter = { command = "biome", args = ["format", "--stdin-file-path", "file.astro"] }
+auto-format = true
+
+[[language]]
+name = "typescript"
+language-servers = [
+  { name = "typescript-language-server", except-features = ["format"] },
+  "biome",
+]
+auto-format = true
+
+[[language]]
+name = "javascript"
+language-servers = [
+  { name = "typescript-language-server", except-features = ["format"] },
+  "biome",
+]
+auto-format = true
+
+[[language]]
+name = "json"
+language-servers = ["biome"]
+auto-format = true
+
+[[language]]
+name = "css"
+language-servers = ["biome"]
+auto-format = true
+
+[[language]]
+name = "hcl"
+language-servers = ["terraform-ls"]
+language-id = "terraform"
+auto-format = true
+
+[[language]]
+name = "tfvars"
+language-servers = ["terraform-ls"]
+language-id = "terraform-vars"
+auto-format = true

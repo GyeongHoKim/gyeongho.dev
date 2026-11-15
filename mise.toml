@@ -1,0 +1,71 @@
+min_version = "2026.11.0"
+
+[settings]
+lockfile = true
+
+[tools]
+node = "26.13.1"
+pnpm = "12.21.0"
+terraform = "1.15.5"
+terraform-ls = "0.39.1"
+uv = "0.13.8"
+
+[env]
+# astro-ls, biome, typescript-language-server를 에디터가 찾을 수 있게 한다.
+_.path = ["{{config_root}}/node_modules/.bin"]
+ASTRO_TELEMETRY_DISABLED = "1"
+
+[tasks.install]
+description = "Install dependencies"
+run = "pnpm install --frozen-lockfile"
+sources = ["package.json", "pnpm-lock.yaml", "mise.toml"]
+outputs = ["node_modules/.pnpm/lock.yaml"]
+
+[tasks.dev]
+description = "Start the dev server"
+depends = ["install"]
+run = "pnpm dev"
+
+[tasks.build]
+description = "Build the site into dist/"
+depends = ["install"]
+run = "pnpm build"
+
+[tasks.check]
+description = "Lint, format check and type check"
+depends = ["install"]
+run = ["pnpm lint", "pnpm check"]
+
+[tasks.test]
+description = "Run unit tests"
+depends = ["install"]
+run = "pnpm test"
+
+[tasks.e2e]
+description = "Run browser tests against the built site"
+depends = ["build"]
+run = "pnpm e2e"
+
+[tasks.ci]
+description = "Everything CI runs"
+depends = ["check", "test", "e2e"]
+
+[tasks."infra:init"]
+description = "Initialize Terraform"
+run = "terraform -chdir=infra init"
+
+[tasks."infra:check"]
+description = "Check Terraform formatting and validity"
+depends = ["infra:init"]
+run = ["terraform -chdir=infra fmt -check", "terraform -chdir=infra validate"]
+
+[tasks."infra:plan"]
+description = "Show the Terraform plan"
+depends = ["infra:init"]
+run = "terraform -chdir=infra plan"
+
+[tasks."infra:apply"]
+description = "Apply the Terraform plan"
+depends = ["infra:init"]
+interactive = true
+run = "terraform -chdir=infra apply"
