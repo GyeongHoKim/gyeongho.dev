@@ -6,6 +6,7 @@ import "@fontsource/gaegu";
 import "@fontsource/gaegu/700.css";
 import "@ghds/tokens/css";
 import "../styles/global.css";
+import FisheyeFilter from "../components/FisheyeFilter.astro";
 import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
 import MobileMenu from "../components/MobileMenu.astro";
@@ -68,6 +69,7 @@ const ogLocale = locale === "ko" ? "ko_KR" : "en_US";
 		<slot name="head" />
 	</head>
 	<body>
+		<FisheyeFilter />
 		<div class="page">
 			<Header locale={locale} current={current} />
 			<main>
@@ -78,6 +80,13 @@ const ogLocale = locale === "ko" ? "ko_KR" : "en_US";
 		<MobileMenu locale={locale} current={current} />
 		<script>
 		import "../scripts/ghds";
+		import { initEgg } from "../scripts/fisheye-egg";
+
+		const logo = document.querySelector<HTMLElement>(".brand");
+		if (logo)
+			initEgg(logo, document.documentElement, {
+				reducedMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
+			});
 		</script>
 	</body>
 </html>

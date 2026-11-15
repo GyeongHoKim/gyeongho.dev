@@ -308,3 +308,9 @@ a:hover {
 	background: var(--button88-bg, var(--sys-color-paper-primary));
 	box-shadow: 2px 2px 0 0 var(--sys-color-border-default);
 }
+
+/* Logo easter egg: bend the page like a fisheye lens (see scripts/fisheye-egg.ts). */
+/* The wrapper, not body: a filter on body would re-anchor fixed elements. */
+html[data-fisheye] .page {
+	filter: url(#fisheye);
+}
