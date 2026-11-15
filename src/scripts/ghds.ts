@@ -8,3 +8,4 @@ import "@ghds/web-components/marker";
 import "@ghds/web-components/slider";
 import "@ghds/web-components/toast";
 import "@ghds/web-components/toaster";
+import "@ghds/web-components/toggle";

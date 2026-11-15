@@ -1,0 +1,359 @@
+---
+import { talks } from "../../data/talks";
+import { getLocaleStaticPaths, type Locale, t } from "../../i18n";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+export const getStaticPaths = getLocaleStaticPaths;
+
+const locale = Astro.params.lang as Locale;
+const [featured] = talks;
+const covers = {
+	seminar: ["primary", "warning"],
+	award: ["success"],
+} as const;
+const coverTone = (index: number, type: "seminar" | "award") => {
+	const tones = covers[type];
+	return tones[index % tones.length];
+};
+const reviewMessage = t(locale, "talks.review");
+const filters = ["all", "seminar", "award"] as const;
+---
+
+<BaseLayout
+	locale={locale}
+	title={`${t(locale, "talks.title")} — GyeongHo Kim`}
+	description={t(locale, "talks.description")}
+	current="talks"
+>
+	<section class="container head" aria-labelledby="talks-h">
+		<h1 id="talks-h" class="page-title">{t(locale, "talks.title")}</h1>
+		<p class="lead">{t(locale, "talks.lead")}</p>
+	</section>
+
+	<section class="container featured" aria-labelledby="feat-h">
+		<div class="slide-wrap">
+			<div class="slide">
+				<span class="mono kicker">
+					{`${t(locale, "talks.featured.series")} · ${featured.date}`}
+				</span>
+				<span class="hand slide-title">{featured.title[locale]}</span>
+				<span class="sub">{t(locale, "talks.speaker")}</span>
+			</div>
+		</div>
+		<div class="info">
+			<gh-badge variant="primary">{t(locale, "talks.recent")}</gh-badge>
+			<h2 id="feat-h" class="hand">{featured.title[locale]}</h2>
+			<dl>
+				<dt>{t(locale, "talks.eventLabel")}</dt>
+				<dd>{t(locale, "talks.featured.event")}</dd>
+				<dt>{t(locale, "talks.dateLabel")}</dt>
+				<dd>{featured.date}</dd>
+				<dt>{t(locale, "talks.venue")}</dt>
+				<dd>{t(locale, "talks.featured.venue")}</dd>
+				<dt>{t(locale, "talks.audience")}</dt>
+				<dd>{t(locale, "talks.featured.audience")}</dd>
+			</dl>
+			<p class="summary">
+				{t(locale, "talks.featured.summaryBefore")}<code>@ids/*</code>
+				{t(locale, "talks.featured.summaryAfter")}
+			</p>
+			<div class="actions">
+				{featured.slides === "review" && (
+					<gh-button variant="primary" data-review data-message={reviewMessage}>
+						{t(locale, "talks.slides")}
+					</gh-button>
+				)}
+				{featured.slides !== null && featured.slides !== "review" && (
+					<gh-button variant="primary" href={featured.slides.href}>
+						{t(locale, "talks.slides")}
+					</gh-button>
+				)}
+			</div>
+		</div>
+	</section>
+
+	<section class="container all" aria-labelledby="all-h" data-talks>
+		<div class="all-head">
+			<h2 id="all-h" class="section-title">{t(locale, "talks.all")}</h2>
+			<fieldset aria-label={t(locale, "talks.filter.label")} class="filters">
+				{filters.map((filter) => (
+					<gh-toggle
+						pressed={filter === "all" ? "" : undefined}
+						data-filter={filter}
+					>
+						{t(locale, `talks.filter.${filter}`)}
+					</gh-toggle>
+				))}
+			</fieldset>
+		</div>
+		<div class="grid">
+			{talks.map((talk, i) => (
+				<article data-type={talk.type}>
+					<div
+						class="cover"
+						data-tone={coverTone(i, talk.type)}
+						style={`--tilt: ${[-1.5, 1, -0.5, 1.5][i % 4]}deg`}
+					>
+						<span class="hand cover-title">{talk.title[locale]}</span>
+					</div>
+					<div class="meta">
+						<gh-badge variant={talk.type === "award" ? "success" : "primary"}>
+							{t(locale, `talks.kind.${talk.type}`)}
+						</gh-badge>
+						<span class="mono date">{talk.date}</span>
+					</div>
+					<h3>{talk.title[locale]}</h3>
+					<span class="event">{talk.event[locale]}</span>
+					<div class="links">
+						{talk.slides === "review" && (
+							<a href="#all-h" data-review data-message={reviewMessage}>
+								{t(locale, "talks.slidesLink")}
+								<gh-icon name="external-link" size="sm"></gh-icon>
+							</a>
+						)}
+						{talk.slides !== null && talk.slides !== "review" && (
+							<a href={talk.slides.href}>
+								{t(locale, "talks.slidesLink")}
+								<gh-icon name="external-link" size="sm"></gh-icon>
+							</a>
+						)}
+					</div>
+				</article>
+			))}
+		</div>
+	</section>
+
+	<section class="container ask" aria-labelledby="ask-h">
+		<gh-card>
+			<div class="ask-box">
+				<div class="ask-text">
+					<h2 id="ask-h" class="hand">{t(locale, "talks.ask.title")}</h2>
+					<span>{t(locale, "talks.ask.text")}</span>
+				</div>
+				<a href="mailto:me@gyeongho.dev">
+					<gh-icon name="mail" size="sm"></gh-icon>me@gyeongho.dev
+				</a>
+			</div>
+		</gh-card>
+	</section>
+
+	<gh-toaster position="bottom-center"></gh-toaster>
+</BaseLayout>
+
+<script>
+import { initReviewToast, initTalkFilter } from "../../scripts/talks";
+
+const list = document.querySelector<HTMLElement>("[data-talks]");
+if (list) initTalkFilter(list);
+const toaster = document.querySelector("gh-toaster");
+if (toaster)
+	initReviewToast(
+		toaster,
+		document.querySelectorAll<HTMLElement>("[data-review]"),
+	);
+</script>
+
+<style>
+.head {
+	padding-block: var(--sys-spacing-3xl) var(--sys-spacing-xl);
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-md);
+}
+.lead {
+	margin: 0;
+	max-width: 38em;
+	font-size: calc(var(--sys-typography-body-fontSize) * 1.125);
+	color: var(--sys-color-text-secondary);
+}
+.featured {
+	padding-block: var(--sys-spacing-md) var(--sys-spacing-2xl);
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--sys-spacing-2xl);
+	align-items: center;
+}
+.slide-wrap {
+	flex: 1 1 560px;
+	min-width: 0;
+}
+.slide,
+.cover {
+	box-sizing: border-box;
+	background: var(--sys-color-paper-primary);
+	border: var(--sys-border-width-thick) solid var(--sys-color-text-primary);
+}
+.slide {
+	aspect-ratio: 16 / 9;
+	padding: var(--sys-spacing-2xl);
+	border-radius: var(--sys-radius-lg);
+	box-shadow: 6px 6px 0 var(--sys-color-border-default);
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: var(--sys-spacing-md);
+}
+.kicker {
+	font-size: var(--sys-typography-caption-fontSize);
+	color: var(--sys-color-text-secondary);
+}
+.slide-title {
+	font-size: calc(var(--sys-typography-heading-fontSize) * 1.4);
+	line-height: var(--sys-typography-heading-lineHeight);
+}
+.sub {
+	color: var(--sys-color-text-secondary);
+}
+.info {
+	flex: 1 1 340px;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: var(--sys-spacing-md);
+}
+.info h2 {
+	margin: 0;
+	font-size: calc(var(--sys-typography-heading-fontSize) * 1.1);
+	line-height: var(--sys-typography-heading-lineHeight);
+}
+dl {
+	margin: 0;
+	display: grid;
+	grid-template-columns: auto 1fr;
+	gap: var(--sys-spacing-xs) var(--sys-spacing-lg);
+	font-size: var(--sys-typography-caption-fontSize);
+}
+dt {
+	color: var(--sys-color-icon-muted);
+}
+dd {
+	margin: 0;
+}
+.summary {
+	margin: 0;
+	color: var(--sys-color-text-secondary);
+}
+.actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--sys-spacing-sm);
+}
+.all {
+	padding-block: var(--sys-spacing-xl) var(--sys-spacing-3xl);
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-xl);
+}
+.all-head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--sys-spacing-lg);
+}
+.filters {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	min-inline-size: 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--sys-spacing-sm);
+}
+.grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
+	gap: var(--sys-spacing-2xl);
+}
+article {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-md);
+}
+/* A display value here would override the hidden attribute. */
+article[hidden] {
+	display: none;
+}
+.cover {
+	aspect-ratio: 16 / 9;
+	padding: var(--sys-spacing-lg);
+	display: flex;
+	align-items: flex-end;
+	border-radius: var(--sys-radius-md);
+	box-shadow: 4px 4px 0 var(--sys-color-border-default);
+	transform: rotate(var(--tilt));
+}
+.cover[data-tone="warning"] {
+	background: var(--sys-color-paper-warning);
+}
+.cover[data-tone="success"] {
+	background: var(--sys-color-paper-success);
+}
+.cover-title {
+	font-size: var(--sys-typography-title-fontSize);
+	line-height: var(--sys-typography-heading-lineHeight);
+}
+.meta {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--sys-spacing-sm);
+}
+.date {
+	font-size: var(--sys-typography-caption-fontSize);
+	color: var(--sys-color-icon-muted);
+}
+h3 {
+	margin: 0;
+	font-size: var(--sys-typography-title-fontSize);
+	line-height: var(--sys-typography-title-lineHeight);
+}
+.event {
+	font-size: var(--sys-typography-caption-fontSize);
+	color: var(--sys-color-text-secondary);
+}
+.links {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--sys-spacing-lg);
+	font-weight: var(--sys-typography-label-fontWeight);
+}
+.links a,
+.ask-box a {
+	min-height: 44px;
+	display: inline-flex;
+	align-items: center;
+	gap: var(--sys-spacing-xs);
+}
+.ask {
+	padding-block: 0 var(--sys-spacing-4xl);
+}
+.ask-box {
+	padding: var(--sys-spacing-xl);
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--sys-spacing-lg);
+}
+.ask-text {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-xs);
+	color: var(--sys-color-text-secondary);
+}
+.ask-text h2 {
+	margin: 0;
+	font-size: var(--sys-typography-title-fontSize);
+	color: var(--sys-color-text-primary);
+}
+@media (max-width: 760px) {
+	.slide {
+		padding: var(--sys-spacing-lg);
+	}
+	.slide-title {
+		font-size: var(--sys-typography-heading-fontSize);
+	}
+}
+</style>
