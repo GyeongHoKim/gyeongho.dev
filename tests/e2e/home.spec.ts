@@ -16,7 +16,7 @@ test("lists every project and shows the empty Lately state", async ({
 }) => {
 	await page.goto("/en/");
 	await expect(page.locator("gh-card[variant=sticky]")).toHaveCount(
-		projects.length,
+		projects.filter((project) => !("portfolioOnly" in project)).length,
 	);
 	await expect(page.getByTestId("lately-empty")).toBeVisible();
 });

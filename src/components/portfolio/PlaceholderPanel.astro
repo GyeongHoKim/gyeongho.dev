@@ -1,0 +1,47 @@
+---
+import { type Locale, t } from "../../i18n";
+
+interface Props {
+	locale: Locale;
+	title: string;
+}
+
+const { locale, title } = Astro.props;
+---
+
+<div class="soon">
+	<gh-icon name="eye" size="lg"></gh-icon>
+	<span class="hand title">{title}</span>
+	<span class="text">{t(locale, "portfolio.soon")}</span>
+</div>
+
+<style>
+.soon {
+	width: 100%;
+	height: 100%;
+	box-sizing: border-box;
+	padding: var(--sys-spacing-lg);
+	border: var(--sys-border-width-thick) dashed var(--sys-color-border-strong);
+	border-radius: var(--sys-radius-lg);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: var(--sys-spacing-sm);
+	text-align: center;
+	color: var(--sys-color-icon-muted);
+}
+.title {
+	font-size: var(--sys-typography-title-fontSize);
+	color: var(--sys-color-text-secondary);
+}
+.text {
+	font-size: var(--sys-typography-caption-fontSize);
+}
+@media (max-width: 760px) {
+	.soon {
+		padding: var(--sys-spacing-sm);
+		gap: var(--sys-spacing-xs);
+	}
+}
+</style>

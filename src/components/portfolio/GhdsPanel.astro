@@ -1,0 +1,60 @@
+---
+import { type Locale, t } from "../../i18n";
+
+interface Props {
+	locale: Locale;
+}
+
+const { locale } = Astro.props;
+---
+
+<div class="ghds">
+	<span class="hand title">{t(locale, "portfolio.ghds.title")}</span>
+	<div class="row">
+		<gh-button variant="primary">Save changes</gh-button>
+		<gh-button variant="neutral">Cancel</gh-button>
+		<gh-button variant="danger">Delete project</gh-button>
+	</div>
+	<div class="row small">
+		<gh-badge variant="primary">primary</gh-badge>
+		<gh-badge variant="success">success</gh-badge>
+		<gh-badge variant="warning">warning</gh-badge>
+		<gh-badge variant="info">info</gh-badge>
+	</div>
+	<gh-card>
+		<p class="card">{t(locale, "portfolio.ghds.card")}</p>
+	</gh-card>
+</div>
+
+<style>
+.ghds {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: var(--sys-spacing-lg);
+}
+.title {
+	font-size: var(--sys-typography-heading-fontSize);
+}
+.row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--sys-spacing-sm);
+}
+.row.small {
+	gap: var(--sys-spacing-xs);
+}
+.card {
+	margin: 0;
+	padding: var(--sys-spacing-md) var(--sys-spacing-lg);
+}
+@media (max-width: 760px) {
+	.ghds {
+		gap: var(--sys-spacing-sm);
+	}
+	.title {
+		font-size: var(--sys-typography-title-fontSize);
+	}
+}
+</style>

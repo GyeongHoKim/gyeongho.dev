@@ -1,0 +1,321 @@
+---
+import MediaFrame from "../../components/portfolio/MediaFrame.astro";
+import { getLocaleStaticPaths, type Locale, localePath, t } from "../../i18n";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { projects as allProjects } from "../../lib/projects";
+
+export const getStaticPaths = getLocaleStaticPaths;
+
+const locale = Astro.params.lang as Locale;
+// Company work first, then open source. The sort is stable, so the JSON order holds inside a chapter.
+const chapterOrder = { company: 0, oss: 1 } as const;
+const rank = (chapter?: "company" | "oss") =>
+	chapter ? chapterOrder[chapter] : 2;
+const projects = [...allProjects].sort(
+	(a, b) => rank(a.chapter) - rank(b.chapter),
+);
+const total = projects.length;
+const pad = (n: number) => String(n).padStart(2, "0");
+const isExternal = (href: string) => /^https?:/.test(href);
+// A link back to this very page is noise on this page.
+const portfolioHref = (href: string) => href === "/portfolio/";
+---
+
+<BaseLayout
+	locale={locale}
+	title={`${t(locale, "portfolio.title")} · gyeongho.dev`}
+	description={t(locale, "portfolio.description")}
+	current="portfolio"
+>
+	<div class="progress no-print" aria-hidden="true">
+		<div class="bar" data-progress></div>
+	</div>
+
+	<section class="container intro" aria-labelledby="work-h">
+		<h1 id="work-h" class="hand">{t(locale, "portfolio.title")}</h1>
+		<span class="hint">
+			<gh-icon name="arrow-down" size="sm"></gh-icon>
+			{t(locale, "portfolio.scrollHint")}
+		</span>
+	</section>
+
+	<div class="container showcase" data-testid="card-stack" data-card-stack>
+		<div class="steps">
+			{projects.map((project, i) => {
+				const links = project.links.filter((link) => !portfolioHref(link.href));
+				return (
+					<>
+						{(i === 0 || projects[i - 1].chapter !== project.chapter) &&
+							project.chapter && (
+								<h2 class="chapter">
+									{t(locale, `portfolio.chapter.${project.chapter}`)}
+								</h2>
+							)}
+						<article class="step" data-step data-index={i}>
+							<span class="mono num">
+								{pad(i + 1)} / {pad(total)}
+							</span>
+							<h3 class="hand" data-testid="project-name">
+								{project.name[locale]}
+							</h3>
+							<p class="detail">
+								{(project.detail ?? project.description)[locale]}
+							</p>
+							{project.did && (
+								<ul class="did" aria-label={t(locale, "portfolio.did")}>
+									{project.did[locale].map((line) => (
+										<li>{line}</li>
+									))}
+								</ul>
+							)}
+							<ul class="tags" aria-label={t(locale, "portfolio.tags")}>
+								{project.tags[locale].map((tag) => (
+									<li>
+										<gh-badge variant="neutral">{tag}</gh-badge>
+									</li>
+								))}
+							</ul>
+							{links.length > 0 && (
+								<ul class="links">
+									{links.map((link) => (
+										<li>
+											<a
+												href={
+													isExternal(link.href)
+														? link.href
+														: localePath(locale, link.href)
+												}
+											>
+												{link.label[locale]}
+												{isExternal(link.href) && (
+													<gh-icon name="external-link" size="sm"></gh-icon>
+												)}
+											</a>
+										</li>
+									))}
+								</ul>
+							)}
+						</article>
+					</>
+				);
+			})}
+		</div>
+
+		<div class="media">
+			<MediaFrame locale={locale} projects={projects} />
+		</div>
+	</div>
+
+	<section class="container more" aria-labelledby="more-h">
+		<div class="more-text">
+			<h2 id="more-h" class="hand">{t(locale, "portfolio.more.title")}</h2>
+			<span>{t(locale, "portfolio.more.text")}</span>
+		</div>
+		<div class="more-links">
+			<a href={localePath(locale, "resume")}>
+				{t(locale, "portfolio.more.resume")}
+				<gh-icon name="arrow-right" size="sm"></gh-icon>
+			</a>
+			<a href={localePath(locale, "talks")}>
+				{t(locale, "portfolio.more.talks")}
+				<gh-icon name="arrow-right" size="sm"></gh-icon>
+			</a>
+		</div>
+	</section>
+</BaseLayout>
+
+<script>
+import { initCardStack } from "../../scripts/card-stack";
+
+const root = document.querySelector<HTMLElement>("[data-card-stack]");
+if (root)
+	initCardStack(root, {
+		reducedMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
+	});
+</script>
+
+<style>
+.progress {
+	position: fixed;
+	inset: 0 0 auto 0;
+	height: 4px;
+	z-index: var(--sys-zIndex-sticky);
+	background: var(--sys-color-border-subtle);
+}
+.bar {
+	height: 100%;
+	background: var(--sys-color-bg-primary-default);
+	transform: scaleX(0);
+	transform-origin: left;
+}
+.intro {
+	padding-block: var(--sys-spacing-3xl) var(--sys-spacing-xl);
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-md);
+}
+h1 {
+	margin: 0;
+	font-size: calc(var(--sys-typography-heading-fontSize) * 1.3);
+	line-height: var(--sys-typography-heading-lineHeight);
+}
+.lead {
+	margin: 0;
+	max-width: 38em;
+	font-size: calc(var(--sys-typography-body-fontSize) * 1.125);
+	color: var(--sys-color-text-secondary);
+}
+.hint {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--sys-spacing-xs);
+	font-size: var(--sys-typography-caption-fontSize);
+	font-weight: var(--sys-typography-label-fontWeight);
+	color: var(--sys-color-icon-muted);
+}
+.showcase {
+	padding-block: 0 var(--sys-spacing-3xl);
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--sys-spacing-3xl);
+	align-items: flex-start;
+}
+.steps {
+	flex: 1 1 400px;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+}
+.chapter {
+	margin: var(--sys-spacing-3xl) 0 0;
+	font-size: var(--sys-typography-caption-fontSize);
+	font-weight: var(--sys-typography-heading-fontWeight);
+	letter-spacing: var(--sys-typography-tracking-wide);
+	text-transform: uppercase;
+	color: var(--sys-color-icon-muted);
+}
+.step {
+	min-height: 560px;
+	box-sizing: border-box;
+	padding-block: var(--sys-spacing-3xl);
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: var(--sys-spacing-md);
+}
+/* Dim inactive steps only once the script marks the active one. */
+[data-ready] .step:not([data-active]) {
+	opacity: 0.35;
+	transform: translateX(calc(var(--sys-spacing-sm) * -1));
+}
+.num {
+	font-size: var(--sys-typography-caption-fontSize);
+	color: var(--sys-color-icon-muted);
+}
+h3 {
+	margin: 0;
+	font-size: calc(var(--sys-typography-title-fontSize) * 1.25);
+	line-height: var(--sys-typography-title-lineHeight);
+}
+.detail {
+	margin: 0;
+	font-size: calc(var(--sys-typography-body-fontSize) * 1.06);
+	color: var(--sys-color-text-secondary);
+}
+.did {
+	margin: 0;
+	padding-left: var(--sys-spacing-xl);
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-xs);
+	color: var(--sys-color-text-secondary);
+}
+.tags,
+.links {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	display: flex;
+	flex-wrap: wrap;
+}
+.tags {
+	gap: var(--sys-spacing-xs);
+}
+.links {
+	gap: 0 var(--sys-spacing-lg);
+	font-weight: var(--sys-typography-label-fontWeight);
+}
+.links a {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--sys-spacing-xs);
+	min-height: 44px;
+}
+.media {
+	flex: 1 1 520px;
+	min-width: 0;
+	position: sticky;
+	top: var(--sys-spacing-2xl);
+	align-self: flex-start;
+}
+.more {
+	padding-block: var(--sys-spacing-xl) var(--sys-spacing-4xl);
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--sys-spacing-xl);
+	align-items: center;
+	justify-content: space-between;
+}
+.more-text {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-xs);
+	color: var(--sys-color-text-secondary);
+	flex: 1 1 400px;
+}
+.more-text h2 {
+	margin: 0;
+	font-size: var(--sys-typography-heading-fontSize);
+	color: var(--sys-color-text-primary);
+}
+.more-links {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--sys-spacing-lg);
+	font-weight: var(--sys-typography-label-fontWeight);
+}
+.more-links a {
+	min-height: 44px;
+	display: inline-flex;
+	align-items: center;
+	gap: var(--sys-spacing-xs);
+}
+
+/* Only animate when motion is welcome, so reduced motion leaves no running animations. */
+@media (prefers-reduced-motion: no-preference) {
+	.step {
+		transition:
+			opacity var(--sys-animation-duration-normal)
+			var(--sys-animation-easing-standard),
+			transform var(--sys-animation-duration-normal)
+			var(--sys-animation-easing-standard);
+	}
+}
+
+/* On narrow screens the screen stays pinned on top while the steps scroll under it. */
+@media (max-width: 760px) {
+	.showcase {
+		gap: var(--sys-spacing-lg);
+	}
+	.media {
+		order: -1;
+		flex-basis: 100%;
+		top: var(--sys-spacing-sm);
+		z-index: var(--sys-zIndex-sticky);
+	}
+	.step {
+		min-height: 60vh;
+		padding-block: var(--sys-spacing-xl);
+	}
+}
+</style>

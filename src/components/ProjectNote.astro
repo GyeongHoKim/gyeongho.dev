@@ -16,10 +16,10 @@ const isExternal = (href: string) => /^https?:/.test(href);
 
 <gh-card variant="sticky" fastener="tape" tone={tone} tilt={tilt} interactive>
 	<article class="note-body">
-		<h3 class="hand">{project.name}</h3>
+		<h3 class="hand">{project.name[locale]}</h3>
 		<p class="desc">{project.description[locale]}</p>
 		<ul class="tags" aria-label={t(locale, "home.tags")}>
-			{project.tags.map((tag) => (
+			{project.tags[locale].map((tag) => (
 				<li>
 					<gh-badge variant="neutral">{tag}</gh-badge>
 				</li>

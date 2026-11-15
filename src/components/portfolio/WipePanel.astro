@@ -1,0 +1,108 @@
+---
+import { Image } from "astro:assets";
+import before from "../../assets/home/cam1.jpg";
+import after from "../../assets/portfolio/fisheye-after.jpg";
+import { type Locale, t } from "../../i18n";
+
+interface Props {
+	locale: Locale;
+}
+
+const { locale } = Astro.props;
+---
+
+<div class="wipe" data-wipe data-step-progress>
+	<Image
+		class="wipe-img"
+		src={before}
+		alt={t(locale, "portfolio.wipe.beforeAlt")}
+		width={900}
+	/>
+	<Image
+		class="wipe-img"
+		data-wipe-after
+		style="clip-path: inset(0 100% 0 0)"
+		src={after}
+		alt={t(locale, "portfolio.wipe.afterAlt")}
+		width={900}
+	/>
+	<div class="line" data-wipe-line aria-hidden="true"></div>
+	<span
+		class="label"
+		data-wipe-label
+		data-before={t(locale, "portfolio.wipe.before")}
+		data-during={t(locale, "portfolio.wipe.during")}
+		data-after={t(locale, "portfolio.wipe.after")}
+	>
+		{t(locale, "portfolio.wipe.before")}
+	</span>
+</div>
+
+<script>
+import { STEP_PROGRESS, stepProgress } from "../../scripts/card-stack";
+
+// The straightened photo wipes in over the fisheye one as its step scrolls by.
+for (const wipe of document.querySelectorAll<HTMLElement>("[data-wipe]")) {
+	const card = wipe.closest<HTMLElement>("[data-card]");
+	const after = wipe.querySelector<HTMLElement>("[data-wipe-after]");
+	const line = wipe.querySelector<HTMLElement>("[data-wipe-line]");
+	const label = wipe.querySelector<HTMLElement>("[data-wipe-label]");
+	if (!card || !after || !line || !label) continue;
+	const apply = () => {
+		const w = stepProgress(card);
+		after.style.clipPath = `inset(0 ${((1 - w) * 100).toFixed(1)}% 0 0)`;
+		line.style.left = `${(w * 100).toFixed(1)}%`;
+		line.style.opacity = w > 0.01 && w < 0.99 ? "1" : "0";
+		const d = label.dataset;
+		label.textContent =
+			w < 0.05
+				? (d.before ?? "")
+				: w > 0.95
+					? (d.after ?? "")
+					: `${d.during ?? ""} ${Math.round(w * 100)}%`;
+	};
+	card.addEventListener(STEP_PROGRESS, apply);
+	apply();
+}
+</script>
+
+<style>
+.wipe {
+	position: relative;
+	height: 100%;
+	overflow: hidden;
+}
+.wipe :global(.wipe-img) {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+}
+.line {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	width: var(--sys-border-width-thick);
+	margin-left: calc(var(--sys-border-width-thick) / -2);
+	background: var(--sys-color-bg-canvas);
+	box-shadow: 0 0 0 1px var(--sys-color-border-strong);
+	opacity: 0;
+}
+.label {
+	position: absolute;
+	left: var(--sys-spacing-md);
+	bottom: var(--sys-spacing-md);
+	padding: var(--sys-spacing-xs) var(--sys-spacing-sm);
+	border-radius: var(--sys-radius-pill);
+	background: color-mix(
+		in srgb,
+		var(--sys-color-bg-overlay) calc(var(--sys-opacity-scrim) * 100%),
+		transparent
+	);
+	color: var(--sys-color-text-onPrimary);
+	font-size: var(--sys-typography-caption-fontSize);
+	font-weight: var(--sys-typography-label-fontWeight);
+}
+</style>

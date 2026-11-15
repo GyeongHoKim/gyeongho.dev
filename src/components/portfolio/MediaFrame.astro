@@ -1,0 +1,226 @@
+---
+import { type Locale, t } from "../../i18n";
+import { portfolioImage, portfolioVideo } from "../../lib/portfolio-assets";
+import type { CustomPanel, Project } from "../../lib/projects";
+import FlowPanel from "./FlowPanel.astro";
+import GhdsPanel from "./GhdsPanel.astro";
+import ImagePanel from "./ImagePanel.astro";
+import PlaceholderPanel from "./PlaceholderPanel.astro";
+import VideoPanel from "./VideoPanel.astro";
+import WipePanel from "./WipePanel.astro";
+
+interface Props {
+	locale: Locale;
+	/** One screen per project, in this order. */
+	projects: Project[];
+}
+
+const { locale, projects } = Astro.props;
+const first = projects[0];
+// `flush` panels fill the screen edge to edge on a dark backdrop.
+const custom = {
+	wipe: { Panel: WipePanel, flush: true },
+	ghds: { Panel: GhdsPanel, flush: false },
+} satisfies Record<CustomPanel, { Panel: unknown; flush: boolean }>;
+const isFlush = (media: Project["media"]) =>
+	media?.kind === "image" ||
+	media?.kind === "video" ||
+	(media?.kind === "custom" && custom[media.component].flush);
+---
+
+<figure class="frame">
+	<div class="chrome">
+		<span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+		<span class="url mono" data-url>
+			{first.address ?? first.name[locale]}
+		</span>
+	</div>
+	<div class="screens">
+		{projects.map((project, i) => {
+			const { media } = project;
+			const Custom = media?.kind === "custom" && custom[media.component].Panel;
+			return (
+				<div
+					class="screen"
+					data-card
+					data-kind={media?.kind ?? "placeholder"}
+					data-flush={isFlush(media) ? "" : undefined}
+					data-card-url={project.address ?? project.name[locale]}
+					data-card-title={project.name[locale]}
+					data-state={i === 0 ? "front" : "back"}
+					inert={i !== 0}
+				>
+					{media?.kind === "image" && (
+						<ImagePanel
+							src={portfolioImage(media.src)}
+							alt={media.alt[locale]}
+						/>
+					)}
+					{media?.kind === "video" && (
+						<VideoPanel
+							src={portfolioVideo(media.src)}
+							poster={media.poster && portfolioImage(media.poster).src}
+							label={media.label[locale]}
+						/>
+					)}
+					{media?.kind === "flow" && (
+						<FlowPanel nodes={media.flow[locale]} highlight={media.highlight} />
+					)}
+					{Custom && <Custom locale={locale} />}
+					{!media && (
+						<PlaceholderPanel locale={locale} title={project.name[locale]} />
+					)}
+				</div>
+			);
+		})}
+	</div>
+	<figcaption>
+		<span class="current" data-title>{first.name[locale]}</span>
+		<div class="pager">
+			<gh-button
+				variant="neutral"
+				aria-label={t(locale, "portfolio.prevLabel")}
+				data-prev
+				>{t(locale, "portfolio.prev")}</gh-button
+			>
+			<span class="mono counter" data-counter data-testid="card-counter"
+				>1 / {projects.length}</span
+			>
+			<gh-button
+				variant="neutral"
+				aria-label={t(locale, "portfolio.nextLabel")}
+				data-next
+				>{t(locale, "portfolio.next")}</gh-button
+			>
+		</div>
+	</figcaption>
+</figure>
+
+<style>
+.frame {
+	margin: 0;
+	background: var(--sys-color-bg-surface);
+	border: var(--sys-border-width-thick) solid var(--sys-color-text-primary);
+	border-radius: var(--sys-radius-lg);
+	box-shadow: 6px 6px 0 var(--sys-color-border-default);
+	overflow: hidden;
+}
+.chrome {
+	display: flex;
+	align-items: center;
+	gap: var(--sys-spacing-md);
+	padding: var(--sys-spacing-sm) var(--sys-spacing-md);
+	border-bottom: var(--sys-border-width-thick) solid
+		var(--sys-color-text-primary);
+	background: var(--sys-color-bg-muted);
+}
+.dots {
+	display: inline-flex;
+	gap: var(--sys-spacing-xs);
+}
+.dots i {
+	width: 10px;
+	height: 10px;
+	border-radius: var(--sys-radius-pill);
+}
+.dots i:nth-child(1) {
+	background: var(--sys-color-bg-danger-default);
+}
+.dots i:nth-child(2) {
+	background: var(--sys-color-bg-warning-default);
+}
+.dots i:nth-child(3) {
+	background: var(--sys-color-bg-success-default);
+}
+.url {
+	flex: 1;
+	min-width: 0;
+	padding: var(--sys-spacing-xs) var(--sys-spacing-sm);
+	border-radius: var(--sys-radius-pill);
+	background: var(--sys-color-bg-surface);
+	border: var(--sys-border-width-thin) solid var(--sys-color-border-default);
+	font-size: var(--sys-typography-caption-fontSize);
+	color: var(--sys-color-text-secondary);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.screens {
+	display: grid;
+	aspect-ratio: 16 / 10;
+	background: var(--sys-color-bg-canvas);
+}
+/* Each panel fills its screen. The screen owns the padding and the backdrop. */
+.screen {
+	grid-area: 1 / 1;
+	min-height: 0;
+	min-width: 0;
+	box-sizing: border-box;
+	padding: var(--sys-spacing-xl);
+	background: var(--sys-color-bg-canvas);
+	opacity: 0;
+}
+.screen[data-flush] {
+	padding: 0;
+	background: var(--sys-color-bg-overlay);
+}
+.screen[data-state="front"] {
+	opacity: 1;
+	z-index: 1;
+}
+figcaption {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--sys-spacing-md);
+	padding: var(--sys-spacing-md);
+	border-top: var(--sys-border-width-thick) solid var(--sys-color-text-primary);
+}
+.current {
+	font-weight: var(--sys-typography-heading-fontWeight);
+}
+.pager {
+	display: flex;
+	align-items: center;
+	gap: var(--sys-spacing-sm);
+}
+.counter {
+	min-width: 48px;
+	text-align: center;
+	font-size: var(--sys-typography-caption-fontSize);
+	color: var(--sys-color-icon-muted);
+}
+
+/* On narrow screens the frame stays pinned, so keep it short. */
+@media (max-width: 760px) {
+	.frame {
+		box-shadow: 3px 3px 0 var(--sys-color-border-default);
+	}
+	.chrome {
+		padding: var(--sys-spacing-xs) var(--sys-spacing-sm);
+	}
+	.screens {
+		aspect-ratio: 2 / 1;
+	}
+	.screen {
+		padding: var(--sys-spacing-sm);
+	}
+	.screen[data-flush] {
+		padding: 0;
+	}
+	figcaption {
+		flex-wrap: nowrap;
+		padding: var(--sys-spacing-xs) var(--sys-spacing-sm);
+	}
+	.current {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.pager {
+		flex: none;
+	}
+}
+</style>

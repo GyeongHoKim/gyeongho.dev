@@ -1,0 +1,63 @@
+---
+interface Props {
+	nodes: string[];
+	/** Index of the node drawn as the highlighted one. */
+	highlight: number;
+}
+
+const { nodes, highlight } = Astro.props;
+---
+
+<div class="flow">
+	{nodes.map((node, n) => (
+		<>
+			{n > 0 && (
+				<span class="arrow" aria-hidden="true">
+					→
+				</span>
+			)}
+			<span class:list={["node", { hi: n === highlight }]}>{node}</span>
+		</>
+	))}
+</div>
+
+<style>
+.flow {
+	height: 100%;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	gap: var(--sys-spacing-md);
+}
+.node {
+	padding: var(--sys-spacing-md) var(--sys-spacing-lg);
+	background: var(--sys-color-bg-surface);
+	border: var(--sys-border-width-thick) solid var(--sys-color-text-primary);
+	border-radius: var(--sys-radius-md);
+	box-shadow: 3px 3px 0 var(--sys-color-border-default);
+	font-weight: var(--sys-typography-heading-fontWeight);
+}
+.node.hi {
+	background: var(--sys-color-paper-primary);
+	color: var(--sys-color-text-primary);
+}
+.arrow {
+	font-size: var(--sys-typography-title-fontSize);
+	color: var(--sys-color-icon-muted);
+}
+@media (max-width: 760px) {
+	.flow {
+		gap: var(--sys-spacing-xs);
+		overflow: hidden;
+	}
+	.node {
+		padding: var(--sys-spacing-xs) var(--sys-spacing-sm);
+		font-size: var(--sys-typography-caption-fontSize);
+		box-shadow: 2px 2px 0 var(--sys-color-border-default);
+	}
+	.arrow {
+		font-size: var(--sys-typography-body-fontSize);
+	}
+}
+</style>
