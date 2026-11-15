@@ -1,0 +1,402 @@
+---
+import { tokens } from "@ghds/tokens";
+import { getLocaleStaticPaths, type Locale, localePath, t } from "../../i18n";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+export const getStaticPaths = getLocaleStaticPaths;
+
+const locale = Astro.params.lang as Locale;
+const { sketch } = tokens.sys;
+const { color } = tokens.sys;
+
+const sketchValues = [
+	{
+		value: String(sketch.roughness),
+		label: t(locale, "colophon.sketch.roughness"),
+		token: "sys-sketch-roughness",
+	},
+	{
+		value: String(sketch.bowing),
+		label: t(locale, "colophon.sketch.bowing"),
+		token: "sys-sketch-bowing",
+	},
+	{
+		value: `${sketch.hachureGap}px`,
+		label: t(locale, "colophon.sketch.hachureGap"),
+		token: "sys-sketch-hachureGap",
+	},
+	{
+		value: `${String(sketch.hachureAngle).replace("-", "−")}°`,
+		label: t(locale, "colophon.sketch.hachureAngle"),
+		token: "sys-sketch-hachureAngle",
+	},
+];
+
+const swatches = [
+	{ name: "canvas", token: "--sys-color-bg-canvas", hex: color.bg.canvas },
+	{ name: "ink", token: "--sys-color-text-primary", hex: color.text.primary },
+	{
+		name: "brand",
+		token: "--sys-color-bg-primary-default",
+		hex: color.bg.primary.default,
+	},
+	{
+		name: "success",
+		token: "--sys-color-bg-success-default",
+		hex: color.bg.success.default,
+	},
+	{
+		name: "warning",
+		token: "--sys-color-bg-warning-default",
+		hex: color.bg.warning.default,
+	},
+	{
+		name: "danger",
+		token: "--sys-color-bg-danger-default",
+		hex: color.bg.danger.default,
+	},
+];
+---
+
+<BaseLayout
+	locale={locale}
+	title="Colophon — GyeongHo Kim"
+	description={t(locale, "colophon.description")}
+>
+	<div class="container-narrow page">
+		<section class="stack" aria-labelledby="col-h">
+			<span class="eyebrow">/colophon</span>
+			<h1 id="col-h" class="page-title">{t(locale, "colophon.title")}</h1>
+			<p class="lead">
+				{t(locale, "colophon.intro.before")}<strong>GHDS</strong>
+				{t(locale, "colophon.intro.after")}
+			</p>
+		</section>
+
+		<section class="stack" aria-labelledby="why-h">
+			<h2 id="why-h" class="section-title">
+				{t(locale, "colophon.sketch.title")}
+			</h2>
+			<p class="body">{t(locale, "colophon.sketch.text")}</p>
+			<ul class="sketch-grid grid-4">
+				{sketchValues.map((item) => (
+					<li>
+						<div class="sketch-card">
+							<span class="big hand">{item.value}</span>
+							<span class="strong">{item.label}</span>
+							<code>{item.token}</code>
+						</div>
+					</li>
+				))}
+			</ul>
+			<div class="demo">
+				<span class="demo-label">{t(locale, "colophon.sketch.demo")}</span>
+				<gh-button variant="primary">Save changes</gh-button>
+				<gh-button variant="neutral">Cancel</gh-button>
+				<gh-badge variant="info">info</gh-badge>
+				<gh-icon name="heart"></gh-icon>
+				<gh-icon name="star"></gh-icon>
+			</div>
+		</section>
+
+		<section class="stack" aria-labelledby="tok-h">
+			<h2 id="tok-h" class="section-title">
+				{t(locale, "colophon.tokens.title")}
+			</h2>
+			<p class="body">{t(locale, "colophon.tokens.text")}</p>
+			<div class="flow">
+				<div class="step">
+					<span class="step-label">{t(locale, "colophon.tokens.ref")}</span>
+					<div class="ref-row">
+						<span class="chip" aria-hidden="true"></span>
+						<code>ref-palette-brand-600</code>
+					</div>
+					<code class="muted">{color.bg.primary.default}</code>
+				</div>
+				<gh-icon name="arrow-right"></gh-icon>
+				<div class="step">
+					<span class="step-label">{t(locale, "colophon.tokens.sys")}</span>
+					<code>sys-color-bg-primary-default</code>
+					<span class="muted">{t(locale, "colophon.tokens.sysNote")}</span>
+				</div>
+				<gh-icon name="arrow-right"></gh-icon>
+				<div class="step">
+					<span class="step-label">{t(locale, "colophon.tokens.comp")}</span>
+					<code>Button (primary)</code>
+					<gh-button variant="primary">Send invite</gh-button>
+				</div>
+			</div>
+			<ul class="swatches" aria-label={t(locale, "colophon.tokens.swatches")}>
+				{swatches.map((swatch) => (
+					<li>
+						<span
+							class="swatch"
+							aria-hidden="true"
+							style={`background: var(${swatch.token})`}
+						></span>
+						<span class="strong small">{swatch.name}</span>
+						<code class="muted small">{swatch.hex}</code>
+					</li>
+				))}
+			</ul>
+		</section>
+
+		<section class="stack" aria-labelledby="type-h">
+			<h2 id="type-h" class="section-title">
+				{t(locale, "colophon.type.title")}
+			</h2>
+			<div class="grid-2 type-grid">
+				<div class="type-card">
+					<span class="step-label">{t(locale, "colophon.type.handLabel")}</span>
+					<span class="hand hand-sample"
+						>{t(locale, "colophon.type.handSample")}</span
+					>
+					<span class="note">{t(locale, "colophon.type.handNote")}</span>
+				</div>
+				<div class="type-card">
+					<span class="step-label">{t(locale, "colophon.type.bodyLabel")}</span>
+					<span class="body-sample"
+						>{t(locale, "colophon.type.bodySample")}</span
+					>
+					<span class="note">{t(locale, "colophon.type.bodyNote")}</span>
+				</div>
+			</div>
+			<p class="body">{t(locale, "colophon.type.text")}</p>
+		</section>
+
+		<section class="stack" aria-labelledby="a11y-h">
+			<h2 id="a11y-h" class="section-title">
+				{t(locale, "colophon.a11y.title")}
+			</h2>
+			<ul class="bullets">
+				<li>{t(locale, "colophon.a11y.1")}</li>
+				<li>{t(locale, "colophon.a11y.2")}</li>
+				<li>{t(locale, "colophon.a11y.3")}</li>
+			</ul>
+		</section>
+
+		<section class="stack" aria-labelledby="stack-h">
+			<h2 id="stack-h" class="section-title">
+				{t(locale, "colophon.stack.title")}
+			</h2>
+			<dl class="dl-stack">
+				<dt>{t(locale, "colophon.stack.ds")}</dt>
+				<dd>
+					<a href="https://gyeonghokim.github.io/gyeongho-design-system"
+						>GHDS</a
+					>{t(locale, "colophon.stack.dsText")}
+				</dd>
+				<dt>{t(locale, "colophon.stack.fisheye")}</dt>
+				<dd>
+					<a href="https://github.com/GyeongHoKim/fisheye.js">fisheye.js</a>
+					{t(locale, "colophon.stack.fisheyeText")}
+				</dd>
+				<dt>{t(locale, "colophon.stack.motion")}</dt>
+				<dd>{t(locale, "colophon.stack.motionText")}</dd>
+				<dt>{t(locale, "colophon.stack.generator")}</dt>
+				<dd><a href="https://astro.build">Astro</a></dd>
+				<dt>{t(locale, "colophon.stack.hosting")}</dt>
+				<dd><a href="https://vercel.com">Vercel</a></dd>
+				<dt>{t(locale, "colophon.stack.inspiration")}</dt>
+				<dd>
+					<a href="https://ncase.me/">Nicky Case</a>,{" "}
+					<a href="https://anhvn.com/">anhvn</a>,{" "}
+					<a href="https://marighoul.com/">Mari</a>
+					{t(locale, "colophon.stack.inspirationBefore")}<a
+						href={localePath(locale, "rss#blogroll")}
+						>{t(locale, "colophon.stack.inspirationLink")}</a
+					>{t(locale, "colophon.stack.inspirationAfter")}
+				</dd>
+			</dl>
+		</section>
+	</div>
+</BaseLayout>
+
+<style>
+.page {
+	padding-block: calc(var(--sys-spacing-3xl) + var(--sys-spacing-sm));
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--sys-spacing-2xl) + var(--sys-spacing-sm));
+}
+.stack {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-lg);
+}
+.lead {
+	margin: 0;
+	font-size: calc(var(--sys-typography-body-fontSize) * 1.125);
+	color: var(--sys-color-text-secondary);
+}
+.body {
+	margin: 0;
+	color: var(--sys-color-text-secondary);
+}
+code {
+	font-family: var(--sys-typography-code-fontFamily);
+	font-size: var(--sys-typography-caption-fontSize);
+}
+.muted {
+	color: var(--sys-color-text-secondary);
+}
+.strong {
+	font-weight: var(--sys-typography-heading-fontWeight);
+}
+.small {
+	font-size: var(--sys-typography-caption-fontSize);
+}
+.sketch-grid {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: var(--sys-spacing-md);
+}
+.sketch-card {
+	height: 100%;
+	box-sizing: border-box;
+	padding: var(--sys-spacing-md);
+	background: var(--sys-color-bg-surface);
+	border: var(--sys-border-width-default) solid var(--sys-color-border-default);
+	border-radius: var(--sys-radius-lg);
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-xs);
+}
+.sketch-card .big {
+	font-size: calc(var(--sys-typography-heading-fontSize) * 1.1);
+	line-height: 1;
+	color: var(--sys-color-text-link);
+}
+.sketch-card .strong {
+	font-size: var(--sys-typography-label-fontSize);
+}
+.sketch-card code {
+	font-size: var(--sys-typography-caption-fontSize);
+	color: var(--sys-color-text-secondary);
+	word-break: break-all;
+}
+.demo {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--sys-spacing-md);
+	padding: var(--sys-spacing-lg) var(--sys-spacing-lg);
+	background: var(--sys-color-bg-muted);
+	border-radius: var(--sys-radius-lg);
+}
+.demo-label {
+	margin-right: var(--sys-spacing-sm);
+	font-size: var(--sys-typography-label-fontSize);
+	color: var(--sys-color-text-secondary);
+}
+.flow {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--sys-spacing-md);
+}
+.step {
+	flex: 1 1 200px;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: var(--sys-spacing-sm);
+	padding: var(--sys-spacing-md);
+	background: var(--sys-color-bg-surface);
+	border: var(--sys-border-width-default) solid var(--sys-color-text-primary);
+	border-radius: var(--sys-radius-md);
+	box-shadow: 3px 3px 0 var(--sys-color-border-default);
+}
+.step-label {
+	font-size: var(--sys-typography-caption-fontSize);
+	font-weight: var(--sys-typography-heading-fontWeight);
+	letter-spacing: 0.08em;
+	color: var(--sys-color-text-secondary);
+}
+.ref-row {
+	display: flex;
+	align-items: center;
+	gap: var(--sys-spacing-sm);
+}
+.chip,
+.swatch {
+	display: block;
+	background: var(--sys-color-bg-primary-default);
+	border: var(--sys-border-width-default) solid var(--sys-color-text-primary);
+}
+.chip {
+	width: 28px;
+	height: 28px;
+	border-radius: var(--sys-radius-sm);
+}
+.swatch {
+	height: 48px;
+	border-radius: var(--sys-radius-md);
+}
+.swatches {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--sys-spacing-sm);
+}
+.swatches li {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-xs);
+	width: 112px;
+}
+.type-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--sys-spacing-md);
+}
+.type-card {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-sm);
+	padding: var(--sys-spacing-lg);
+	background: var(--sys-color-bg-surface);
+	border: var(--sys-border-width-default) solid var(--sys-color-border-default);
+	border-radius: var(--sys-radius-lg);
+}
+.hand-sample {
+	font-size: calc(var(--sys-typography-heading-fontSize) * 1.2);
+	line-height: 1.2;
+	white-space: pre-line;
+}
+.body-sample {
+	font-size: var(--sys-typography-title-fontSize);
+	line-height: var(--sys-typography-body-lineHeight);
+	white-space: pre-line;
+}
+.note {
+	font-size: var(--sys-typography-label-fontSize);
+	color: var(--sys-color-text-secondary);
+}
+.bullets {
+	margin: 0;
+	padding-left: var(--sys-spacing-lg);
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-sm);
+	color: var(--sys-color-text-secondary);
+}
+.dl-stack {
+	margin: 0;
+	display: grid;
+	grid-template-columns: 160px 1fr;
+	gap: var(--sys-spacing-md) var(--sys-spacing-lg);
+}
+.dl-stack dt {
+	font-weight: var(--sys-typography-heading-fontWeight);
+}
+.dl-stack dd {
+	margin: 0;
+	color: var(--sys-color-text-secondary);
+}
+</style>

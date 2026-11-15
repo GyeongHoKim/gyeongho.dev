@@ -51,3 +51,19 @@ test("gh-badge is upgraded", async ({ page }) => {
 		() => document.querySelector("header gh-badge")?.shadowRoot != null,
 	);
 });
+
+test("mobile menu opens as a sheet from anywhere on the page", async ({
+	page,
+}) => {
+	await page.goto("/en/about/");
+	const menu = page.locator("[data-menu-open]");
+	test.skip(!(await menu.isVisible()), "desktop shows the header nav");
+	await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+	await expect(menu).toBeInViewport();
+	await menu.click();
+	const sheet = page.locator("#site-menu");
+	await expect(sheet).toBeVisible();
+	await expect(sheet.getByRole("link", { name: "Talks" })).toBeInViewport();
+	await sheet.getByRole("button", { name: "Close" }).click();
+	await expect(sheet).toBeHidden();
+});

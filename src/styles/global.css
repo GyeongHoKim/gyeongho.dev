@@ -247,3 +247,43 @@ a:hover {
 		padding: 0 16px 20px 0 !important;
 	}
 }
+
+/* static pages (About, Uses, Colophon) */
+.page-title,
+.section-title {
+	margin: 0;
+	font-family: var(--sys-typography-heading-fontFamily);
+	line-height: var(--sys-typography-heading-lineHeight);
+}
+.page-title {
+	font-size: calc(var(--sys-typography-heading-fontSize) * 1.3);
+}
+.section-title {
+	font-size: var(--sys-typography-heading-fontSize);
+}
+.eyebrow {
+	font-family: var(--sys-typography-code-fontFamily);
+	font-size: var(--sys-typography-label-fontSize);
+	color: var(--sys-color-text-secondary);
+}
+.polaroid {
+	position: relative;
+	margin: 0;
+	padding: var(--sys-spacing-md) var(--sys-spacing-md) var(--sys-spacing-lg);
+	background: var(--sys-color-bg-surface);
+	box-shadow: var(--sys-shadow-lg);
+	transform: rotate(-2.5deg);
+}
+.polaroid::before {
+	content: "";
+	position: absolute;
+	top: calc(-1 * var(--sys-spacing-md));
+	left: 50%;
+	width: 96px;
+	height: var(--sys-spacing-lg);
+	margin-left: -48px;
+	background: color-mix(in srgb, var(--sys-color-bg-canvas) 70%, transparent);
+	border-inline: var(--sys-border-width-thick) dashed
+		color-mix(in srgb, var(--sys-color-border-strong) 60%, transparent);
+	transform: rotate(3deg);
+}

@@ -61,6 +61,94 @@ export const ui = {
 		"home.lately.title": "Lately",
 		"home.lately.more": "모든 글 보기",
 		"home.lately.empty": "아직 올린 글이 없습니다.",
+
+		"about.description": "판교에서 일하는 웹 솔루션 개발자 김경호를 소개합니다",
+		"about.title": "About",
+		"about.caption": "그거 아시나요?\n프로그래밍과 활쏘기는\n닮아있답니다?",
+		"about.p1":
+			"판교에서 일하는 개발자 김경호입니다. 영상 보안 회사 IDIS의 솔루션 개발실에서 웹 솔루션 개발자로 일합니다. 백엔드는 Go, 프론트는 TypeScript, 인프라는 Terraform으로 만듭니다. NVR, DVR, IP Cam에서 출발한 영상을 받아 옮기고, 브라우저에서 재생되게 만드는 일이 제 하루의 대부분입니다. 요즘은 사내 AX 전환을 위한 서버 구축(MCP 서버 개발, Ontology & RAG 구축, K3s 관리 등)을 돕고 있습니다.",
+		"about.p2":
+			"퇴근 후에는 주로 미디어 쪽 오픈소스에 기여하고, 홈랩 구축에 돈을 지르고, TinyGo로 임베디드 펌웨어를 만들고, YouTube에 영상도 가끔씩 올립니다. 이 사이트도 제가 만든 손그림 스타일 디자인 시스템인 GHDS로 만들었습니다.",
+		"about.p3":
+			"이건 개인적인 생각인데요, FFmpeg 개발자들은 노벨 평화상을 받아야 합니다. m(_ _)m",
+		"about.tag.streaming": "영상 스트리밍",
+		"about.tag.oss": "오픈소스",
+		"about.now.title": "Now",
+		"about.now.uxlint.before": "AI로 웹앱의 UX를 점검하는 CLI ",
+		"about.now.uxlint.after": "를 개발하고 있습니다.",
+		"about.now.mcp":
+			"고객이 ChatGPT로 장치를 제어할 수 있도록, IDIS protocol MCP Server를 개발중입니다.",
+		"about.play.title": "Things I'm into",
+		"about.play.aria": "관심사 카드",
+		"about.contact.title": "Say hi",
+		"about.contact.text":
+			"같이 만들고 싶은 게 있거나, 글에 대한 생각이 있다면 편하게 연락 주세요.",
+		"uses.description": "매일 쓰는 도구와 집에서 돌리는 서버",
+		"uses.title": "Uses",
+		"uses.intro":
+			"매일 쓰는 도구와 집에서 돌리는 서버입니다. 도구 목록은 제 dotfiles에 적힌 그대로입니다.",
+		"uses.dot.title": "dotfiles",
+		"uses.dot.before": "설정은 전부 ",
+		"uses.dot.after":
+			"에 있습니다. chezmoi와 Ansible로 Fedora, Debian·Ubuntu, macOS에 같은 환경을 설치합니다. GUI 앱까지 설치하는 desktop과 CLI만 설치하는 server, 두 가지 프로필이 있습니다.",
+		"uses.lab.title": "Homelab",
+		"uses.lab.note":
+			"모든 기기는 Headscale로 하나의 네트워크처럼 묶여 있습니다. 개인 프로젝트는 GitHub와 직접 띄운 Gitea 양쪽에서 관리합니다.",
+		"uses.colophon.before": "이 사이트를 무엇으로 만들었는지는 ",
+		"uses.colophon.after": "에 적어 뒀습니다.",
+		"colophon.description": "이 사이트를 만든 디자인 시스템과 도구 이야기",
+		"colophon.title": "Colophon",
+		"colophon.intro.before":
+			"이 사이트의 선 하나, 버튼 하나는 전부 제가 만든 디자인 시스템 ",
+		"colophon.intro.after":
+			"로 그렸습니다. 연필로 그린 듯한 선이지만, 읽기 편함과 키보드 접근성은 포기하지 않는 게 목표입니다.",
+		"colophon.sketch.title": "GHDS의 선은 매번 새로 그려집니다",
+		"colophon.sketch.text":
+			"GHDS의 버튼과 카드 테두리는 이미지가 아닙니다. 화면에 그릴 때마다 스케치 엔진이 토큰 값을 읽어 선을 계산합니다. 선의 roughness와 bowing, hachure의 간격과 각도가 모두 숫자로 정해져 있습니다.",
+		"colophon.sketch.roughness": "roughness",
+		"colophon.sketch.bowing": "bowing",
+		"colophon.sketch.hachureGap": "hachure gap",
+		"colophon.sketch.hachureAngle": "hachure angle",
+		"colophon.sketch.demo": "이 값으로 그린 실제 컴포넌트:",
+		"colophon.tokens.title": "색은 세 단계를 거칩니다",
+		"colophon.tokens.text":
+			"원재료 색(ref)에 역할을 붙이고(sys), 컴포넌트는 역할만 읽습니다(comp). 그래서 다크 모드는 역할 단계만 바꾸면 위의 모든 화면이 따라옵니다.",
+		"colophon.tokens.ref": "REF · 원재료",
+		"colophon.tokens.sys": "SYS · 역할",
+		"colophon.tokens.sysNote": '"주요 행동의 배경색"',
+		"colophon.tokens.comp": "COMP · 컴포넌트",
+		"colophon.tokens.swatches": "색 견본",
+		"colophon.type.title": "글꼴은 두 목소리입니다",
+		"colophon.type.handLabel": "손글씨 · 제목용",
+		"colophon.type.handSample": "Sketch it first\n먼저 그려 보기",
+		"colophon.type.handNote": "Gochi Hand (영문) · Gaegu (한글)",
+		"colophon.type.bodyLabel": "본문 · 읽는 글자",
+		"colophon.type.bodySample":
+			"Every stroke is drawn from tokens.\n모든 선은 토큰으로 그립니다.",
+		"colophon.type.bodyNote": "Nunito Sans (영문) · Noto Sans KR (한글)",
+		"colophon.type.text":
+			"손글씨는 제목에만 씁니다. 숫자, 본문, 입력값은 언제나 반듯한 글꼴로 보여 줍니다. 글자를 고르는 기준은 언어가 아니라 글자 하나하나입니다. 영문 글자는 영문 글꼴로, 한글은 한글 글꼴로 자연스럽게 넘어갑니다.",
+		"colophon.a11y.title": "손그림이어도 접근성은 그대로",
+		"colophon.a11y.1":
+			"스케치 선은 장식이라 screen reader에서는 숨기고, 그 아래의 진짜 버튼과 입력 칸이 모든 의미를 가집니다.",
+		"colophon.a11y.2":
+			"글자와 배경의 대비는 WCAG 2.1 AA 기준을 넘도록 빌드할 때 확인합니다.",
+		"colophon.a11y.3":
+			"움직임 줄이기를 켜 두셨다면 이 사이트의 애니메이션과 자동재생도 멈춥니다.",
+		"colophon.stack.title": "그 밖에 쓴 것들",
+		"colophon.stack.ds": "디자인 시스템",
+		"colophon.stack.dsText":
+			" — 디자인 토큰을 구축하고, 이를 바탕으로 React, Web Components, React Native 컴포넌트를 만들었습니다.",
+		"colophon.stack.fisheye": "어안 데모",
+		"colophon.stack.fisheyeText": ' — 홈 화면의 "직접 돌려 보세요" 카드',
+		"colophon.stack.motion": "애니메이션",
+		"colophon.stack.motionText": "Motion — 겹친 카드 넘기기",
+		"colophon.stack.generator": "사이트 생성기",
+		"colophon.stack.hosting": "호스팅",
+		"colophon.stack.inspiration": "영감",
+		"colophon.stack.inspirationBefore": " — ",
+		"colophon.stack.inspirationLink": "블로그롤",
+		"colophon.stack.inspirationAfter": "에 더 있습니다.",
 	},
 	en: {
 		"nav.about": "About",
@@ -125,5 +213,95 @@ export const ui = {
 		"home.lately.title": "Lately",
 		"home.lately.more": "All posts",
 		"home.lately.empty": "Nothing published yet.",
+		"about.description":
+			"About GyeongHo Kim, a web solutions developer working in Pangyo",
+		"about.title": "About",
+		"about.caption": "Did you know?\nProgramming and archery\nare alike.",
+		"about.p1":
+			"I am GyeongHo Kim, a developer working in Pangyo. I work as a web solutions developer in the solutions development office at IDIS, a video security company. I build backends in Go, frontends in TypeScript and infrastructure in Terraform. Most of my day goes into receiving video that starts at NVRs, DVRs and IP cams, moving it along, and making it play in a browser. Lately I am helping build servers for the company's AX transition (MCP server development, Ontology & RAG, K3s management and more).",
+		"about.p2":
+			"After work I mostly contribute to media open source, spend money on my homelab, build embedded firmware with TinyGo, and now and then upload a video to YouTube. This site is also built with GHDS, the hand-drawn style design system I made.",
+		"about.p3":
+			"This is just my personal opinion, but the FFmpeg developers deserve a Nobel Peace Prize. m(_ _)m",
+		"about.tag.streaming": "Video streaming",
+		"about.tag.oss": "Open source",
+		"about.now.title": "Now",
+		"about.now.uxlint.before": "I am developing ",
+		"about.now.uxlint.after": ", a CLI that checks a web app's UX with AI.",
+		"about.now.mcp":
+			"I am developing the IDIS protocol MCP Server so that customers can control devices through ChatGPT.",
+		"about.play.title": "Things I'm into",
+		"about.play.aria": "Interest cards",
+		"about.contact.title": "Say hi",
+		"about.contact.text":
+			"If you want to build something together, or have thoughts on a post, feel free to reach out.",
+		"uses.description":
+			"The tools I use every day and the servers I run at home",
+		"uses.title": "Uses",
+		"uses.intro":
+			"The tools I use every day and the servers I run at home. The tool list is exactly what is written in my dotfiles.",
+		"uses.dot.title": "dotfiles",
+		"uses.dot.before": "All my settings live in ",
+		"uses.dot.after":
+			". chezmoi and Ansible install the same environment on Fedora, Debian and Ubuntu, and macOS. There are two profiles: desktop, which installs GUI apps too, and server, which installs only the CLI.",
+		"uses.lab.title": "Homelab",
+		"uses.lab.note":
+			"Every machine is tied into one network with Headscale. I manage personal projects on both GitHub and a Gitea I host myself.",
+		"uses.colophon.before": "What this site is built with is written at ",
+		"uses.colophon.after": ".",
+		"colophon.description": "The design system and tools behind this site",
+		"colophon.title": "Colophon",
+		"colophon.intro.before":
+			"Every line and every button on this site is drawn with ",
+		"colophon.intro.after":
+			", a design system I made. The lines look pencil-drawn, but the goal is to give up neither readability nor keyboard accessibility.",
+		"colophon.sketch.title": "GHDS lines are drawn anew every time",
+		"colophon.sketch.text":
+			"The borders of GHDS buttons and cards are not images. Each time they are drawn, a sketch engine reads token values and computes the lines. The roughness and bowing of the lines, and the gap and angle of the hachure, are all set as numbers.",
+		"colophon.sketch.roughness": "roughness",
+		"colophon.sketch.bowing": "bowing",
+		"colophon.sketch.hachureGap": "hachure gap",
+		"colophon.sketch.hachureAngle": "hachure angle",
+		"colophon.sketch.demo": "Real components drawn with these values:",
+		"colophon.tokens.title": "Color goes through three layers",
+		"colophon.tokens.text":
+			"Raw colors (ref) get a role (sys), and components read only the role (comp). So a dark mode only has to change the role layer and every screen above follows.",
+		"colophon.tokens.ref": "REF · raw",
+		"colophon.tokens.sys": "SYS · role",
+		"colophon.tokens.sysNote": '"Background of the main action"',
+		"colophon.tokens.comp": "COMP · component",
+		"colophon.tokens.swatches": "Color swatches",
+		"colophon.type.title": "Type has two voices",
+		"colophon.type.handLabel": "Handwriting · for headings",
+		"colophon.type.handSample": "Sketch it first\n먼저 그려 보기",
+		"colophon.type.handNote": "Gochi Hand (Latin) · Gaegu (Hangul)",
+		"colophon.type.bodyLabel": "Body · for reading",
+		"colophon.type.bodySample":
+			"Every stroke is drawn from tokens.\n모든 선은 토큰으로 그립니다.",
+		"colophon.type.bodyNote": "Nunito Sans (Latin) · Noto Sans KR (Hangul)",
+		"colophon.type.text":
+			"Handwriting is only for headings. Numbers, body text and input values always appear in a steady typeface. The rule for choosing a typeface is not the language but each character. Latin letters use the Latin font, and Hangul passes naturally to the Hangul font.",
+		"colophon.a11y.title": "Hand-drawn, but accessibility stays",
+		"colophon.a11y.1":
+			"The sketch lines are decoration, so they are hidden from screen readers, and the real buttons and inputs underneath carry all the meaning.",
+		"colophon.a11y.2":
+			"The contrast between text and background is checked at build time to exceed the WCAG 2.1 AA standard.",
+		"colophon.a11y.3":
+			"If you turned on reduced motion, this site's animations and autoplay stop too.",
+		"colophon.stack.title": "Everything else I used",
+		"colophon.stack.ds": "Design system",
+		"colophon.stack.dsText":
+			" — I built the design tokens and made React, Web Components and React Native components on top of them.",
+		"colophon.stack.fisheye": "Fisheye demo",
+		"colophon.stack.fisheyeText":
+			' — the "Try it yourself" card on the home page',
+		"colophon.stack.motion": "Animation",
+		"colophon.stack.motionText": "Motion — flipping the stacked cards",
+		"colophon.stack.generator": "Site generator",
+		"colophon.stack.hosting": "Hosting",
+		"colophon.stack.inspiration": "Inspiration",
+		"colophon.stack.inspirationBefore": " — more in the ",
+		"colophon.stack.inspirationLink": "blogroll",
+		"colophon.stack.inspirationAfter": ".",
 	},
 } as const;

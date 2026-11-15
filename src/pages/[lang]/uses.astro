@@ -1,0 +1,209 @@
+---
+import { homelabNodes, usesGroups } from "../../data/uses";
+import { getLocaleStaticPaths, type Locale, localePath, t } from "../../i18n";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+export const getStaticPaths = getLocaleStaticPaths;
+
+const locale = Astro.params.lang as Locale;
+---
+
+<BaseLayout
+	locale={locale}
+	title="Uses — GyeongHo Kim"
+	description={t(locale, "uses.description")}
+>
+	<div class="container page">
+		<section class="head" aria-labelledby="uses-h">
+			<span class="eyebrow">/uses</span>
+			<h1 id="uses-h" class="page-title">{t(locale, "uses.title")}</h1>
+			<p class="lead">{t(locale, "uses.intro")}</p>
+		</section>
+
+		<section class="stack" aria-labelledby="dot-h">
+			<h2 id="dot-h" class="section-title">{t(locale, "uses.dot.title")}</h2>
+			<p class="body">
+				{t(locale, "uses.dot.before")}<a
+					href="https://github.com/GyeongHoKim/dotfiles"
+					>GyeongHoKim/dotfiles</a
+				>{t(locale, "uses.dot.after")}
+			</p>
+			<div class="terminal term-lines mono">
+				<code>export GITHUB_USERNAME=GyeongHoKim</code>
+				<code
+					>sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply
+					$GITHUB_USERNAME</code
+				>
+			</div>
+		</section>
+
+		{usesGroups.map((group, i) => (
+			<section class="stack" aria-labelledby={`group-${i}-h`}>
+				<h2 id={`group-${i}-h`} class="section-title">
+					{group.title}
+				</h2>
+				<ul class="items">
+					{group.items.map((item) => (
+						<li>
+							<div class="item">
+								<strong>{item.name}</strong>
+								<span class="note">{item.note[locale]}</span>
+							</div>
+						</li>
+					))}
+				</ul>
+			</section>
+		))}
+
+		<section class="stack" aria-labelledby="lab-h">
+			<h2 id="lab-h" class="section-title">{t(locale, "uses.lab.title")}</h2>
+			<ul class="terminal rack">
+				{homelabNodes.map((node) => (
+					<li class="node">
+						<div class="node-head">
+							<span class={`led ${node.status}`} aria-hidden="true"></span>
+							<span class="mono role">{node.role}</span>
+						</div>
+						<strong>{node.name[locale]}</strong>
+						<span class="note">{node.note[locale]}</span>
+					</li>
+				))}
+			</ul>
+			<p class="small">{t(locale, "uses.lab.note")}</p>
+		</section>
+
+		<p class="body">
+			{t(locale, "uses.colophon.before")}<a
+				href={localePath(locale, "colophon")}
+				>/colophon</a
+			>{t(locale, "uses.colophon.after")}
+		</p>
+	</div>
+</BaseLayout>
+
+<style>
+.page {
+	padding-block: calc(var(--sys-spacing-3xl) + var(--sys-spacing-sm));
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-2xl);
+}
+.head {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-md);
+	max-width: 760px;
+}
+.lead {
+	margin: 0;
+	font-size: calc(var(--sys-typography-body-fontSize) * 1.125);
+	color: var(--sys-color-text-secondary);
+}
+.stack {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-md);
+}
+.body {
+	margin: 0;
+	max-width: 760px;
+	color: var(--sys-color-text-secondary);
+}
+.small {
+	margin: 0;
+	font-size: var(--sys-typography-label-fontSize);
+	color: var(--sys-color-text-secondary);
+}
+.terminal {
+	padding: var(--sys-spacing-lg);
+	background: var(--sys-color-text-primary);
+	color: var(--sys-color-bg-canvas);
+	border-radius: var(--sys-radius-lg);
+	box-shadow: 6px 6px 0 var(--sys-color-border-default);
+}
+.term-lines {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-xs);
+	overflow-x: auto;
+	font-size: var(--sys-typography-code-fontSize);
+	line-height: 1.6;
+}
+.term-lines code {
+	display: block;
+	white-space: nowrap;
+}
+.items {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+	gap: var(--sys-spacing-md);
+}
+.item {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-xs);
+	height: 100%;
+	box-sizing: border-box;
+	padding: var(--sys-spacing-md);
+	background: var(--sys-color-bg-surface);
+	border: var(--sys-border-width-default) solid var(--sys-color-border-default);
+	border-radius: var(--sys-radius-lg);
+}
+.note {
+	font-size: var(--sys-typography-label-fontSize);
+	color: var(--sys-color-text-secondary);
+}
+.rack {
+	margin: 0;
+	list-style: none;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: stretch;
+	gap: var(--sys-spacing-md);
+}
+.node {
+	flex: 1 1 200px;
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-sm);
+	padding: var(--sys-spacing-md);
+	background: color-mix(
+		in srgb,
+		var(--sys-color-text-primary) 88%,
+		var(--sys-color-bg-canvas)
+	);
+	border: var(--sys-border-width-default) solid var(--sys-color-text-secondary);
+	border-radius: var(--sys-radius-md);
+}
+.node strong {
+	font-size: calc(var(--sys-typography-body-fontSize) * 1.125);
+}
+.node .note,
+.role {
+	color: var(--sys-color-border-default);
+}
+.node-head {
+	display: flex;
+	align-items: center;
+	gap: var(--sys-spacing-sm);
+}
+.role {
+	font-size: var(--sys-typography-caption-fontSize);
+}
+.led {
+	width: 10px;
+	height: 10px;
+	border-radius: var(--sys-radius-pill);
+	background: var(--led);
+	box-shadow: 0 0 6px var(--led);
+}
+.led.up {
+	--led: var(--sys-color-bg-success-default);
+}
+.led.idle {
+	--led: var(--sys-color-bg-warning-default);
+}
+</style>

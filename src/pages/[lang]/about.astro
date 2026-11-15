@@ -1,0 +1,250 @@
+---
+import { Image } from "astro:assets";
+import about from "../../assets/about.jpg";
+import { interests } from "../../data/interests";
+import { getLocaleStaticPaths, type Locale, t } from "../../i18n";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { paperFor } from "../../lib/paper";
+
+export const getStaticPaths = getLocaleStaticPaths;
+
+const locale = Astro.params.lang as Locale;
+---
+
+<BaseLayout
+	locale={locale}
+	title="About — GyeongHo Kim"
+	description={t(locale, "about.description")}
+	current="about"
+>
+	<section class="container intro" aria-labelledby="about-h">
+		<figure class="polaroid">
+			<Image
+				src={about}
+				alt={t(locale, "home.portraitAlt")}
+				width={300}
+				height={300}
+				loading="eager"
+			/>
+			<figcaption class="hand">{t(locale, "about.caption")}</figcaption>
+		</figure>
+		<div class="text">
+			<h1 id="about-h" class="page-title">{t(locale, "about.title")}</h1>
+			<p>{t(locale, "about.p1")}</p>
+			<p>{t(locale, "about.p2")}</p>
+			<p>{t(locale, "about.p3")}</p>
+			<ul class="tags">
+				<li>
+					<gh-badge variant="primary"
+						>{t(locale, "about.tag.streaming")}</gh-badge
+					>
+				</li>
+				<li><gh-badge variant="primary">WebGPU</gh-badge></li>
+				<li><gh-badge variant="primary">Go</gh-badge></li>
+				<li><gh-badge variant="primary">React · TypeScript</gh-badge></li>
+				<li>
+					<gh-badge variant="primary">{t(locale, "about.tag.oss")}</gh-badge>
+				</li>
+			</ul>
+		</div>
+	</section>
+
+	<section id="now" class="container now" aria-labelledby="now-h">
+		<gh-card variant="lined" fastener="pin" tone="primary" tilt="right">
+			<h2 id="now-h" class="section-title">{t(locale, "about.now.title")}</h2>
+			<ul>
+				<li>
+					{t(locale, "about.now.uxlint.before")}<strong>UXLint</strong>
+					{t(locale, "about.now.uxlint.after")}
+				</li>
+				<li>{t(locale, "about.now.mcp")}</li>
+			</ul>
+		</gh-card>
+	</section>
+
+	<section id="playground" class="container play" aria-labelledby="play-h">
+		<h2 id="play-h" class="section-title">{t(locale, "about.play.title")}</h2>
+		<div class="cork">
+			<ul aria-label={t(locale, "about.play.aria")}>
+				{interests.map((interest, index) => {
+					const { tone, tilt } = paperFor(index);
+					return (
+						<li>
+							<gh-card variant="sticky" fastener="pin" tone={tone} tilt={tilt}>
+								<div class="sticker">
+									<span class="kind">{interest.kind[locale]}</span>
+									<span class="label hand">{interest.label[locale]}</span>
+								</div>
+							</gh-card>
+						</li>
+					);
+				})}
+			</ul>
+		</div>
+	</section>
+
+	<section id="contact" class="container contact" aria-labelledby="contact-h">
+		<gh-card>
+			<div class="contact-body">
+				<div class="contact-text">
+					<h2 id="contact-h" class="section-title">
+						{t(locale, "about.contact.title")}
+					</h2>
+					<span>{t(locale, "about.contact.text")}</span>
+				</div>
+				<div class="contact-links">
+					<a href="https://github.com/GyeongHoKim"
+						>GitHub<gh-icon name="external-link" size="sm"></gh-icon></a
+					>
+					<a href="mailto:me@gyeongho.dev"
+						><gh-icon name="mail" size="sm"></gh-icon>me@gyeongho.dev</a
+					>
+				</div>
+			</div>
+		</gh-card>
+	</section>
+</BaseLayout>
+
+<style>
+.intro {
+	padding-block: var(--sys-spacing-3xl) var(--sys-spacing-2xl);
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--sys-spacing-3xl);
+	align-items: flex-start;
+}
+.polaroid {
+	flex: 0 1 300px;
+}
+.polaroid :global(img) {
+	display: block;
+	width: 100%;
+	height: auto;
+	aspect-ratio: 1 / 1;
+	object-fit: cover;
+	background: var(--sys-color-bg-muted);
+}
+figcaption {
+	margin-top: var(--sys-spacing-md);
+	text-align: center;
+	white-space: pre-line;
+	font-size: calc(var(--sys-typography-body-fontSize) * 1.375);
+	color: var(--sys-color-text-secondary);
+}
+.text {
+	flex: 1 1 520px;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-lg);
+}
+.text p {
+	margin: 0;
+	max-width: 36em;
+	font-size: calc(var(--sys-typography-body-fontSize) * 1.125);
+	color: var(--sys-color-text-secondary);
+}
+ul {
+	margin: 0;
+}
+.tags {
+	padding: 0;
+	list-style: none;
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--sys-spacing-sm);
+}
+.now {
+	padding-block: var(--sys-spacing-xl) var(--sys-spacing-2xl);
+}
+.now gh-card {
+	display: block;
+	max-width: 720px;
+	margin-inline: auto;
+}
+.now ul {
+	padding-left: var(--sys-spacing-lg);
+	line-height: 28px;
+	color: var(--sys-color-text-secondary);
+}
+.play {
+	padding-block: var(--sys-spacing-2xl);
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-lg);
+}
+.cork ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	display: flex;
+	flex-wrap: wrap;
+	align-content: flex-start;
+	gap: var(--sys-spacing-xl) var(--sys-spacing-lg);
+}
+.cork {
+	padding: var(--sys-spacing-2xl) var(--sys-spacing-xl) var(--sys-spacing-xl);
+	border: 14px solid var(--sys-color-bg-warning-hover);
+	border-radius: var(--sys-radius-md);
+	box-shadow:
+		inset 0 2px 10px
+		color-mix(in srgb, var(--sys-color-text-primary) 35%, transparent),
+		var(--sys-shadow-lg);
+}
+.cork li {
+	min-width: 150px;
+	max-width: 320px;
+}
+.cork gh-card {
+	display: block;
+}
+.sticker {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 2px;
+}
+.kind {
+	font-size: var(--sys-typography-caption-fontSize);
+	font-weight: var(--sys-typography-label-fontWeight);
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--sys-color-text-secondary);
+}
+.label {
+	font-size: calc(var(--sys-typography-body-fontSize) * 1.375);
+	line-height: 1.2;
+	color: var(--sys-color-text-primary);
+}
+.contact {
+	padding-block: var(--sys-spacing-2xl) var(--sys-spacing-3xl);
+}
+.contact gh-card {
+	display: block;
+}
+.contact-body {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--sys-spacing-md);
+}
+.contact-text {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-xs);
+	color: var(--sys-color-text-secondary);
+}
+.contact-links {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--sys-spacing-md);
+	font-weight: var(--sys-typography-label-fontWeight);
+}
+.contact-links a {
+	min-height: 44px;
+	display: inline-flex;
+	align-items: center;
+	gap: var(--sys-spacing-sm);
+}
+</style>
