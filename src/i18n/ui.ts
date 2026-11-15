@@ -24,7 +24,7 @@ export const ui = {
 		"home.intro.before": "영상이 카메라에서",
 		"home.intro.marked": "브라우저 화면까지 오는 길",
 		"home.intro.after":
-			"을 만드는 사람입니다. RTSP와 회사 자체 프로토콜로 들어온 영상을 웹 브라우저가 재생할 수 있는 프로토콜과 코덱으로 바꿔 주는 서버를 Go로 만들었습니다. 클라이언트에서는 WASM, WebCodecs, WebGPU로 HEVC를 디코딩하고 어안렌즈 영상을 보정(undistort)하는 웹 비디오 플레이어를 만들고 있습니다. 퇴근 후에는 오픈소스 기여를 즐겨 합니다. mp4ff에 VP9 CENC 암호화 지원을 추가했고, 제가 만든 lucide-lit은 lucide 공식 패키지 목록에 올라 있습니다. 홈랩에서는 NVR과 ONVIF 호환 카메라 여러 대, K3s 서버를 운영합니다. 쉬는 날에는 활을 쏘러 가기도 합니다!",
+			"을 만드는 사람입니다. RTSP와 회사 자체 프로토콜로 들어온 영상을 웹 브라우저가 재생할 수 있는 프로토콜과 코덱으로 바꿔 주는 서버를 Go로 만들었습니다. 클라이언트에서는 WASM, WebCodecs, WebGPU로 HEVC를 디코딩하고 어안렌즈 영상을 보정(undistort)하는 웹 비디오 플레이어를 만들고 있습니다. 퇴근 후에는 오픈소스 기여를 즐겨 합니다. 최근에는 mp4ff에 VP9 CENC 암호화 지원을 추가하고, moq-go에 CMSF DRM 콘텐츠 보호 카탈로그 지원을 추가했습니다. 제가 만든 lucide-lit 라이브러리가 lucide의 공식 카탈로그에 추가되었네요! 홈랩에서는 NVR과 ONVIF 호환 카메라 여러 대, K3s 서버를 운영합니다.",
 		"home.deck.group": "데모 카드 고르기",
 		"home.deck.live": "직접 돌려 보기",
 		"home.deck.product": "실제 제품 영상",
@@ -36,19 +36,14 @@ export const ui = {
 		"home.demo.loading": "WebGPU 준비 중…",
 		"home.demo.hint": "드래그해서 둘러보세요",
 		"home.demo.canvasLabel":
-			"어안 렌즈 사진을 실시간으로 편 화면. Explore 모드에서는 드래그하거나 방향키로 시점을 돌릴 수 있습니다.",
+			"어안 렌즈 사진을 실시간으로 디와핑한 화면. Explore 모드에서는 드래그하거나 방향키로 시점을 돌릴 수 있습니다.",
 		"home.demo.modes": "보기 방식",
 		"home.demo.camera": "샘플 카메라",
 		"home.demo.camera1": "카메라 1",
 		"home.demo.camera2": "카메라 2",
-		"home.demo.fallbackAlt": "펴기 전의 어안 렌즈 사진",
+		"home.demo.fallbackAlt": "디와핑 전의 어안 렌즈 사진",
 		"home.demo.fallbackText":
-			"이 브라우저에선 WebGPU를 쓸 수 없어서 펴기 전 사진만 보여 드립니다. WebGPU를 지원하는 브라우저에서 열면 직접 돌려 볼 수 있습니다.",
-		"home.demo.captionBefore":
-			"어안 렌즈 사진을 브라우저 안에서 WebGPU로 실시간으로 펴고 있습니다. 제가 만든 ",
-		"home.demo.captionMiddle": "를 썼습니다. 파라미터를 전부 만져 보고 싶다면 ",
-		"home.demo.captionLink": "전체 데모",
-		"home.demo.captionAfter": "로 가 보세요.",
+			"이 브라우저에선 WebGPU를 쓸 수 없어서 디와핑 전 사진만 보여 드립니다. WebGPU를 지원하는 브라우저에서 열면 직접 돌려 볼 수 있습니다.",
 		"home.product.title": "실제 제품에서는",
 		"home.product.alt":
 			"제품 화면 녹화. 어안 원본에서 Main View를 누르면 ePTZ로 바뀌고, 여러 뷰 모드를 거쳐 다시 원본으로 돌아옵니다.",
@@ -62,11 +57,11 @@ export const ui = {
 		"home.lately.more": "모든 글 보기",
 		"home.lately.empty": "아직 올린 글이 없습니다.",
 
-		"about.description": "판교에서 일하는 웹 솔루션 개발자 김경호를 소개합니다",
+		"about.description": "웹 브라우저에서 영상을 재생하는 데에 필요한 모든 것을 개발하는 김경호를 소개합니다",
 		"about.title": "About",
 		"about.caption": "그거 아시나요?\n프로그래밍과 활쏘기는\n닮아있답니다?",
 		"about.p1":
-			"판교에서 일하는 개발자 김경호입니다. 영상 보안 회사 IDIS의 솔루션 개발실에서 웹 솔루션 개발자로 일합니다. 백엔드는 Go, 프론트는 TypeScript, 인프라는 Terraform으로 만듭니다. NVR, DVR, IP Cam에서 출발한 영상을 받아 옮기고, 브라우저에서 재생되게 만드는 일이 제 하루의 대부분입니다. 요즘은 사내 AX 전환을 위한 서버 구축(MCP 서버 개발, Ontology & RAG 구축, K3s 관리 등)을 돕고 있습니다.",
+			"웹 브라우저에서 영상을 재생하는 데에 필요한 모든 것을 개발합니다, 말 그대로. 모든 것을. 영상 보안 회사 IDIS의 솔루션 개발실에서 웹 솔루션 개발자로 일합니다. 백엔드는 Go, 프론트는 TypeScript, 인프라는 Terraform으로 만듭니다. NVR, DVR, IP Cam에서 출발한 영상을 받아 옮기고, 브라우저에서 재생되게 만드는 일이 제 하루의 대부분입니다. 요즘은 사내 AX 전환을 위한 서버 구축(MCP 서버 개발, Ontology & RAG 구축, K3s 관리 등)을 돕고 있습니다.",
 		"about.p2":
 			"퇴근 후에는 주로 미디어 쪽 오픈소스에 기여하고, 홈랩 구축에 돈을 지르고, TinyGo로 임베디드 펌웨어를 만들고, YouTube에 영상도 가끔씩 올립니다. 이 사이트도 제가 만든 손그림 스타일 디자인 시스템인 GHDS로 만들었습니다.",
 		"about.p3":
@@ -152,11 +147,9 @@ export const ui = {
 
 		"portfolio.title": "Portfolio",
 		"portfolio.description":
-			"회사에서 만든 것과 오픈소스로 공개한 것을 실제 화면과 함께 모았습니다",
-		"portfolio.lead":
-			"회사에서 만든 것과 오픈소스로 공개한 것을 실제 화면과 함께 모았습니다. 스크롤을 내리면 화면이 하나씩 바뀝니다.",
-		"portfolio.scrollHint": "스크롤해서 하나씩 보세요",
-		"portfolio.chapter.company": "회사에서 · IDIS",
+			"오픈소스로 공개한 것을 실제 화면과 함께 모았습니다",
+		"portfolio.scrollHint": "스크롤 해주세요",
+		"portfolio.chapter.company": "IDIS",
 		"portfolio.chapter.oss": "오픈소스",
 		"portfolio.did": "한 일",
 		"portfolio.tags": "기술",
@@ -166,10 +159,10 @@ export const ui = {
 		"portfolio.nextLabel": "다음 작업",
 		"portfolio.soon": "화면을 준비하고 있습니다",
 		"portfolio.wipe.before": "원본 (어안)",
-		"portfolio.wipe.during": "펴는 중…",
-		"portfolio.wipe.after": "fisheye.js로 편 결과",
-		"portfolio.wipe.beforeAlt": "펴기 전 어안 사진",
-		"portfolio.wipe.afterAlt": "fisheye.js로 편 사진",
+		"portfolio.wipe.during": "디와핑 중…",
+		"portfolio.wipe.after": "fisheye.js로 디와핑한 결과",
+		"portfolio.wipe.beforeAlt": "디와핑 전 어안 사진",
+		"portfolio.wipe.afterAlt": "fisheye.js로 디와핑한 사진",
 		"portfolio.ghds.title": "Sketch it first · 먼저 그려 보기",
 		"portfolio.ghds.card":
 			"모든 선은 토큰으로 그립니다. Every stroke is drawn from tokens.",
@@ -179,9 +172,9 @@ export const ui = {
 		"portfolio.more.resume": "이력 전체 보기",
 		"portfolio.more.talks": "발표 자료 보기",
 		"talks.title": "Talks",
-		"talks.description": "회사에서 직접 연 세미나와 대외활동",
+		"talks.description": "세미나와 대외활동",
 		"talks.lead":
-			"회사에서 직접 연 세미나와 대외활동을 모았습니다. 슬라이드는 PDF로 받아 볼 수 있습니다.",
+			"세미나와 대외활동을 모았습니다. 슬라이드는 PDF로 받아 볼 수 있습니다.",
 		"talks.recent": "최근 발표",
 		"talks.venue": "장소",
 		"talks.audience": "청중",
@@ -191,7 +184,7 @@ export const ui = {
 		"talks.featured.event": "아이디스 사내 세미나 (주최·발표)",
 		"talks.featured.venue": "9층 대회의실",
 		"talks.featured.audience": "연구 5팀 전원",
-		"talks.featured.summaryBefore": "직접 개발한 프론트엔드 코어 라이브러리 ",
+		"talks.featured.summaryBefore": "프론트엔드 코어 라이브러리 ",
 		"talks.featured.summaryAfter":
 			"를 소개하고, 개발 프로세스와 CI/CD를 설명한 세미나입니다.",
 		"talks.speaker": "김경호 · GyeongHo Kim",
@@ -257,6 +250,26 @@ export const ui = {
 		"wm.send": "웹멘션 보내기",
 		"wm.mailBefore": "웹사이트가 없다면 ",
 		"wm.mailAfter": "로 생각을 보내 주셔도 좋습니다.",
+
+		"guestbook.title": "Guestbook",
+		"guestbook.description": "다녀간 흔적을 Webmention으로 남기는 방명록",
+		"guestbook.lead":
+			"다녀간 흔적을 남겨 주세요. 한 줄 인사도, 사이트 주소도 좋습니다. 남긴 메모는 아래 벽에 붙습니다.",
+		"guestbook.form.title": "메모 남기기",
+		"guestbook.how.1": "자기 사이트에 이 페이지를 링크한 글을 씁니다.",
+		"guestbook.how.2": "그 글의 주소를 아래에 붙여 넣습니다.",
+		"guestbook.how.3": "보냅니다.",
+		"guestbook.formLabel": "글 주소",
+		"guestbook.send": "메모 붙이기",
+		"guestbook.note":
+			"새 메모는 사이트를 다시 빌드할 때 벽에 나타납니다. 방명록은 Webmention만 받습니다.",
+		"guestbook.about": "웹멘션이란?",
+		"guestbook.wall.title": "남겨진 메모",
+		"guestbook.wall.label": "남겨진 메모 목록",
+		"guestbook.count.suffix": "장",
+		"guestbook.count.suffixOne": "장",
+		"guestbook.empty": "아직 붙은 메모가 없습니다. 첫 메모를 남겨 주세요.",
+		"guestbook.source": "원문 보기",
 		"feed.title": "gyeongho.dev — 김경호",
 		"feed.description": "영상 스트리밍, WebGPU, Go, 그리고 가끔 홈랩 이야기",
 		"rss.title": "RSS",
@@ -324,7 +337,7 @@ export const ui = {
 		"home.intro.before": "I build the road that video travels",
 		"home.intro.marked": "from the camera to the browser screen",
 		"home.intro.after":
-			". I wrote a Go server that turns video arriving over RTSP and my company's own protocol into protocols and codecs a web browser can play. On the client side I am building a web video player that decodes HEVC with WASM, WebCodecs and WebGPU and corrects (undistorts) fisheye lens video. After work I enjoy contributing to open source. I added VP9 CENC encryption support to mp4ff, and lucide-lit, which I made, is on the official lucide package list. At home I run an NVR, several ONVIF-compatible cameras and a K3s server. On days off I sometimes go shoot a bow!",
+			". I wrote a Go server that turns video arriving over RTSP and my company's own protocol into protocols and codecs a web browser can play. On the client side I am building a web video player that decodes HEVC with WASM, WebCodecs and WebGPU and corrects (undistorts) fisheye lens video. After work I enjoy contributing to open source. Recently I added VP9 CENC encryption support to mp4ff and CMSF DRM content-protection catalog support to moq-go. A library I made, lucide-lit, has been added to the official lucide catalog! At home I run an NVR, several ONVIF-compatible cameras and a K3s server.",
 		"home.deck.group": "Choose a demo card",
 		"home.deck.live": "Try it live",
 		"home.deck.product": "In the real product",
@@ -344,12 +357,6 @@ export const ui = {
 		"home.demo.fallbackAlt": "A fisheye lens photo before straightening",
 		"home.demo.fallbackText":
 			"WebGPU is not available in this browser, so only the photo before straightening is shown. Open this page in a browser that supports WebGPU to try it yourself.",
-		"home.demo.captionBefore":
-			"This fisheye photo is being straightened in real time, in your browser, with WebGPU. It uses ",
-		"home.demo.captionMiddle":
-			", a library I made. To play with every parameter, head to the ",
-		"home.demo.captionLink": "full demo",
-		"home.demo.captionAfter": ".",
 		"home.product.title": "In the real product",
 		"home.product.alt":
 			"Screen recording of the product. Pressing Main View on the fisheye original switches to ePTZ, goes through several view modes and returns to the original.",
@@ -363,11 +370,11 @@ export const ui = {
 		"home.lately.more": "All posts",
 		"home.lately.empty": "Nothing published yet.",
 		"about.description":
-			"About GyeongHo Kim, a web solutions developer working in Pangyo",
+			"About GyeongHo Kim, who builds everything needed to play video in a web browser",
 		"about.title": "About",
 		"about.caption": "Did you know?\nProgramming and archery\nare alike.",
 		"about.p1":
-			"I am GyeongHo Kim, a developer working in Pangyo. I work as a web solutions developer in the solutions development office at IDIS, a video security company. I build backends in Go, frontends in TypeScript and infrastructure in Terraform. Most of my day goes into receiving video that starts at NVRs, DVRs and IP cams, moving it along, and making it play in a browser. Lately I am helping build servers for the company's AX transition (MCP server development, Ontology & RAG, K3s management and more).",
+			"I build everything needed to play video in a web browser. Literally, everything. I work as a web solutions developer in the solutions development office at IDIS, a video security company. I build backends in Go, frontends in TypeScript and infrastructure in Terraform. Most of my day goes into receiving video that starts at NVRs, DVRs and IP cams, moving it along, and making it play in a browser. Lately I am helping build servers for the company's AX transition (MCP server development, Ontology & RAG, K3s management and more).",
 		"about.p2":
 			"After work I mostly contribute to media open source, spend money on my homelab, build embedded firmware with TinyGo, and now and then upload a video to YouTube. This site is also built with GHDS, the hand-drawn style design system I made.",
 		"about.p3":
@@ -455,11 +462,9 @@ export const ui = {
 
 		"portfolio.title": "Portfolio",
 		"portfolio.description":
-			"What I built at work and what I open-sourced, shown with real screens",
-		"portfolio.lead":
-			"What I built at work and what I released as open source, collected with real screens. Scroll down and the screen changes one project at a time.",
-		"portfolio.scrollHint": "Scroll to go through them one by one",
-		"portfolio.chapter.company": "At work · IDIS",
+			"What I open-sourced, shown with real screens",
+		"portfolio.scrollHint": "Please scroll",
+		"portfolio.chapter.company": "IDIS",
 		"portfolio.chapter.oss": "Open source",
 		"portfolio.did": "What I did",
 		"portfolio.tags": "Tech",
@@ -481,9 +486,9 @@ export const ui = {
 		"portfolio.more.resume": "See the whole résumé",
 		"portfolio.more.talks": "See my talk slides",
 		"talks.title": "Talks",
-		"talks.description": "Seminars I ran at work and other public activities",
+		"talks.description": "Seminars and other public activities",
 		"talks.lead":
-			"Seminars I ran at work and other public activities. Slides are available as PDF.",
+			"A collection of seminars and other public activities. Slides are available as PDF.",
 		"talks.recent": "Latest talk",
 		"talks.venue": "Venue",
 		"talks.audience": "Audience",
@@ -561,6 +566,27 @@ export const ui = {
 		"wm.send": "Send webmention",
 		"wm.mailBefore": "No website? You can email your thoughts to ",
 		"wm.mailAfter": ".",
+
+		"guestbook.title": "Guestbook",
+		"guestbook.description":
+			"A guestbook where visitors leave notes by Webmention",
+		"guestbook.lead":
+			"Leave a trace that you stopped by. A line of greeting or a link to your site is fine. Your note gets stuck on the wall below.",
+		"guestbook.form.title": "Leave a note",
+		"guestbook.how.1": "Write a post on your own site that links to this page.",
+		"guestbook.how.2": "Paste the address of that post below.",
+		"guestbook.how.3": "Send it.",
+		"guestbook.formLabel": "URL of your post",
+		"guestbook.send": "Send",
+		"guestbook.note":
+			"New notes appear on the wall the next time the site is built. The guestbook only accepts Webmention.",
+		"guestbook.about": "What are webmentions?",
+		"guestbook.wall.title": "Notes on the wall",
+		"guestbook.wall.label": "Notes left by visitors",
+		"guestbook.count.suffix": " notes",
+		"guestbook.count.suffixOne": " note",
+		"guestbook.empty": "No notes yet. Be the first to leave one.",
+		"guestbook.source": "View original",
 		"feed.title": "gyeongho.dev — GyeongHo Kim",
 		"feed.description":
 			"Video streaming, WebGPU, Go, and now and then the homelab",

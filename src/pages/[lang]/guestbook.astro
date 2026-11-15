@@ -1,0 +1,285 @@
+---
+import { getLocaleStaticPaths, type Locale, localePath, t } from "../../i18n";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { fullDate } from "../../lib/format";
+import { loadGuestbook, WEBMENTION_ENDPOINT } from "../../lib/guestbook";
+import { paperFor } from "../../lib/paper";
+
+export const getStaticPaths = getLocaleStaticPaths;
+
+const locale = Astro.params.lang as Locale;
+const target = new URL(localePath(locale, "guestbook"), Astro.site).href;
+const entries = await loadGuestbook(Astro.site as URL, {
+	token: import.meta.env.WEBMENTION_IO_TOKEN,
+});
+const steps = [1, 2, 3] as const;
+---
+
+<BaseLayout
+	locale={locale}
+	title={`${t(locale, "guestbook.title")} — GyeongHo Kim`}
+	description={t(locale, "guestbook.description")}
+>
+	<section class="container head" aria-labelledby="gb-h">
+		<h1 id="gb-h" class="page-title">{t(locale, "guestbook.title")}</h1>
+		<p class="lead">{t(locale, "guestbook.lead")}</p>
+	</section>
+
+	<div class="container layout">
+		<section class="send" aria-labelledby="form-h">
+			<gh-card elevated>
+				<div class="send-body">
+					<h2 id="form-h" class="section-title">
+						{t(locale, "guestbook.form.title")}
+					</h2>
+					<ol class="steps">
+						{steps.map((n) => (
+							<li>
+								<span class={`num hand num-${n}`} aria-hidden="true">
+									{n}
+								</span>
+								<span>{t(locale, `guestbook.how.${n}`)}</span>
+							</li>
+						))}
+					</ol>
+					<form
+						id="guestbook-form"
+						class="form"
+						method="post"
+						action={WEBMENTION_ENDPOINT}
+					>
+						<gh-input
+							name="source"
+							type="url"
+							required
+							placeholder="https://"
+							label={t(locale, "guestbook.formLabel")}
+						></gh-input>
+						<input type="hidden" name="target" value={target}>
+						<gh-button type="submit" variant="primary"
+							>{t(locale, "guestbook.send")}</gh-button
+						>
+					</form>
+					<p class="note">
+						{t(locale, "guestbook.note")}{" "}
+						<a href="https://indieweb.org/Webmention"
+							>{t(locale, "guestbook.about")}</a
+						>
+					</p>
+				</div>
+			</gh-card>
+		</section>
+
+		<section class="wall" aria-labelledby="wall-h">
+			<h2 id="wall-h" class="section-title">
+				{t(locale, "guestbook.wall.title")}{" "}
+				<span class="mono count"
+					>{entries.length}{t(
+						locale,
+						entries.length === 1
+							? "guestbook.count.suffixOne"
+							: "guestbook.count.suffix",
+					)}</span
+				>
+			</h2>
+			{entries.length === 0 ? (
+				<div class="empty" data-testid="guestbook-empty">
+					<p>{t(locale, "guestbook.empty")}</p>
+				</div>
+			) : (
+				<ol class="notes" aria-label={t(locale, "guestbook.wall.label")}>
+					{entries.map((entry, index) => {
+						const { tone, tilt } = paperFor(index);
+						return (
+							<li class="h-entry">
+								<gh-card
+									variant="sticky"
+									fastener="tape"
+									tone={tone}
+									tilt={tilt}
+								>
+									<div class="note-body">
+										<p class="p-content hand text">{entry.text}</p>
+										<div class="meta">
+											{entry.authorUrl ? (
+												<a
+													class="p-author h-card name"
+													rel="ugc nofollow"
+													href={entry.authorUrl}
+												>
+													{entry.author}
+												</a>
+											) : (
+												<span class="p-author h-card name">{entry.author}</span>
+											)}
+											<a
+												class="u-url mono date"
+												rel="ugc nofollow"
+												href={entry.source}
+											>
+												{entry.date ? (
+													<time
+														class="dt-published"
+														datetime={entry.date.toISOString()}
+													>
+														{fullDate(entry.date)}
+													</time>
+												) : (
+													t(locale, "guestbook.source")
+												)}
+											</a>
+										</div>
+									</div>
+								</gh-card>
+							</li>
+						);
+					})}
+				</ol>
+			)}
+		</section>
+	</div>
+</BaseLayout>
+
+<style>
+.head {
+	padding-block: calc(var(--sys-spacing-3xl) + var(--sys-spacing-sm))
+		var(--sys-spacing-xl);
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-md);
+}
+.lead {
+	margin: 0;
+	max-width: 38em;
+	font-size: calc(var(--sys-typography-body-fontSize) * 1.125);
+	color: var(--sys-color-text-secondary);
+}
+.layout {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--sys-spacing-2xl);
+	align-items: flex-start;
+	padding-bottom: var(--sys-spacing-3xl);
+}
+.send {
+	flex: 1 1 372px;
+	min-width: 0;
+	max-width: 420px;
+}
+.send gh-card {
+	display: block;
+}
+.send-body {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-md);
+	padding: var(--sys-spacing-sm);
+}
+.steps {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-sm);
+}
+.steps li {
+	display: flex;
+	align-items: center;
+	gap: var(--sys-spacing-md);
+}
+.num {
+	flex: none;
+	width: calc(var(--sys-spacing-xl) + var(--sys-spacing-sm));
+	height: calc(var(--sys-spacing-xl) + var(--sys-spacing-sm));
+	border-radius: var(--sys-radius-pill);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: var(--sys-typography-title-fontSize);
+}
+.num-1 {
+	background: var(--sys-color-paper-primary);
+}
+.num-2 {
+	background: var(--sys-color-paper-success);
+}
+.num-3 {
+	background: var(--sys-color-paper-warning);
+}
+.form {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: var(--sys-spacing-md);
+}
+.form gh-input {
+	align-self: stretch;
+}
+.note {
+	margin: 0;
+	font-size: var(--sys-typography-label-fontSize);
+	color: var(--sys-color-text-secondary);
+}
+.wall {
+	flex: 999 1 520px;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-lg);
+}
+.count {
+	font-size: var(--sys-typography-label-fontSize);
+	color: var(--sys-color-text-secondary);
+}
+.empty {
+	padding: var(--sys-spacing-lg);
+	background: var(--sys-color-bg-muted);
+	border-radius: var(--sys-radius-lg);
+}
+.empty p {
+	margin: 0;
+}
+.notes {
+	margin: 0;
+	padding: var(--sys-spacing-md) 0 0;
+	list-style: none;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+	gap: var(--sys-spacing-xl) var(--sys-spacing-lg);
+}
+.notes li {
+	display: flex;
+}
+.notes gh-card {
+	flex: 1;
+	min-width: 0;
+}
+.note-body {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-md);
+	min-height: 140px;
+	height: 100%;
+	overflow-wrap: anywhere;
+}
+.text {
+	margin: 0;
+	font-size: var(--sys-typography-title-fontSize);
+	line-height: var(--sys-typography-body-lineHeight);
+	white-space: pre-line;
+}
+.meta {
+	display: flex;
+	flex-direction: column;
+	margin-top: auto;
+}
+.name {
+	font-weight: var(--sys-typography-heading-fontWeight);
+	font-size: var(--sys-typography-label-fontSize);
+}
+.date {
+	font-size: var(--sys-typography-caption-fontSize);
+	color: var(--sys-color-text-secondary);
+}
+</style>

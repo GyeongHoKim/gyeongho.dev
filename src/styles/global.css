@@ -10,6 +10,8 @@ body {
 	font-family: var(--sys-typography-body-fontFamily);
 	font-size: var(--sys-typography-body-fontSize);
 	line-height: var(--sys-typography-body-lineHeight);
+	word-break: keep-all;
+	overflow-wrap: break-word;
 	background-color: var(--sys-color-bg-canvas);
 	background-image: radial-gradient(
 		var(--sys-color-border-subtle) 1.2px,
