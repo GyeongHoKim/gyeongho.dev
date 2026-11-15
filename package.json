@@ -14,7 +14,7 @@
 		"lint": "biome check .",
 		"format": "biome check --write .",
 		"test": "vitest run",
-		"e2e": "playwright test --pass-with-no-tests"
+		"e2e": "playwright test"
 	},
 	"dependencies": {
 		"@astrojs/rss": "4.0.19",

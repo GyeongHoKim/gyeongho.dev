@@ -1,12 +1,152 @@
 ---
-import { getLocaleStaticPaths, type Locale } from "../../i18n";
+import { Image } from "astro:assets";
+import portrait from "../../assets/home/portrait.jpg";
+import FisheyeDemo from "../../components/FisheyeDemo.astro";
+import ProjectNote from "../../components/ProjectNote.astro";
+import { getLocaleStaticPaths, type Locale, localePath, t } from "../../i18n";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { projects } from "../../lib/projects";
 
 export const getStaticPaths = getLocaleStaticPaths;
 
 const locale = Astro.params.lang as Locale;
 ---
 
-<BaseLayout locale={locale} title="gyeongho.dev" description="gyeongho.dev">
-	<h1>gyeongho.dev</h1>
+<BaseLayout
+	locale={locale}
+	title={t(locale, "home.title")}
+	description={t(locale, "home.description")}
+>
+	<section id="top" class="container hero">
+		<div class="intro">
+			<Image
+				class="portrait"
+				src={portrait}
+				alt={t(locale, "home.portraitAlt")}
+				width={200}
+				height={200}
+				loading="eager"
+			/>
+			<h1 class="hand">{t(locale, "home.hello")}</h1>
+			<p class="lead">
+				<span>{t(locale, "home.intro.before")}</span>{" "}<gh-marker
+					>{t(locale, "home.intro.marked")}</gh-marker
+				><span>{t(locale, "home.intro.after")}</span>
+			</p>
+		</div>
+		<FisheyeDemo locale={locale} />
+	</section>
+
+	<section id="projects" class="container block" aria-labelledby="projects-h">
+		<div class="block-head">
+			<h2 id="projects-h" class="hand">{t(locale, "home.projects.title")}</h2>
+			<a class="more" href={localePath(locale, "portfolio")}>
+				{t(locale, "home.projects.more")}
+				<gh-icon name="arrow-right" size="sm"></gh-icon>
+			</a>
+		</div>
+		<ul class="notes">
+			{projects.map((project, index) => (
+				<li>
+					<ProjectNote project={project} index={index} locale={locale} />
+				</li>
+			))}
+		</ul>
+	</section>
+
+	<section id="writing" class="container block" aria-labelledby="writing-h">
+		<div class="block-head">
+			<h2 id="writing-h" class="hand">{t(locale, "home.lately.title")}</h2>
+			<a class="more" href={localePath(locale, "blog")}>
+				{t(locale, "home.lately.more")}
+				<gh-icon name="arrow-right" size="sm"></gh-icon>
+			</a>
+		</div>
+		<p class="empty" data-testid="lately-empty">
+			{t(locale, "home.lately.empty")}
+		</p>
+	</section>
 </BaseLayout>
+
+<style>
+.hero {
+	padding-block: var(--sys-spacing-3xl) var(--sys-spacing-2xl);
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--sys-spacing-2xl);
+	align-items: flex-start;
+}
+.intro {
+	flex: 1 1 420px;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: var(--sys-spacing-lg);
+}
+.hero > :global([data-fisheye-demo]) {
+	flex: 1 1 520px;
+	min-width: 0;
+}
+.intro :global(.portrait) {
+	align-self: center;
+	width: 200px;
+	height: 200px;
+	border-radius: var(--sys-radius-pill);
+	object-fit: cover;
+	border: var(--sys-border-width-thick) solid var(--sys-color-text-primary);
+	box-shadow: 4px 4px 0 var(--sys-color-border-default);
+	background: var(--sys-color-bg-muted);
+}
+h1 {
+	margin: 0;
+	font-size: calc(var(--sys-typography-heading-fontSize) * 1.3);
+	line-height: var(--sys-typography-heading-lineHeight);
+}
+.lead {
+	margin: 0;
+	max-width: 34em;
+	font-size: calc(var(--sys-typography-body-fontSize) * 1.125);
+	color: var(--sys-color-text-secondary);
+}
+.block {
+	padding-block: var(--sys-spacing-2xl);
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-xl);
+}
+.block-head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: var(--sys-spacing-sm);
+}
+h2 {
+	margin: 0;
+	font-size: var(--sys-typography-heading-fontSize);
+	line-height: var(--sys-typography-heading-lineHeight);
+}
+.more {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--sys-spacing-xs);
+	min-height: 44px;
+	font-weight: var(--sys-typography-label-fontWeight);
+}
+.notes {
+	margin: 0;
+	padding: var(--sys-spacing-sm) 0 0;
+	list-style: none;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+	gap: var(--sys-spacing-2xl) var(--sys-spacing-xl);
+}
+.empty {
+	margin: 0;
+	padding: var(--sys-spacing-lg) 0;
+	border-bottom: var(--sys-border-width-default) dashed
+		var(--sys-color-border-default);
+	color: var(--sys-color-text-secondary);
+}
+</style>

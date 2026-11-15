@@ -12,6 +12,8 @@ export default defineConfig({
 	},
 	integrations: [
 		sitemap({
+			// The root page only redirects to a locale and is noindex.
+			filter: (page) => new URL(page).pathname !== "/",
 			i18n: { defaultLocale: "en", locales: { ko: "ko-KR", en: "en-US" } },
 		}),
 	],

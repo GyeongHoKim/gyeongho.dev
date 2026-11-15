@@ -18,5 +18,13 @@
 	},
 	"formatter": { "indentStyle": "tab" },
 	"javascript": { "formatter": { "quoteStyle": "double" } },
-	"linter": { "enabled": true, "rules": { "preset": "recommended" } }
+	"linter": { "enabled": true, "rules": { "preset": "recommended" } },
+	"overrides": [
+		{
+			"includes": ["src/components/FisheyeDemo.astro"],
+			"linter": {
+				"rules": { "a11y": { "useAriaPropsSupportedByRole": "off" } }
+			}
+		}
+	]
 }

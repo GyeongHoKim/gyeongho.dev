@@ -1,0 +1,160 @@
+[
+	{
+		"name": "미디어 서버",
+		"description": {
+			"ko": "RTSP, 자사 프로토콜로 전달되는 영상관제 시스템의 영상을 브라우저에서 볼 수 있는 프로토콜 & 코덱으로 바꿔주는 Go 서버. 국내 2곳의 물류센터, 3곳의 건설회사, 경기도 지자체와 부산 관공서, 터키 산림청 산하의 각 타워 그리고 미국 8곳의 Transit Agency 회사에 제 서버가 구축되어 있습니다.",
+			"en": "A Go server that converts video from surveillance systems, delivered over RTSP and a proprietary protocol, into protocols and codecs a browser can play. My server is deployed at 2 logistics centers and 3 construction companies in Korea, a Gyeonggi-do local government and a Busan public office, the towers run by the Turkish Forestry Directorate, and 8 transit agencies in the US."
+		},
+		"tags": ["Go", "HLS · DASH · WebRTC", "DRM"],
+		"links": [
+			{
+				"label": { "ko": "Portfolio에서 보기", "en": "See it in Portfolio" },
+				"href": "/portfolio/"
+			}
+		]
+	},
+	{
+		"name": "WASM HEVC 디코더",
+		"description": {
+			"ko": "브라우저가 재생할 수 없는 HEVC 코덱 영상을 서버 트랜스코딩 없이 브라우저에서 디코딩합니다. libavcodec, libavformat을 이용해서 디코딩 로직을 짜고 Emscripten으로 빌드했습니다.",
+			"en": "Decodes HEVC video that browsers cannot play right in the browser, with no server-side transcoding. I wrote the decoding logic on top of libavcodec and libavformat and built it with Emscripten."
+		},
+		"tags": ["WebAssembly", "libavcodec", "WebGPU"],
+		"links": [
+			{
+				"label": { "ko": "Portfolio에서 보기", "en": "See it in Portfolio" },
+				"href": "/portfolio/"
+			}
+		]
+	},
+	{
+		"name": "fisheye.js",
+		"description": {
+			"ko": "WebGPU로 어안 렌즈 왜곡을 브라우저에서 펴는 라이브러리. WebCodecs VideoFrame을 받아 e-PTZ, 파노라마, 분할 화면으로 보여줍니다. 위에서 돌려 본 것이 이 라이브러리입니다.",
+			"en": "A library that straightens fisheye lens distortion in the browser with WebGPU. It takes WebCodecs VideoFrames and shows them as e-PTZ, panorama or split views. The demo above runs on it."
+		},
+		"tags": ["WebGPU", "WebCodecs", "TypeScript"],
+		"links": [
+			{
+				"label": { "ko": "GitHub", "en": "GitHub" },
+				"href": "https://github.com/GyeongHoKim/fisheye.js"
+			}
+		]
+	},
+	{
+		"name": "디자인 시스템 · @ids/*",
+		"description": {
+			"ko": "회사 SI 웹앱들의 공통 기반입니다. 프론트엔드 코어 라이브러리 8종과 컴포넌트 59개짜리 React 디자인 시스템을 만들었고, Chromatic visual regression test와 CI/CD pipeline을 구축했습니다.",
+			"en": "The common base of the company's SI web apps. I built 8 frontend core libraries and a React design system with 59 components, and set up Chromatic visual regression tests and a CI/CD pipeline."
+		},
+		"tags": ["React", "TypeScript", "Design system"],
+		"links": [
+			{
+				"label": { "ko": "Portfolio에서 보기", "en": "See it in Portfolio" },
+				"href": "/portfolio/"
+			}
+		]
+	},
+	{
+		"name": "DRM · cenc, cbcs",
+		"description": {
+			"ko": "Go MP4 라이브러리 mp4ff에 VP9 Common Encryption 지원을 보냈고 merge됐습니다. 미디어 서버의 DRM과 암호화를 만들던 작업 중 기여했습니다.",
+			"en": "I sent VP9 Common Encryption support to mp4ff, a Go MP4 library, and it was merged. I contributed it while building DRM and encryption for the media server."
+		},
+		"tags": ["Go", "CENC", "오픈소스 기여"],
+		"links": [
+			{
+				"label": { "ko": "GitHub", "en": "GitHub" },
+				"href": "https://github.com/Eyevinn/mp4ff"
+			}
+		]
+	},
+	{
+		"name": "Gitea · go-sdk, gitea-cli",
+		"description": {
+			"ko": "Gitea Go SDK에서 RSA key로 서명할 때 나던 panic을 고쳤습니다(HTTPSign에 ssh.AlgorithmSigner 구현). 공식 CLI gt에는 AI agent가 CI 실패 확인부터 PR 작성, review까지 할 수 있게 하는 agent skill을 추가했습니다. 둘 다 merge됐습니다.",
+			"en": "I fixed a panic in the Gitea Go SDK when signing with an RSA key (implemented ssh.AlgorithmSigner in HTTPSign). I also added an agent skill to the official CLI gt that lets an AI agent go from checking CI failures to writing and reviewing PRs. Both were merged."
+		},
+		"tags": ["Go", "Gitea", "오픈소스 기여"],
+		"links": [
+			{
+				"label": { "ko": "go-sdk PR #781", "en": "go-sdk PR #781" },
+				"href": "https://gitea.com/gitea/go-sdk/pulls/781"
+			},
+			{
+				"label": { "ko": "gitea-cli PR #29", "en": "gitea-cli PR #29" },
+				"href": "https://gitea.com/gitea/cli/pulls/29"
+			}
+		]
+	},
+	{
+		"name": "onvif-simulator",
+		"description": {
+			"ko": "Go로 만든 ONVIF 장치 시뮬레이터. Profile S의 장치 쪽 필수 기능을 구현했고 RTSP 서버가 들어 있습니다.",
+			"en": "An ONVIF device simulator written in Go. It implements the required device-side features of Profile S and includes an RTSP server."
+		},
+		"tags": ["Go", "ONVIF", "RTSP"],
+		"links": [
+			{
+				"label": { "ko": "GitHub", "en": "GitHub" },
+				"href": "https://github.com/GyeongHoKim/onvif-simulator"
+			}
+		]
+	},
+	{
+		"name": "gerrit-mcp-server",
+		"description": {
+			"ko": "AI coding agent를 Gerrit code review에 연결합니다. Review할 change를 찾고, diff를 읽고, line comment를 남기고, review를 올릴 수 있습니다. Go로 만든 단일 binary이고 MCP server와 CLI(agent skill) 두 가지로 씁니다.",
+			"en": "Connects AI coding agents to Gerrit code review. They can find changes to review, read diffs, leave line comments and post reviews. A single Go binary that works both as an MCP server and as a CLI (agent skill)."
+		},
+		"tags": ["Go", "MCP", "Gerrit"],
+		"links": [
+			{
+				"label": { "ko": "GitHub", "en": "GitHub" },
+				"href": "https://github.com/GyeongHoKim/gerrit-mcp-server"
+			}
+		]
+	},
+	{
+		"name": "ky-digest-auth",
+		"description": {
+			"ko": "Ky에 HTTP Digest 인증을 붙이는 hook입니다. 401 응답의 challenge를 읽어 Authorization header를 만들고 다시 요청합니다. CCTV, NVR, embedded 장비를 위해 MD5와 SHA-256을 지원합니다.",
+			"en": "A hook that adds HTTP Digest authentication to Ky. It reads the challenge in a 401 response, builds the Authorization header and retries the request. It supports MD5 and SHA-256 for CCTV, NVR and embedded devices."
+		},
+		"tags": ["TypeScript", "Ky", "HTTP Digest"],
+		"links": [
+			{
+				"label": { "ko": "GitHub", "en": "GitHub" },
+				"href": "https://github.com/GyeongHoKim/ky-digest-auth"
+			}
+		]
+	},
+	{
+		"name": "UXLint",
+		"description": {
+			"ko": "AI로 웹앱의 UX를 점검하는 CLI. 페르소나와 핵심 기능을 알려 주면 페이지별 UX 리포트를 써 줍니다.",
+			"en": "A CLI that checks a web app's UX with AI. Tell it the personas and key features and it writes a UX report for each page."
+		},
+		"tags": ["CLI", "AI", "UX"],
+		"links": [
+			{
+				"label": { "ko": "GitHub", "en": "GitHub" },
+				"href": "https://github.com/GyeongHoKim/uxlint"
+			}
+		]
+	},
+	{
+		"name": "GHDS",
+		"description": {
+			"ko": "이 사이트를 그리고 있는 손그림 디자인 시스템. 디자인 토큰을 구축하고, 이를 바탕으로 React, Web Components, React Native 컴포넌트를 만들었습니다.",
+			"en": "The hand-drawn design system this site is drawn with. I built the design tokens and, on top of them, React, Web Components and React Native components."
+		},
+		"tags": ["React", "Web Components", "Tokens"],
+		"links": [
+			{
+				"label": { "ko": "데모 보기", "en": "View the demo" },
+				"href": "https://gyeonghokim.github.io/gyeongho-design-system"
+			}
+		]
+	}
+]

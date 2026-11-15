@@ -1,0 +1,89 @@
+---
+import { type Locale, localePath, t } from "../i18n";
+import { paperFor } from "../lib/paper";
+import type { Project } from "../lib/projects";
+
+interface Props {
+	project: Project;
+	index: number;
+	locale: Locale;
+}
+
+const { project, index, locale } = Astro.props;
+const { tone, tilt } = paperFor(index);
+const isExternal = (href: string) => /^https?:/.test(href);
+---
+
+<gh-card variant="sticky" fastener="tape" tone={tone} tilt={tilt} interactive>
+	<article class="note-body">
+		<h3 class="hand">{project.name}</h3>
+		<p class="desc">{project.description[locale]}</p>
+		<ul class="tags" aria-label={t(locale, "home.tags")}>
+			{project.tags.map((tag) => (
+				<li>
+					<gh-badge variant="neutral">{tag}</gh-badge>
+				</li>
+			))}
+		</ul>
+		<ul class="links">
+			{project.links.map((link) => (
+				<li>
+					<a
+						href={
+							isExternal(link.href) ? link.href : localePath(locale, link.href)
+						}
+					>
+						{link.label[locale]}
+						{isExternal(link.href) && (
+							<gh-icon name="external-link" size="sm"></gh-icon>
+						)}
+					</a>
+				</li>
+			))}
+		</ul>
+	</article>
+</gh-card>
+
+<style>
+gh-card {
+	display: block;
+	height: 100%;
+}
+.note-body {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-sm);
+	min-height: 200px;
+}
+h3 {
+	margin: 0;
+	font-size: var(--sys-typography-title-fontSize);
+	line-height: var(--sys-typography-title-lineHeight);
+}
+.desc {
+	margin: 0;
+	flex-grow: 1;
+	color: var(--sys-color-text-secondary);
+}
+ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	display: flex;
+	flex-wrap: wrap;
+}
+.tags {
+	gap: var(--sys-spacing-xs);
+}
+.links {
+	column-gap: var(--sys-spacing-md);
+}
+.links a {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--sys-spacing-xs);
+	min-height: 44px;
+	font-size: var(--sys-typography-label-fontSize);
+	font-weight: var(--sys-typography-heading-fontWeight);
+}
+</style>

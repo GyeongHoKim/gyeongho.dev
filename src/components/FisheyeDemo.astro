@@ -1,0 +1,319 @@
+---
+import { Image } from "astro:assets";
+import cam1 from "../assets/home/cam1.jpg";
+import cam2 from "../assets/home/cam2.jpg";
+import product from "../assets/home/product.jpg";
+import productVideo from "../assets/home/product.mp4?url";
+import { type Locale, t } from "../i18n";
+
+interface Props {
+	locale: Locale;
+}
+
+const { locale } = Astro.props;
+const modes = [
+	["ptz", "Explore"],
+	["equirectangular", "Panorama"],
+	["cylindrical", "Cylindrical"],
+	["pane", "Quad"],
+	["original", "Original"],
+] as const;
+const cameras = [
+	["cam1", t(locale, "home.demo.camera1")],
+	["cam2", t(locale, "home.demo.camera2")],
+] as const;
+---
+
+<div
+	class="deck-wrap"
+	data-fisheye-demo
+	data-cam1={cam1.src}
+	data-cam2={cam2.src}
+	data-status-fallback={t(locale, "home.demo.statusFallback")}
+	data-loading={t(locale, "home.demo.loading")}
+	data-hint={t(locale, "home.demo.hint")}
+>
+	<fieldset aria-label={t(locale, "home.deck.group")} class="tabs">
+		<gh-button variant="primary" aria-pressed="true" data-deck-tab="live"
+			>{t(locale, "home.deck.live")}</gh-button
+		>
+		<gh-button variant="neutral" aria-pressed="false" data-deck-tab="product"
+			>{t(locale, "home.deck.product")}</gh-button
+		>
+	</fieldset>
+	<div class="deck">
+		<div class="slot" data-deck-card="live">
+			<gh-card>
+				<figure>
+					<div class="card-head">
+						<h2 class="hand">{t(locale, "home.demo.title")}</h2>
+						<span class="mono status" data-status
+							>{t(locale, "home.demo.statusFallback")}</span
+						>
+					</div>
+					<div class="stage" data-live hidden>
+						<canvas
+							width="1024"
+							height="768"
+							tabindex="0"
+							role="img"
+							aria-label={t(locale, "home.demo.canvasLabel")}
+							data-canvas
+						></canvas>
+						<span class="hint" aria-hidden="true" data-hint-text
+							>{t(locale, "home.demo.loading")}</span
+						>
+					</div>
+					<fieldset
+						class="row"
+						aria-label={t(locale, "home.demo.modes")}
+						data-live
+						hidden
+					>
+						{modes.map(([id, label], i) => (
+							<gh-button
+								variant={i === 0 ? "primary" : "neutral"}
+								aria-pressed={i === 0 ? "true" : "false"}
+								data-mode={id}
+							>
+								{label}
+							</gh-button>
+						))}
+					</fieldset>
+					<div data-zoom-row data-live hidden>
+						<gh-slider
+							label="Zoom"
+							min="1"
+							max="4"
+							step="0.1"
+							value="1"
+						></gh-slider>
+					</div>
+					<div class="row small" data-live hidden>
+						<span>{t(locale, "home.demo.camera")}</span>
+						{cameras.map(([id, label], i) => (
+							<gh-button
+								variant="neutral"
+								aria-pressed={i === 0 ? "true" : "false"}
+								data-cam={id}
+							>
+								{label}
+							</gh-button>
+						))}
+					</div>
+					<div class="fallback" data-testid="fisheye-fallback">
+						<Image
+							src={cam1}
+							alt={t(locale, "home.demo.fallbackAlt")}
+							width={640}
+							loading="eager"
+						/>
+						<p class="small">{t(locale, "home.demo.fallbackText")}</p>
+					</div>
+					<figcaption class="small">
+						{t(locale, "home.demo.captionBefore")}<a
+							href="https://github.com/GyeongHoKim/fisheye.js"
+							>fisheye.js</a
+						>{t(locale, "home.demo.captionMiddle")}<a
+							href="https://gyeonghokim.github.io/fisheye.js/"
+							>{t(locale, "home.demo.captionLink")}</a
+						>{t(locale, "home.demo.captionAfter")}
+					</figcaption>
+				</figure>
+			</gh-card>
+			<button
+				type="button"
+				class="bring"
+				data-bring="live"
+				hidden
+				aria-label={t(locale, "home.deck.bringLive")}
+			></button>
+		</div>
+		<div class="slot" data-deck-card="product">
+			<gh-card>
+				<figure>
+					<div class="card-head">
+						<h2 class="hand">{t(locale, "home.product.title")}</h2>
+						<span class="mono status">iNEX Fisheye · WebGPU</span>
+					</div>
+					<video
+						class="shot"
+						data-product-video
+						src={productVideo}
+						poster={product.src}
+						muted
+						loop
+						playsinline
+						preload="metadata"
+						aria-label={t(locale, "home.product.alt")}
+					></video>
+					<figcaption class="small product-caption">
+						<span>{t(locale, "home.product.caption")}</span>
+						<gh-button
+							variant="neutral"
+							data-product-toggle
+							data-pause={t(locale, "home.product.pause")}
+							data-play={t(locale, "home.product.play")}
+							>{t(locale, "home.product.pause")}</gh-button
+						>
+					</figcaption>
+				</figure>
+			</gh-card>
+			<button
+				type="button"
+				class="bring"
+				data-bring="product"
+				hidden
+				aria-label={t(locale, "home.deck.bringProduct")}
+			></button>
+		</div>
+	</div>
+</div>
+
+<script>
+import "../scripts/fisheye-demo";
+</script>
+
+<style>
+fieldset {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	min-width: 0;
+}
+.deck-wrap {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-md);
+}
+.tabs,
+.row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--sys-spacing-sm);
+}
+.deck {
+	display: grid;
+	padding: 0 var(--sys-spacing-xl) var(--sys-spacing-lg) 0;
+}
+.slot {
+	grid-area: 1 / 1;
+	align-self: start;
+	position: relative;
+	transform-origin: 50% 100%;
+}
+.slot[data-state="front"] {
+	z-index: 2;
+}
+.slot[data-state="back"] {
+	z-index: 1;
+}
+gh-card {
+	display: block;
+}
+[data-zoom-row] gh-slider {
+	display: flex;
+	inline-size: 100%;
+}
+figure {
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-md);
+}
+.card-head {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: var(--sys-spacing-sm);
+}
+h2 {
+	margin: 0;
+	font-size: var(--sys-typography-title-fontSize);
+	line-height: var(--sys-typography-title-lineHeight);
+}
+.status {
+	font-size: var(--sys-typography-caption-fontSize);
+	color: var(--sys-color-text-secondary);
+}
+.small {
+	margin: 0;
+	font-size: var(--sys-typography-label-fontSize);
+	font-weight: var(--sys-typography-body-fontWeight);
+	color: var(--sys-color-text-secondary);
+}
+.stage {
+	position: relative;
+}
+canvas,
+.fallback :global(img),
+.shot {
+	display: block;
+	width: 100%;
+	height: auto;
+	aspect-ratio: 4 / 3;
+	object-fit: contain;
+	border-radius: var(--sys-radius-md);
+	background: var(--sys-color-text-primary);
+	touch-action: none;
+}
+.product-caption {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--sys-spacing-md);
+}
+.product-caption span {
+	flex: 1 1 260px;
+}
+.shot {
+	aspect-ratio: 1280 / 670;
+	object-fit: cover;
+}
+canvas[data-grabbable] {
+	cursor: grab;
+}
+canvas[data-grabbing] {
+	cursor: grabbing;
+}
+canvas:focus-visible {
+	outline: 2px solid var(--sys-color-border-focus);
+	outline-offset: 3px;
+}
+.hint {
+	position: absolute;
+	left: 50%;
+	bottom: var(--sys-spacing-md);
+	transform: translateX(-50%);
+	padding: var(--sys-spacing-xs) var(--sys-spacing-md);
+	border-radius: var(--sys-radius-pill);
+	background: var(--sys-color-text-primary);
+	color: var(--sys-color-bg-surface);
+	font-size: var(--sys-typography-label-fontSize);
+	font-weight: var(--sys-typography-label-fontWeight);
+	opacity: 0.8;
+	pointer-events: none;
+	white-space: nowrap;
+}
+.fallback {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-sm);
+}
+.bring {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	cursor: pointer;
+	border-radius: var(--sys-radius-lg);
+}
+[hidden] {
+	display: none !important;
+}
+</style>
