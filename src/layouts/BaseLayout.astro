@@ -1,0 +1,74 @@
+---
+import "@fontsource-variable/nunito-sans";
+import "@fontsource-variable/noto-sans-kr";
+import "@fontsource/gochi-hand";
+import "@fontsource/gaegu";
+import "@fontsource/gaegu/700.css";
+import "@ghds/tokens/css";
+import "../styles/global.css";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import MobileMenu from "../components/MobileMenu.astro";
+import { LOCALES, type Locale, localePath, switchLocalePath } from "../i18n";
+
+interface Props {
+	locale: Locale;
+	title: string;
+	description: string;
+	current?: "about" | "portfolio" | "talks" | "resume" | "blog" | "rss";
+}
+
+const { locale, title, description, current } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogLocale = locale === "ko" ? "ko_KR" : "en_US";
+---
+
+<!doctype html>
+<html lang={locale} data-theme="light">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>{title}</title>
+		<meta name="description" content={description}>
+		<link rel="icon" href="/favicon.ico" sizes="48x48">
+		<link rel="icon" href="/favicon.png" type="image/png" sizes="96x96">
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+		<link rel="canonical" href={canonical}>
+		{LOCALES.map((code) => (
+			<link
+				rel="alternate"
+				hreflang={code}
+				href={new URL(switchLocalePath(Astro.url.pathname, code), Astro.site)}
+			/>
+		))}
+		<link
+			rel="alternate"
+			type="application/rss+xml"
+			title="gyeongho.dev"
+			href={new URL(
+				localePath(locale, "feed.xml").replace(/\/$/, ""),
+				Astro.site,
+			)}
+		>
+		<meta property="og:type" content="website">
+		<meta property="og:site_name" content="gyeongho.dev">
+		<meta property="og:title" content={title}>
+		<meta property="og:description" content={description}>
+		<meta property="og:url" content={canonical}>
+		<meta property="og:locale" content={ogLocale}>
+		<slot name="head" />
+	</head>
+	<body>
+		<div class="page">
+			<Header locale={locale} current={current} />
+			<main>
+				<slot />
+			</main>
+			<Footer locale={locale} />
+		</div>
+		<MobileMenu locale={locale} current={current} />
+		<script>
+		import "../scripts/ghds";
+		</script>
+	</body>
+</html>

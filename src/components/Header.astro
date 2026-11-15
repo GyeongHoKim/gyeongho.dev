@@ -1,0 +1,70 @@
+---
+import { type Locale, localePath, t } from "../i18n";
+
+interface Props {
+	locale: Locale;
+	current?: "about" | "portfolio" | "talks" | "resume" | "blog" | "rss";
+}
+
+const { locale, current } = Astro.props;
+const items = ["about", "portfolio", "talks", "resume", "blog"] as const;
+---
+
+<header class="no-print site-header">
+	<a
+		href={localePath(locale)}
+		class="navlink hand brand"
+		aria-label={t(locale, "home.aria")}
+		>gyeongho.dev</a
+	>
+	<nav class="desk-nav" aria-label={t(locale, "nav.main")}>
+		{items.map((item) => (
+			<a
+				href={localePath(locale, item)}
+				class="navlink"
+				aria-current={current === item ? "page" : undefined}
+			>
+				{t(locale, `nav.${item}`)}
+			</a>
+		))}
+		<a
+			href={localePath(locale, "rss")}
+			class="navlink rss-link"
+			aria-current={current === "rss" ? "page" : undefined}
+		>
+			<gh-badge variant="warning">{t(locale, "nav.rss")}</gh-badge>
+		</a>
+	</nav>
+</header>
+
+<style>
+.site-header {
+	max-width: 1120px;
+	margin: 0 auto;
+	padding: var(--sys-spacing-lg) var(--sys-spacing-lg) 0;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--sys-spacing-md);
+}
+.brand {
+	font-size: var(--sys-typography-heading-fontSize);
+	font-weight: 700;
+	color: var(--sys-color-text-primary);
+	border-bottom: 0;
+}
+.desk-nav {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 28px;
+	font-size: var(--sys-typography-body-fontSize);
+	font-weight: 500;
+}
+.rss-link {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--sys-spacing-xs);
+}
+</style>

@@ -1,0 +1,249 @@
+/* Site styles on GHDS tokens. Only --sys-* and --comp-* tokens are used. */
+:root {
+	color-scheme: light;
+}
+
+body {
+	margin: 0;
+	min-height: 100vh;
+	color: var(--sys-color-text-primary);
+	font-family: var(--sys-typography-body-fontFamily);
+	font-size: var(--sys-typography-body-fontSize);
+	line-height: var(--sys-typography-body-lineHeight);
+	background-color: var(--sys-color-bg-canvas);
+	background-image: radial-gradient(
+		var(--sys-color-border-subtle) 1.2px,
+		transparent 1.2px
+	);
+	background-size: 24px 24px;
+}
+
+a {
+	color: var(--sys-color-text-link);
+}
+/* No text token for the hover shade; bg-primary-active matches the canvas colour. */
+a:hover {
+	color: var(--sys-color-bg-primary-active);
+}
+
+.hand {
+	font-family: var(--sys-typography-heading-fontFamily);
+}
+.mono {
+	font-family: var(--sys-typography-code-fontFamily);
+}
+.container {
+	max-width: 1120px;
+	margin: 0 auto;
+	padding-inline: var(--sys-spacing-lg);
+}
+.container-narrow {
+	max-width: 880px;
+	margin: 0 auto;
+	padding-inline: var(--sys-spacing-lg);
+}
+
+/* No muted text token; icon-default matches the canvas nav colour. */
+.navlink {
+	color: var(--sys-color-icon-default);
+	text-decoration: none;
+	padding: var(--sys-spacing-xs) 2px;
+	border-bottom: var(--sys-border-width-default) solid transparent;
+}
+.navlink:hover {
+	color: var(--sys-color-text-primary);
+	border-bottom-color: var(--sys-color-border-default);
+}
+.navlink[aria-current="page"] {
+	color: var(--sys-color-text-primary);
+	border-bottom: var(--sys-border-width-thick) solid var(--sys-color-text-link);
+}
+
+.note {
+	transition:
+		transform var(--sys-animation-duration-normal)
+		var(--sys-animation-easing-emphasized),
+		box-shadow var(--sys-animation-duration-normal)
+		var(--sys-animation-easing-standard);
+}
+.note:hover,
+.note:focus-within {
+	transform: translateY(-6px) rotate(-1deg);
+	box-shadow: var(--sys-shadow-xl) !important;
+}
+
+.cork {
+	background-color: var(--sys-color-chart-3);
+	background-image:
+		radial-gradient(
+			color-mix(in srgb, var(--sys-color-bg-warning-hover) 35%, transparent) 1px,
+			transparent 1.6px
+		),
+		radial-gradient(
+			color-mix(in srgb, var(--sys-color-paper-warning) 55%, transparent) 1px,
+			transparent 1.6px
+		),
+		linear-gradient(
+			color-mix(in srgb, var(--sys-color-bg-canvas) 22%, transparent),
+			color-mix(in srgb, var(--sys-color-bg-canvas) 22%, transparent)
+		);
+	background-size:
+		7px 7px,
+		11px 11px,
+		auto;
+	background-position:
+		0 0,
+		4px 6px,
+		0 0;
+}
+
+.lined {
+	background-color: var(--sys-color-paper-lined);
+	background-image:
+		linear-gradient(
+			90deg,
+			transparent 35px,
+			var(--sys-color-paper-margin) 35px,
+			var(--sys-color-paper-margin) 37px,
+			transparent 37px
+		),
+		repeating-linear-gradient(
+			180deg,
+			transparent 0px,
+			transparent 27px,
+			var(--sys-color-paper-rule) 27px,
+			var(--sys-color-paper-rule) 28px
+		);
+	background-position:
+		0 0,
+		0 8px;
+}
+
+.pinned {
+	transition:
+		transform var(--sys-animation-duration-normal)
+		var(--sys-animation-easing-emphasized),
+		box-shadow var(--sys-animation-duration-normal)
+		var(--sys-animation-easing-standard);
+}
+.pinned:hover {
+	box-shadow: var(--sys-shadow-xl) !important;
+}
+.pinned:focus-visible,
+.sticker:focus-visible,
+.navlink:focus-visible,
+.postlink:focus-visible {
+	outline: 2px solid var(--sys-color-border-focus);
+	outline-offset: 3px;
+}
+
+.postlink {
+	color: var(--sys-color-text-primary);
+	text-decoration: none;
+}
+.postlink:hover {
+	color: var(--sys-color-text-link);
+	text-decoration: underline;
+	text-decoration-thickness: 2px;
+	text-underline-offset: 4px;
+}
+
+.prose p {
+	margin: 0 0 20px;
+}
+.prose h2 {
+	font-family: var(--sys-typography-heading-fontFamily);
+	font-size: var(--sys-typography-heading-fontSize);
+	line-height: var(--sys-typography-heading-lineHeight);
+	margin: 40px 0 var(--sys-spacing-md);
+}
+.prose code {
+	font-family: var(--sys-typography-code-fontFamily);
+	font-size: var(--sys-typography-code-fontSize);
+	background: var(--sys-color-bg-muted);
+	padding: 2px 6px;
+	border-radius: var(--sys-radius-xs);
+}
+.prose pre {
+	margin: 0 0 var(--sys-spacing-lg);
+	padding: var(--sys-spacing-md) 20px;
+	background: var(--sys-color-text-primary);
+	color: var(--sys-color-bg-canvas);
+	border-radius: var(--sys-radius-md);
+	overflow-x: auto;
+	font-family: var(--sys-typography-code-fontFamily);
+	font-size: var(--sys-typography-code-fontSize);
+	line-height: 1.6;
+}
+.prose pre code {
+	background: none;
+	padding: 0;
+	color: inherit;
+}
+
+@media print {
+	body {
+		background: var(--sys-color-bg-surface);
+	}
+	.no-print {
+		display: none !important;
+	}
+	.paper {
+		box-shadow: none !important;
+		border: 0 !important;
+		margin: 0 !important;
+		max-width: none !important;
+	}
+}
+
+@media (max-width: 760px) {
+	.desk-nav {
+		display: none !important;
+	}
+	/* Room for the fixed menu button (see MobileMenu.astro). */
+	.page {
+		padding-bottom: calc(var(--sys-spacing-3xl) + var(--sys-spacing-lg));
+	}
+	.work-media {
+		order: -1;
+		flex-basis: 100% !important;
+		top: 0 !important;
+		z-index: var(--sys-zIndex-sticky);
+		padding: var(--sys-spacing-sm) 0 12px;
+		background: var(--sys-color-bg-canvas);
+		margin: 0 calc(-1 * var(--sys-spacing-lg));
+		padding-left: var(--sys-spacing-md);
+		padding-right: var(--sys-spacing-md);
+	}
+	.work-media figure {
+		box-shadow: 3px 3px 0 var(--sys-color-border-default) !important;
+	}
+	.work-step {
+		min-height: 420px !important;
+		padding: var(--sys-spacing-xl) 0 !important;
+	}
+	.paper {
+		padding: 28px 20px !important;
+		margin: 16px 12px 40px !important;
+	}
+	.grid-2 {
+		grid-template-columns: minmax(0, 1fr) !important;
+	}
+	.grid-4 {
+		grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+	}
+	.dl-stack {
+		grid-template-columns: minmax(0, 1fr) !important;
+		gap: 2px 0 !important;
+	}
+	.dl-stack dd {
+		margin-bottom: 12px !important;
+	}
+	.cork {
+		border-width: 8px !important;
+		padding: 28px 16px 20px !important;
+	}
+	.hero-deck {
+		padding: 0 16px 20px 0 !important;
+	}
+}

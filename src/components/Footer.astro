@@ -1,0 +1,117 @@
+---
+import { type Locale, localePath, t } from "../i18n";
+import LangSwitch from "./LangSwitch.astro";
+
+interface Props {
+	locale: Locale;
+}
+
+const { locale } = Astro.props;
+---
+
+<footer class="no-print site-footer">
+	<div class="webring">
+		<a href="https://xn--sr8hvo.ws/previous" class="tap"
+			><gh-icon name="arrow-left" size="sm"></gh-icon>Previous</a
+		>
+		<a href="https://xn--sr8hvo.ws" class="tap hand webring-name"
+			>An IndieWeb Webring</a
+		>
+		<a href="https://xn--sr8hvo.ws/next" class="tap"
+			>Next<gh-icon name="arrow-right" size="sm"></gh-icon></a
+		>
+	</div>
+	<div class="meta">
+		<a
+			href={localePath(locale, "rss#buttons")}
+			class="button88 hand"
+			aria-label={t(locale, "footer.buttons")}
+			>gyeongho.dev</a
+		>
+		<nav class="mono slash" aria-label={t(locale, "footer.slash")}>
+			<a href={localePath(locale, "about#now")} class="tap">/now</a>
+			<a href={localePath(locale, "uses")} class="tap">/uses</a>
+			<a href={localePath(locale, "colophon")} class="tap">/colophon</a>
+		</nav>
+		<div class="links">
+			<a href={localePath(locale, "guestbook")} class="tap"
+				>{t(locale, "footer.guestbook")}</a
+			>
+			<a href={localePath(locale, "rss#blogroll")} class="tap"
+				>{t(locale, "footer.blogroll")}</a
+			>
+			<a href="https://github.com/GyeongHoKim" class="tap">GitHub</a>
+			<a href={localePath(locale, "rss")} class="tap">RSS</a>
+			<a href="mailto:me@gyeongho.dev" class="tap"
+				><gh-icon name="mail" size="sm"></gh-icon>me@gyeongho.dev</a
+			>
+		</div>
+	</div>
+	<LangSwitch locale={locale} />
+</footer>
+
+<style>
+.site-footer {
+	max-width: 1120px;
+	margin: 0 auto;
+	padding: var(--sys-spacing-2xl) var(--sys-spacing-lg) var(--sys-spacing-3xl);
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-lg);
+	border-top: var(--sys-border-width-default) dashed
+		var(--sys-color-border-default);
+}
+.webring {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	gap: var(--sys-spacing-md);
+	font-size: var(--sys-typography-label-fontSize);
+}
+.webring-name {
+	font-size: var(--sys-typography-title-fontSize);
+}
+.meta {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--sys-spacing-md);
+	font-size: var(--sys-typography-label-fontSize);
+	color: var(--sys-color-text-secondary);
+}
+.tap {
+	min-height: 44px;
+	display: inline-flex;
+	align-items: center;
+	gap: var(--sys-spacing-xs);
+}
+.slash {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+}
+.links {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--sys-spacing-md);
+}
+.button88 {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 88px;
+	height: 31px;
+	box-sizing: border-box;
+	border: var(--sys-border-width-default) solid var(--sys-color-text-primary);
+	font-size: 13px;
+	line-height: 1;
+	color: var(--sys-color-text-primary);
+	text-decoration: none;
+	white-space: nowrap;
+	overflow: hidden;
+	background: var(--sys-color-paper-primary);
+	box-shadow: 2px 2px 0 0 var(--sys-color-border-default);
+}
+</style>

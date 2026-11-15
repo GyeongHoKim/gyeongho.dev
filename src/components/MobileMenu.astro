@@ -1,0 +1,198 @@
+---
+import { type Locale, localePath, t } from "../i18n";
+
+interface Props {
+	locale: Locale;
+	current?: "about" | "portfolio" | "talks" | "resume" | "blog" | "rss";
+}
+
+const { locale, current } = Astro.props;
+const items = ["about", "portfolio", "talks", "resume", "blog", "rss"] as const;
+---
+
+<button
+	type="button"
+	class="no-print menu-fab"
+	data-menu-open
+	aria-haspopup="dialog"
+	aria-controls="site-menu"
+>
+	<svg
+		aria-hidden="true"
+		width="22"
+		height="22"
+		viewBox="0 0 24 24"
+		fill="none"
+		stroke="currentColor"
+		stroke-width="2.4"
+		stroke-linecap="round"
+	>
+		<path d="M4 7 C 9 6.4, 15 7.6, 20 7"></path>
+		<path d="M4 12 C 9 12.6, 15 11.4, 20 12"></path>
+		<path d="M4 17 C 9 16.4, 15 17.6, 20 17"></path>
+	</svg>{t(locale, "nav.menu")}
+</button>
+
+<dialog id="site-menu" class="menu-sheet" aria-label={t(locale, "nav.menu")}>
+	<div class="grip" aria-hidden="true"></div>
+	<nav aria-label={t(locale, "nav.mainMobile")}>
+		<a href={localePath(locale)} class="hand home">gyeongho.dev</a>
+		{items.map((item) => (
+			<a
+				href={localePath(locale, item)}
+				aria-current={current === item ? "page" : undefined}
+			>
+				{t(locale, `nav.${item}`)}
+			</a>
+		))}
+	</nav>
+	<button type="button" class="close" data-menu-close>
+		{t(locale, "nav.close")}
+	</button>
+</dialog>
+
+<script>
+const sheet = document.querySelector<HTMLDialogElement>("#site-menu");
+const opener = document.querySelector<HTMLButtonElement>("[data-menu-open]");
+if (sheet && opener) {
+	opener.addEventListener("click", () => sheet.showModal());
+	sheet
+		.querySelector("[data-menu-close]")
+		?.addEventListener("click", () => sheet.close());
+	// A click on the dialog element itself is a click on the backdrop.
+	sheet.addEventListener("click", (event) => {
+		if (event.target === sheet) sheet.close();
+	});
+	for (const link of sheet.querySelectorAll("a"))
+		link.addEventListener("click", () => sheet.close());
+}
+</script>
+
+<style>
+.menu-fab {
+	display: none;
+	position: fixed;
+	right: calc(var(--sys-spacing-md) + env(safe-area-inset-right));
+	bottom: calc(var(--sys-spacing-md) + env(safe-area-inset-bottom));
+	z-index: var(--sys-zIndex-overlay);
+	align-items: center;
+	gap: var(--sys-spacing-sm);
+	min-height: 48px;
+	padding: var(--sys-spacing-sm) var(--sys-spacing-md);
+	font: inherit;
+	font-weight: 700;
+	color: var(--sys-color-text-primary);
+	background: var(--sys-color-bg-surface);
+	border: var(--sys-border-width-default) solid var(--sys-color-text-primary);
+	border-radius: var(--sys-radius-pill);
+	box-shadow: var(--sys-shadow-lg);
+	cursor: pointer;
+}
+.menu-fab:focus-visible,
+.close:focus-visible,
+.menu-sheet a:focus-visible {
+	outline: var(--sys-border-width-thick) solid var(--sys-color-border-focus);
+	outline-offset: 2px;
+}
+@media (max-width: 760px) {
+	.menu-fab {
+		display: inline-flex;
+	}
+}
+
+.menu-sheet {
+	position: fixed;
+	inset: auto 0 0;
+	width: 100%;
+	max-width: none;
+	max-height: 85dvh;
+	margin: 0;
+	box-sizing: border-box;
+	padding: var(--sys-spacing-sm) var(--sys-spacing-md)
+		calc(var(--sys-spacing-md) + env(safe-area-inset-bottom));
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	color: var(--sys-color-text-primary);
+	background: var(--sys-color-bg-canvas);
+	border: 0;
+	border-top: var(--sys-border-width-default) solid
+		var(--sys-color-text-primary);
+	border-radius: var(--sys-radius-lg) var(--sys-radius-lg) 0 0;
+	box-shadow: var(--sys-shadow-xl);
+	translate: 0 100%;
+	transition:
+		translate 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+		overlay 0.28s allow-discrete,
+		display 0.28s allow-discrete;
+}
+.menu-sheet[open] {
+	translate: 0 0;
+}
+@starting-style {
+	.menu-sheet[open] {
+		translate: 0 100%;
+	}
+}
+.menu-sheet::backdrop {
+	background: rgb(0 0 0 / 0);
+	transition:
+		background 0.28s,
+		overlay 0.28s allow-discrete,
+		display 0.28s allow-discrete;
+}
+.menu-sheet[open]::backdrop {
+	background: rgb(0 0 0 / 0.35);
+}
+@starting-style {
+	.menu-sheet[open]::backdrop {
+		background: rgb(0 0 0 / 0);
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.menu-sheet,
+	.menu-sheet::backdrop {
+		transition: none;
+	}
+}
+
+.grip {
+	width: 44px;
+	height: 4px;
+	margin: 0 auto var(--sys-spacing-sm);
+	border-radius: var(--sys-radius-pill);
+	background: var(--sys-color-border-default);
+}
+.menu-sheet nav {
+	display: flex;
+	flex-direction: column;
+}
+.menu-sheet a {
+	display: flex;
+	align-items: center;
+	min-height: 52px;
+	padding: 0 var(--sys-spacing-md);
+	border-radius: var(--sys-radius-md);
+	font-size: var(--sys-typography-title-fontSize);
+	font-weight: 700;
+	color: var(--sys-color-text-primary);
+	text-decoration: none;
+}
+.menu-sheet a[aria-current="page"] {
+	background: var(--sys-color-paper-primary);
+}
+.menu-sheet .home {
+	font-size: var(--sys-typography-heading-fontSize);
+}
+.close {
+	width: 100%;
+	min-height: 48px;
+	margin-top: var(--sys-spacing-sm);
+	font: inherit;
+	font-weight: 700;
+	color: var(--sys-color-text-primary);
+	background: var(--sys-color-bg-surface);
+	border: var(--sys-border-width-default) solid var(--sys-color-text-primary);
+	border-radius: var(--sys-radius-md);
+	cursor: pointer;
+}
+</style>

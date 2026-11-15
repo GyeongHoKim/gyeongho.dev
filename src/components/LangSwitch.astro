@@ -1,0 +1,51 @@
+---
+import { LOCALES, type Locale, switchLocalePath, t } from "../i18n";
+
+interface Props {
+	locale: Locale;
+}
+
+const { locale } = Astro.props;
+const names: Record<Locale, string> = { ko: "한국어", en: "English" };
+---
+
+<nav class="lang-switch" aria-label={t(locale, "footer.language")}>
+	{LOCALES.map((code, index) => (
+		<>
+			{index > 0 && <span aria-hidden="true">·</span>}
+			{code === locale ? (
+				<span aria-current="true" lang={code}>
+					{names[code]}
+				</span>
+			) : (
+				<a
+					href={switchLocalePath(Astro.url.pathname, code)}
+					hreflang={code}
+					lang={code}
+				>
+					{names[code]}
+				</a>
+			)}
+		</>
+	))}
+</nav>
+
+<style>
+.lang-switch {
+	display: flex;
+	align-items: center;
+	gap: var(--sys-spacing-sm);
+	font-size: var(--sys-typography-label-fontSize);
+	color: var(--sys-color-text-secondary);
+}
+.lang-switch a,
+.lang-switch span[aria-current] {
+	min-height: 44px;
+	display: inline-flex;
+	align-items: center;
+}
+.lang-switch span[aria-current] {
+	color: var(--sys-color-text-primary);
+	font-weight: 700;
+}
+</style>
