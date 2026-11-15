@@ -1,0 +1,437 @@
+---
+import { blogroll } from "../../data/blogroll";
+import { getLocaleStaticPaths, type Locale, localePath, t } from "../../i18n";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+export const getStaticPaths = getLocaleStaticPaths;
+
+const locale = Astro.params.lang as Locale;
+const feedPath = (lang: Locale) =>
+	localePath(lang, "feed.xml").replace(/\/$/, "");
+const feedUrl = new URL(feedPath(locale), Astro.site).href;
+const siteUrl = new URL(Astro.site as URL).href;
+const buttonSrc = new URL("/buttons/gyeongho-dev.svg", Astro.site).href;
+const buttonCode = `<a href="${siteUrl}"><img src="${buttonSrc}" width="88" height="31" alt="${t(locale, "rss.buttons.alt")}"></a>`;
+
+const steps = [1, 2, 3] as const;
+const feeds = ["ko", "en"] as const;
+const rollTones = ["primary", "warning", "danger", "success", "info"] as const;
+const rollTilts = ["left", "right", "left"] as const;
+const wallTones = ["warning", "success", "danger", "info", "primary"] as const;
+const hostOf = (url: string) => new URL(url).host;
+const emptySlots = 5;
+---
+
+<BaseLayout
+	locale={locale}
+	title={`${t(locale, "rss.title")} — GyeongHo Kim`}
+	description={t(locale, "rss.description")}
+	current="rss"
+>
+	<div class="page">
+		<section class="stack" aria-labelledby="rss-h">
+			<h1 id="rss-h" class="page-title">{t(locale, "rss.title")}</h1>
+			<p class="lead">{t(locale, "rss.lead")}</p>
+		</section>
+
+		<gh-card>
+			<div class="copy-box">
+				<span class="label">{t(locale, "rss.url.label")}</span>
+				<div class="copy-row">
+					<code id="feed-url" class="url-field">{feedUrl}</code>
+					<gh-button
+						id="feed-copy"
+						variant="primary"
+						data-done={t(locale, "rss.copied")}
+						>{t(locale, "rss.copy")}</gh-button
+					>
+				</div>
+				<span
+					id="feed-note"
+					class="note"
+					aria-live="polite"
+					data-note={t(locale, "rss.copyNote")}
+					data-fail={t(locale, "rss.copyFail")}
+				></span>
+			</div>
+		</gh-card>
+
+		<section class="stack" aria-labelledby="how-h">
+			<h2 id="how-h" class="section-title">{t(locale, "rss.how.title")}</h2>
+			<ol class="steps">
+				{steps.map((n) => (
+					<li>
+						<span class={`num hand num-${n}`} aria-hidden="true">
+							{n}
+						</span>
+						<div>
+							<strong>{t(locale, `rss.how.${n}.title`)}</strong>
+							<br>
+							<span class="muted">{t(locale, `rss.how.${n}.text`)}</span>
+						</div>
+					</li>
+				))}
+			</ol>
+		</section>
+
+		<section id="feeds" class="stack" aria-labelledby="feeds-h">
+			<h2 id="feeds-h" class="section-title">{t(locale, "rss.feeds.title")}</h2>
+			<ul class="feed-list">
+				{feeds.map((lang) => (
+					<li>
+						<span class="strong">{t(locale, `rss.feeds.${lang}`)}</span>
+						<a href={feedPath(lang)}>
+							<code>{feedPath(lang)}</code>
+						</a>
+					</li>
+				))}
+			</ul>
+		</section>
+
+		<section id="blogroll" class="stack" aria-labelledby="roll-h">
+			<h2 id="roll-h" class="section-title">{t(locale, "rss.roll.title")}</h2>
+			<p class="muted">{t(locale, "rss.roll.text")}</p>
+			<ul class="roll">
+				{blogroll.map((site, index) => (
+					<li class="h-card">
+						<gh-card
+							variant="sticky"
+							fastener="tape"
+							tone={rollTones[index % rollTones.length]}
+							tilt={rollTilts[index % rollTilts.length]}
+						>
+							<div class="roll-body">
+								<a class="p-name u-url hand roll-name" href={site.url}>
+									{site.name}
+								</a>
+								<span class="mono host">{hostOf(site.url)}</span>
+								<p class="roll-note">{site.note[locale]}</p>
+								{site.feed ? (
+									<a class="tap" href={site.feed}>
+										<gh-badge variant="warning">RSS</gh-badge>
+										{t(locale, "rss.roll.feed")}
+									</a>
+								) : (
+									<a class="tap" href={site.url}>
+										{t(locale, "rss.roll.visit")}
+										<gh-icon name="external-link" size="sm"></gh-icon>
+									</a>
+								)}
+							</div>
+						</gh-card>
+					</li>
+				))}
+			</ul>
+		</section>
+
+		<section id="buttons" class="stack" aria-labelledby="btn-h">
+			<h2 id="btn-h" class="section-title">{t(locale, "rss.buttons.title")}</h2>
+			<p class="muted">{t(locale, "rss.buttons.text")}</p>
+			<gh-card elevated>
+				<div class="btn-box">
+					<div class="btn-preview">
+						<span class="label">{t(locale, "rss.buttons.mine")}</span>
+						<img
+							src="/buttons/gyeongho-dev.svg"
+							width="88"
+							height="31"
+							alt={t(locale, "rss.buttons.alt")}
+						>
+						<span class="label gap-top">{t(locale, "rss.buttons.double")}</span>
+						<img src="/buttons/gyeongho-dev.svg" width="176" height="62" alt="">
+					</div>
+					<div class="btn-code">
+						<span class="label">{t(locale, "rss.buttons.code")}</span>
+						<code id="btn-code" class="snippet">{buttonCode}</code>
+						<div class="copy-row">
+							<gh-button
+								id="btn-copy"
+								variant="neutral"
+								data-done={t(locale, "rss.copied")}
+								>{t(locale, "rss.buttons.copy")}</gh-button
+							>
+							<span
+								id="btn-note"
+								class="note"
+								aria-live="polite"
+								data-note={t(locale, "rss.buttons.copied")}
+								data-fail={t(locale, "rss.copyFail")}
+							></span>
+						</div>
+					</div>
+				</div>
+			</gh-card>
+			<h3 class="wall-title">{t(locale, "rss.buttons.wall")}</h3>
+			<ul class="wall" aria-label={t(locale, "rss.buttons.wallLabel")}>
+				{blogroll.map((site, index) => (
+					<li>
+						<a
+							class={`button88 hand tone-${wallTones[index % wallTones.length]}`}
+							href={site.url}
+						>
+							{site.wall}
+						</a>
+					</li>
+				))}
+				{Array.from({ length: emptySlots }, () => (
+					<li aria-hidden="true">
+						<span class="button88 empty"></span>
+					</li>
+				))}
+			</ul>
+			<p class="small muted">{t(locale, "rss.buttons.wallNote")}</p>
+		</section>
+	</div>
+</BaseLayout>
+
+<script>
+import type { GhButton } from "@ghds/web-components/button";
+import { initCopy } from "../../scripts/rss";
+
+const pairs = [
+	{ button: "feed-copy", source: "feed-url", note: "feed-note" },
+	{ button: "btn-copy", source: "btn-code", note: "btn-note" },
+] as const;
+for (const { button, source, note } of pairs) {
+	const buttonEl = document.querySelector<GhButton>(`#${button}`);
+	const sourceEl = document.getElementById(source);
+	const noteEl = document.getElementById(note);
+	if (buttonEl && sourceEl && noteEl)
+		initCopy(buttonEl, sourceEl, noteEl, {
+			done: buttonEl.dataset.done ?? "",
+			note: noteEl.dataset.note ?? "",
+			fail: noteEl.dataset.fail ?? "",
+		});
+}
+</script>
+
+<style>
+.page {
+	max-width: 760px;
+	margin: 0 auto;
+	padding: calc(var(--sys-spacing-3xl) + var(--sys-spacing-sm))
+		var(--sys-spacing-lg);
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--sys-spacing-2xl) + var(--sys-spacing-sm));
+}
+.stack {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-md);
+}
+.lead {
+	margin: 0;
+	font-size: calc(var(--sys-typography-body-fontSize) * 1.125);
+	color: var(--sys-color-text-secondary);
+}
+.muted {
+	margin: 0;
+	color: var(--sys-color-text-secondary);
+}
+.small {
+	font-size: var(--sys-typography-caption-fontSize);
+}
+.strong {
+	font-weight: var(--sys-typography-heading-fontWeight);
+}
+.label {
+	font-size: var(--sys-typography-label-fontSize);
+	font-weight: var(--sys-typography-heading-fontWeight);
+	color: var(--sys-color-text-secondary);
+}
+.note {
+	min-height: 1.5em;
+	font-size: var(--sys-typography-label-fontSize);
+	color: var(--sys-color-text-success);
+}
+code {
+	font-family: var(--sys-typography-code-fontFamily);
+}
+gh-card {
+	display: block;
+}
+.copy-box,
+.btn-box {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-sm);
+	padding: var(--sys-spacing-sm);
+}
+.btn-box {
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: var(--sys-spacing-lg);
+}
+.copy-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--sys-spacing-sm);
+}
+.url-field,
+.snippet {
+	min-width: 0;
+	box-sizing: border-box;
+	padding: var(--sys-spacing-sm) var(--sys-spacing-md);
+	background: var(--sys-color-bg-canvas);
+	border: var(--sys-border-width-default) solid var(--sys-color-border-default);
+	border-radius: var(--sys-radius-md);
+	font-size: var(--sys-typography-label-fontSize);
+	color: var(--sys-color-text-primary);
+	user-select: all;
+	overflow-wrap: anywhere;
+}
+.url-field {
+	flex: 1 1 280px;
+	display: block;
+}
+.snippet {
+	display: block;
+}
+.steps {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-md);
+}
+.steps li {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--sys-spacing-md);
+}
+.num {
+	flex: none;
+	width: calc(var(--sys-spacing-xl) + var(--sys-spacing-sm));
+	height: calc(var(--sys-spacing-xl) + var(--sys-spacing-sm));
+	border-radius: var(--sys-radius-pill);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: var(--sys-typography-title-fontSize);
+}
+.num-1 {
+	background: var(--sys-color-paper-primary);
+}
+.num-2 {
+	background: var(--sys-color-paper-success);
+}
+.num-3 {
+	background: var(--sys-color-paper-warning);
+}
+.feed-list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.feed-list li {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	gap: var(--sys-spacing-sm);
+	padding: var(--sys-spacing-md) 0;
+	border-bottom: var(--sys-border-width-default) dashed
+		var(--sys-color-border-default);
+}
+.feed-list code {
+	font-size: var(--sys-typography-label-fontSize);
+}
+.tap {
+	min-height: 44px;
+	display: inline-flex;
+	align-items: center;
+	gap: var(--sys-spacing-xs);
+	font-size: var(--sys-typography-label-fontSize);
+	font-weight: var(--sys-typography-heading-fontWeight);
+}
+.roll {
+	margin: 0;
+	padding: var(--sys-spacing-md) 0 0;
+	list-style: none;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+	gap: var(--sys-spacing-xl) var(--sys-spacing-lg);
+}
+.roll li {
+	display: flex;
+}
+.roll gh-card {
+	flex: 1;
+}
+.roll-body {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-xs);
+	height: 100%;
+}
+.roll-name {
+	color: var(--sys-color-text-primary);
+	text-decoration: none;
+	font-size: var(--sys-typography-title-fontSize);
+	line-height: 1.2;
+}
+.host {
+	font-size: var(--sys-typography-caption-fontSize);
+	color: var(--sys-color-text-secondary);
+}
+.roll-note {
+	margin: 0;
+	flex-grow: 1;
+	font-size: var(--sys-typography-label-fontSize);
+	color: var(--sys-color-text-secondary);
+}
+.btn-preview {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: var(--sys-spacing-sm);
+}
+.btn-preview img {
+	display: block;
+}
+.gap-top {
+	margin-top: var(--sys-spacing-sm);
+}
+.btn-code {
+	flex: 1 1 280px;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-sm);
+}
+.wall-title {
+	margin: var(--sys-spacing-sm) 0 0;
+	font-size: var(--sys-typography-body-fontSize);
+}
+.wall {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--sys-spacing-sm);
+}
+.button88.empty {
+	--button88-bg: transparent;
+	box-shadow: none;
+	border-style: dashed;
+	border-color: var(--sys-color-border-default);
+}
+.tone-warning {
+	--button88-bg: var(--sys-color-paper-warning);
+}
+.tone-success {
+	--button88-bg: var(--sys-color-paper-success);
+}
+.tone-danger {
+	--button88-bg: var(--sys-color-paper-danger);
+}
+.tone-info {
+	--button88-bg: var(--sys-color-paper-info);
+}
+.tone-primary {
+	--button88-bg: var(--sys-color-paper-primary);
+}
+</style>

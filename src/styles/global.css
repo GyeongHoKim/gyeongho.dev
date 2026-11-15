@@ -287,3 +287,22 @@ a:hover {
 		color-mix(in srgb, var(--sys-color-border-strong) 60%, transparent);
 	transform: rotate(3deg);
 }
+
+/* 88x31 web button (footer, button wall); the size is the format's fixed pixel size. */
+.button88 {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 88px;
+	height: 31px;
+	box-sizing: border-box;
+	border: var(--sys-border-width-default) solid var(--sys-color-text-primary);
+	font-size: 13px;
+	line-height: 1;
+	color: var(--sys-color-text-primary);
+	text-decoration: none;
+	white-space: nowrap;
+	overflow: hidden;
+	background: var(--button88-bg, var(--sys-color-paper-primary));
+	box-shadow: 2px 2px 0 0 var(--sys-color-border-default);
+}
