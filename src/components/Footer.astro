@@ -41,7 +41,7 @@ const { locale, alternates = LOCALES } = Astro.props;
 			<a href={localePath(locale, "rss#blogroll")} class="tap"
 				>{t(locale, "footer.blogroll")}</a
 			>
-			<a href="https://github.com/GyeongHoKim" class="tap">GitHub</a>
+			<a href="https://github.com/GyeongHoKim" rel="me" class="tap">GitHub</a>
 			<a href={localePath(locale, "rss")} class="tap">RSS</a>
 			<a href="mailto:me@gyeongho.dev" class="tap"
 				><gh-icon name="mail" size="sm"></gh-icon>me@gyeongho.dev</a

@@ -1,0 +1,277 @@
+---
+import { type Locale, t } from "../i18n";
+import { fullDate } from "../lib/format";
+import { fetchMentions, type Mention } from "../lib/webmentions";
+
+interface Props {
+	target: string;
+	locale: Locale;
+}
+
+const { target, locale } = Astro.props;
+const mentions = await fetchMentions(target, {
+	token: import.meta.env.WEBMENTION_IO_TOKEN,
+});
+const likes = mentions.filter((m) => m.type === "like");
+const reposts = mentions.filter((m) => m.type === "repost");
+const replies = mentions.filter(
+	(m) => m.type === "reply" || m.type === "mention",
+);
+const verb = (m: Mention) =>
+	t(locale, m.type === "reply" ? "wm.replied" : "wm.mentioned");
+const faces = [
+	{ items: likes, key: "wm.likes", label: "wm.likesLabel", icon: "heart" },
+	{
+		items: reposts,
+		key: "wm.reposts",
+		label: "wm.repostsLabel",
+		icon: "arrow-right",
+	},
+] as const;
+---
+
+<section class="wm" aria-labelledby="wm-h">
+	<div class="head">
+		<h2 id="wm-h" class="hand">{t(locale, "wm.title")}</h2>
+		<a href="https://indieweb.org/Webmention">
+			{t(locale, "wm.about")}
+			<gh-icon name="external-link" size="sm"></gh-icon>
+		</a>
+	</div>
+	{mentions.length === 0 ? (
+		<div class="empty" data-testid="webmentions-empty">
+			<p>{t(locale, "wm.empty")}</p>
+		</div>
+	) : (
+		<>
+			{(likes.length > 0 || reposts.length > 0) && (
+				<div class="groups">
+					{faces.map(
+						({ items, key, label, icon }) =>
+							items.length > 0 && (
+								<div class="group">
+									<span class="count">
+										<gh-icon name={icon} size="sm"></gh-icon>
+										{t(locale, key)}
+										<span class="n">{items.length}</span>
+									</span>
+									<ul class="faces" aria-label={t(locale, label)}>
+										{items.map((m) => (
+											<li
+												class={
+													m.type === "like"
+														? "p-like h-cite"
+														: "p-repost h-cite"
+												}
+											>
+												<a
+													class="u-author h-card"
+													rel="ugc nofollow"
+													href={m.author.url ?? m.url}
+													title={m.author.name}
+												>
+													<gh-avatar
+														size="md"
+														name={m.author.name}
+														src={m.author.photo}
+													></gh-avatar>
+												</a>
+											</li>
+										))}
+									</ul>
+								</div>
+							),
+					)}
+				</div>
+			)}
+			{replies.length > 0 && (
+				<ul class="replies">
+					{replies.map((m) => (
+						<li class="p-comment h-cite">
+							<span aria-hidden="true">
+								<gh-avatar
+									size="md"
+									name={m.author.name}
+									src={m.author.photo}
+								></gh-avatar>
+							</span>
+							<div class="body">
+								<span>
+									<a
+										class="p-author h-card name"
+										rel="ugc nofollow"
+										href={m.author.url ?? m.url}
+									>
+										{m.author.name}
+									</a>{" "}
+									<span class="verb">{verb(m)}</span>
+								</span>
+								{m.text && <p class="p-content">{m.text}</p>}
+								<a class="u-url mono date" rel="ugc nofollow" href={m.url}>
+									{m.published ? (
+										<time
+											class="dt-published"
+											datetime={m.published.toISOString()}
+										>
+											{fullDate(m.published)}
+										</time>
+									) : (
+										new URL(m.url).hostname
+									)}
+								</a>
+							</div>
+						</li>
+					))}
+				</ul>
+			)}
+		</>
+	)}
+	<form
+		class="send"
+		method="post"
+		action="https://webmention.io/gyeongho.dev/webmention"
+	>
+		<gh-input
+			name="source"
+			type="url"
+			required
+			placeholder="https://"
+			label={t(locale, "wm.formLabel")}
+		></gh-input>
+		<input type="hidden" name="target" value={target}>
+		<gh-button type="submit" variant="neutral"
+			>{t(locale, "wm.send")}</gh-button
+		>
+		<p class="mail">
+			{t(locale, "wm.mailBefore")}<a href="mailto:me@gyeongho.dev"
+				>me@gyeongho.dev</a
+			>{t(locale, "wm.mailAfter")}
+		</p>
+	</form>
+</section>
+
+<style>
+.wm {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-lg);
+}
+.head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: var(--sys-spacing-xs);
+}
+h2 {
+	margin: 0;
+	font-size: var(--sys-typography-heading-fontSize);
+	line-height: var(--sys-typography-heading-lineHeight);
+}
+.head a {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--sys-spacing-xs);
+	min-height: 44px;
+	font-size: var(--sys-typography-label-fontSize);
+}
+.empty {
+	padding: var(--sys-spacing-lg);
+	background: var(--sys-color-bg-muted);
+	border-radius: var(--sys-radius-lg);
+}
+.empty p {
+	margin: 0;
+}
+.send {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: var(--sys-spacing-sm);
+	padding: var(--sys-spacing-lg);
+	background: var(--sys-color-bg-muted);
+	border-radius: var(--sys-radius-lg);
+}
+.send gh-input {
+	align-self: stretch;
+}
+.mail {
+	margin: 0;
+	font-size: var(--sys-typography-label-fontSize);
+	color: var(--sys-color-text-secondary);
+}
+.groups {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--sys-spacing-xl);
+}
+.group {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-xs);
+}
+.count {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--sys-spacing-xs);
+	font-weight: var(--sys-typography-heading-fontWeight);
+}
+.n {
+	font-weight: var(--sys-typography-body-fontWeight);
+	color: var(--sys-color-text-secondary);
+}
+.faces {
+	display: flex;
+	flex-wrap: wrap;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.faces li + li {
+	margin-inline-start: calc(var(--sys-spacing-xs) * -1);
+}
+.faces a {
+	display: inline-flex;
+}
+.replies {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-md);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.replies li {
+	display: flex;
+	gap: var(--sys-spacing-md);
+	align-items: flex-start;
+	padding: var(--sys-spacing-md) var(--sys-spacing-lg);
+	background: var(--sys-color-bg-surface);
+	border: var(--sys-border-width-thick) solid var(--sys-color-border-default);
+	border-radius: var(--sys-radius-lg);
+}
+gh-avatar {
+	flex: none;
+}
+.body {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-xs);
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+.name {
+	font-weight: var(--sys-typography-heading-fontWeight);
+}
+.verb {
+	color: var(--sys-color-text-secondary);
+}
+.body p {
+	margin: 0;
+	color: var(--sys-color-text-secondary);
+}
+.date {
+	font-size: var(--sys-typography-caption-fontSize);
+	color: var(--sys-color-text-secondary);
+}
+</style>

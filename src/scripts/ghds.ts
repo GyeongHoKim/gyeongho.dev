@@ -1,4 +1,5 @@
 import "@ghds/web-components/alert";
+import "@ghds/web-components/avatar";
 import "@ghds/web-components/badge";
 import "@ghds/web-components/button";
 import "@ghds/web-components/card";

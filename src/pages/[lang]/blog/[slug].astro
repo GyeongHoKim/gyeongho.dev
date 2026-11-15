@@ -1,6 +1,7 @@
 ---
 import { render } from "astro:content";
 import Toc from "../../../components/Toc.astro";
+import Webmentions from "../../../components/Webmentions.astro";
 import { LOCALES, type Locale, localePath, t } from "../../../i18n";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { fullDate } from "../../../lib/format";
@@ -75,7 +76,9 @@ const href = (target: Post) =>
 			</div>
 
 			<div class="after">
-				<section id="webmentions"></section>
+				<div id="webmentions">
+					<Webmentions target={url.href} locale={locale} />
+				</div>
 				{(older || newer) && (
 					<nav class="pager" aria-label={t(locale, "post.nav")}>
 						{older ? (
@@ -243,9 +246,6 @@ h1 {
 	display: flex;
 	flex-direction: column;
 	gap: var(--sys-spacing-xl);
-}
-.after #webmentions:empty {
-	display: none;
 }
 .pager {
 	display: grid;
