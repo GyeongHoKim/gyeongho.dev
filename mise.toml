@@ -56,8 +56,11 @@ run = "terraform -chdir=infra init"
 
 [tasks."infra:check"]
 description = "Check Terraform formatting and validity"
-depends = ["infra:init"]
-run = ["terraform -chdir=infra fmt -check", "terraform -chdir=infra validate"]
+run = [
+  "terraform -chdir=infra fmt -check",
+  "terraform -chdir=infra init -backend=false",
+  "terraform -chdir=infra validate",
+]
 
 [tasks."infra:plan"]
 description = "Show the Terraform plan"
