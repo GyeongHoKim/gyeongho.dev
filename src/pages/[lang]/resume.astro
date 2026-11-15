@@ -1,0 +1,125 @@
+---
+import { join } from "node:path";
+import { getLocaleStaticPaths, LOCALES, type Locale, t } from "../../i18n";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { resumeAvailable, resumePdfPath } from "../../lib/resume";
+
+export const getStaticPaths = getLocaleStaticPaths;
+
+const locale = Astro.params.lang as Locale;
+const publicDir = join(process.cwd(), "public");
+const available = Object.fromEntries(
+	LOCALES.map((code) => [code, resumeAvailable(code, publicDir)]),
+);
+const labels = { ko: "한국어", en: "English" } as const;
+---
+
+<BaseLayout
+	locale={locale}
+	title={`${t(locale, "resume.title")} — GyeongHo Kim`}
+	description={t(locale, "resume.description")}
+	current="resume"
+>
+	<div class="container-narrow page">
+		<h1 class="page-title">{t(locale, "resume.title")}</h1>
+
+		<div class="toolbar">
+			<fieldset aria-label={t(locale, "resume.languages")} class="langs">
+				{LOCALES.map((code) => (
+					<gh-toggle
+						pressed={code === locale ? "" : undefined}
+						data-resume-lang={code}
+						lang={code}
+					>
+						{labels[code]}
+					</gh-toggle>
+				))}
+			</fieldset>
+			<gh-button
+				variant="primary"
+				href={resumePdfPath(locale)}
+				data-testid="resume-download"
+			>
+				{t(locale, "resume.download")}
+			</gh-button>
+		</div>
+
+		<section
+			class="viewer"
+			aria-label={t(locale, "resume.viewer")}
+			data-resume-viewer
+			data-resume-locale={locale}
+			data-available={JSON.stringify(available)}
+			data-error={t(locale, "resume.error")}
+		>
+			<div class="pages" data-resume-pages></div>
+			{LOCALES.filter((code) => !available[code]).map((code) => (
+				<p
+					class="missing"
+					data-testid="resume-missing"
+					data-resume-missing={code}
+					hidden
+					lang={code}
+				>
+					{t(code, "resume.missing")}
+				</p>
+			))}
+			<p class="missing" data-resume-error hidden></p>
+		</section>
+	</div>
+</BaseLayout>
+
+<script>
+import { initResumeViewer } from "../../scripts/resume-viewer";
+
+const viewer = document.querySelector<HTMLElement>("[data-resume-viewer]");
+if (viewer) initResumeViewer(viewer);
+</script>
+
+<style>
+.page {
+	padding-block: var(--sys-spacing-3xl) var(--sys-spacing-4xl);
+	display: flex;
+	flex-direction: column;
+	gap: var(--sys-spacing-xl);
+}
+.toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--sys-spacing-lg);
+}
+.langs {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	min-inline-size: 0;
+	display: flex;
+	gap: var(--sys-spacing-sm);
+}
+.viewer {
+	min-height: 320px;
+	background: var(--sys-color-bg-surface);
+	border: var(--sys-border-width-thin) solid var(--sys-color-border-subtle);
+	box-shadow: var(--sys-shadow-lg);
+}
+.pages {
+	display: flex;
+	flex-direction: column;
+}
+.pages :global(canvas) {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+.missing {
+	margin: 0;
+	padding: var(--sys-spacing-3xl);
+	text-align: center;
+	color: var(--sys-color-text-secondary);
+}
+.missing[hidden] {
+	display: none;
+}
+</style>

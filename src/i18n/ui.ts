@@ -209,6 +209,14 @@ export const ui = {
 		"talks.ask.title": "발표나 세미나를 부탁하고 싶다면",
 		"talks.ask.text":
 			"영상 스트리밍, WebGPU, 디자인 시스템, Go 이야기라면 즐겁게 준비하겠습니다.",
+		"resume.description": "김경호의 이력서",
+		"resume.title": "Resume",
+		"resume.languages": "이력서 언어",
+		"resume.download": "PDF로 저장",
+		"resume.viewer": "이력서 PDF",
+		"resume.missing": "[이력서 PDF 준비 중]",
+		"resume.error":
+			"이력서를 불러오지 못했습니다. PDF로 저장해서 확인해 주세요.",
 	},
 	en: {
 		"nav.about": "About",
@@ -423,5 +431,12 @@ export const ui = {
 		"talks.ask.title": "Want me to give a talk?",
 		"talks.ask.text":
 			"Video streaming, WebGPU, design systems, Go: happy to prepare any of them.",
+		"resume.description": "GyeongHo Kim's résumé",
+		"resume.title": "Resume",
+		"resume.languages": "Résumé language",
+		"resume.download": "Save as PDF",
+		"resume.viewer": "Résumé PDF",
+		"resume.missing": "[Résumé PDF coming soon]",
+		"resume.error": "The résumé could not be loaded. Save it as a PDF instead.",
 	},
 } as const;
