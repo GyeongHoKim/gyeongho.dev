@@ -1,11 +1,37 @@
+---
+---
+
 <!doctype html>
 <html lang="en" data-theme="light">
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width">
 		<title>gyeongho.dev</title>
+		<link rel="canonical" href="https://gyeongho.dev/en/">
+		<meta name="robots" content="noindex">
+		<script is:inline>
+		// Same rule as pickLocale() in src/i18n/index.ts.
+		(() => {
+			const languages = navigator.languages?.length
+				? navigator.languages
+				: [navigator.language];
+			let locale = "en";
+			for (const language of languages) {
+				const primary = String(language).toLowerCase().split("-")[0];
+				if (primary === "ko" || primary === "en") {
+					locale = primary;
+					break;
+				}
+			}
+			location.replace(`/${locale}/`);
+		})();
+		</script>
 	</head>
 	<body>
 		<h1>gyeongho.dev</h1>
+		<p>
+			<a href="/ko/">한국어</a>
+			<a href="/en/">English</a>
+		</p>
 	</body>
 </html>
