@@ -35,6 +35,7 @@
 		"@astrojs/language-server": "2.17.3",
 		"@biomejs/biome": "2.6.8",
 		"@playwright/test": "1.65.1",
+		"hyperframes": "0.9.80",
 		"typescript": "6.0.3",
 		"typescript-language-server": "6.1.0",
 		"vitest": "5.1.0"

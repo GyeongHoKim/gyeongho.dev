@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1280, height=800" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+:root { --ground:#0e1116; --card:#161b22; --line:#30363d; --ink:#e6edf3; --muted:#9aa4af;
+  --go:#00add8; --hls:#f0883e; --dash:#a371f7; --ok:#3fb950; --bad:#f85149;
+  --sans:-apple-system,"Helvetica Neue",Arial,sans-serif; --mono:Menlo,"SF Mono",Monaco,monospace; }
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { width:1280px; height:800px; overflow:hidden; background:var(--ground); }
+#root { position:relative; width:1280px; height:800px; font-family:var(--sans); color:var(--ink);
+  background:radial-gradient(ellipse at 50% 40%, #18202b 0%, var(--ground) 70%); }
+.title { position:absolute; left:40px; top:48px; font-size:44px; font-weight:700; letter-spacing:-0.02em; }
+.card { position:absolute; background:var(--card); border:2px solid var(--line); border-radius:16px; overflow:hidden;
+  box-shadow:0 18px 40px rgba(0,0,0,.45); }
+.head { height:54px; padding:0 18px; display:flex; align-items:center; gap:12px; border-bottom:2px solid var(--line);
+  font-size:24px; font-weight:700; }
+.head .r { margin-left:auto; font:600 20px var(--mono); color:var(--muted); }
+.foot { height:63px; padding:0 18px; display:flex; align-items:center; gap:10px; font:600 21px var(--mono); color:var(--muted); }
+.screen { background:#000; position:relative; }
+.dots { display:inline-flex; gap:7px; } .dots i { width:13px; height:13px; border-radius:50%; background:var(--line); }
+.term { padding:16px 20px; font:21px/1.62 var(--mono); color:var(--muted); white-space:pre; }
+.term b { color:var(--ink); font-weight:600; } .term .c { color:var(--go); } .term .g { color:var(--ok); }
+.term .o { color:var(--hls); } .term .p { color:var(--dash); }
+.chip { padding:5px 13px; border:2px solid var(--line); border-radius:999px; font:600 20px var(--mono); color:var(--muted); }
+video { position:absolute; object-fit:cover; z-index:2; }
+
+.dev { height:74px; padding:0 18px; display:flex; align-items:center; gap:14px; border-bottom:2px solid var(--line); font-size:23px; font-weight:700; }
+.dev i { width:14px; height:14px; border-radius:50%; background:var(--ok); }
+.dev span { margin-left:auto; }
+.search { position:absolute; left:18px; top:76px; font:21px var(--mono); color:var(--muted); }
+.wait { position:absolute; inset:0; display:grid; place-items:center; font:21px var(--mono); color:var(--muted); }
+#v { left:662px; top:282px; width:576px; height:324px; }
+</style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="12" data-width="1280" data-height="800">
+      <div id="scene" class="clip" data-start="0" data-duration="12" data-track-index="0">
+<div class="title">An ONVIF camera without the hardware</div>
+<div class="card" id="term" style="left:40px; top:150px; width:580px; height:560px">
+  <div class="head"><span class="dots"><i></i><i></i><i></i></span>Terminal</div>
+  <div class="term"><div id="t0"><span class="g">$</span> <b>onvif-simulator serve</b></div><div id="t1"><span class="c">ready</span>  WS-Discovery</div><div id="t2"><span class="c">ready</span>  Device · Media · Events</div><div id="t3"><span class="c">ready</span>  RTSP server, looping main.mp4</div><div id="t4"> </div><div id="t5"><span class="o">&lt;-</span> Probe</div><div id="t6"><span class="o">&lt;-</span> GetCapabilities</div><div id="t7"><span class="o">&lt;-</span> GetProfiles</div><div id="t8"><span class="o">&lt;-</span> GetStreamUri</div><div id="t9"><span class="p">&lt;-</span> RTSP DESCRIBE, SETUP, PLAY</div></div>
+</div>
+<div class="card" id="client" style="left:660px; top:150px; width:580px; height:560px">
+  <div class="head">ONVIF client</div>
+  <div class="dev" id="dev"><i></i>onvif-simulator<span class="chip" style="color:var(--go); border-color:var(--go)">Profile S</span></div>
+  <div class="search" id="search">searching the network…</div>
+  <div class="screen" style="height:324px"><div class="wait" id="wait" data-layout-allow-occlusion>no stream yet</div></div>
+  <div class="foot"><span class="chip" id="k1">Capabilities</span><span class="chip" id="k2">Profiles</span><span class="chip" id="k3">Stream URI</span></div>
+</div>
+</div>
+      <video id="v" class="clip" data-start="7.2" data-duration="4.8" data-track-index="1" src="cam.mp4" muted playsinline></video>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const END = 12;
+      const show = (sel, at, d = 0.3) => tl.fromTo(sel, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: d, ease: "power2.out" }, at);
+      const fadeIn = (sel, at, d = 0.3) => tl.fromTo(sel, { opacity: 0 }, { opacity: 1, duration: d }, at);
+      tl.fromTo("#scene", { opacity: 0 }, { opacity: 1, duration: 0.4 }, 0);
+
+      show("#term", 0.3, 0.5);
+      [0.9, 1.5, 1.9, 2.3, 2.3, 4.2, 5.0, 5.7, 6.4, 7.0].forEach((at, n) => fadeIn("#t" + n, at, 0.15));
+      show("#client", 3.2, 0.5);
+      fadeIn("#search", 3.4);
+      tl.to("#search", { opacity: 0, duration: 0.2 }, 4.3);
+      show("#dev", 4.4);
+      const ok = (id, at) => tl.to(id, { color: "#3fb950", borderColor: "#3fb950", duration: 0.3 }, at);
+      ok("#k1", 5.1); ok("#k2", 5.8); ok("#k3", 6.5);
+      fadeIn("#v", 7.2);
+
+      tl.to(["#scene", "video"], { opacity: 0, duration: 0.4 }, END - 0.4);
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

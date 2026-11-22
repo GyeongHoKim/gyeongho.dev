@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1280, height=800" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+:root { --ground:#0e1116; --card:#161b22; --line:#30363d; --ink:#e6edf3; --muted:#9aa4af;
+  --go:#00add8; --hls:#f0883e; --dash:#a371f7; --ok:#3fb950; --bad:#f85149;
+  --sans:-apple-system,"Helvetica Neue",Arial,sans-serif; --mono:Menlo,"SF Mono",Monaco,monospace; }
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { width:1280px; height:800px; overflow:hidden; background:var(--ground); }
+#root { position:relative; width:1280px; height:800px; font-family:var(--sans); color:var(--ink);
+  background:radial-gradient(ellipse at 50% 40%, #18202b 0%, var(--ground) 70%); }
+.title { position:absolute; left:40px; top:48px; font-size:44px; font-weight:700; letter-spacing:-0.02em; }
+.card { position:absolute; background:var(--card); border:2px solid var(--line); border-radius:16px; overflow:hidden;
+  box-shadow:0 18px 40px rgba(0,0,0,.45); }
+.head { height:54px; padding:0 18px; display:flex; align-items:center; gap:12px; border-bottom:2px solid var(--line);
+  font-size:24px; font-weight:700; }
+.head .r { margin-left:auto; font:600 20px var(--mono); color:var(--muted); }
+.foot { height:63px; padding:0 18px; display:flex; align-items:center; gap:10px; font:600 21px var(--mono); color:var(--muted); }
+.screen { background:#000; position:relative; }
+.dots { display:inline-flex; gap:7px; } .dots i { width:13px; height:13px; border-radius:50%; background:var(--line); }
+.term { padding:16px 20px; font:21px/1.62 var(--mono); color:var(--muted); white-space:pre; }
+.term b { color:var(--ink); font-weight:600; } .term .c { color:var(--go); } .term .g { color:var(--ok); }
+.term .o { color:var(--hls); } .term .p { color:var(--dash); }
+.chip { padding:5px 13px; border:2px solid var(--line); border-radius:999px; font:600 20px var(--mono); color:var(--muted); }
+video { position:absolute; object-fit:cover; z-index:2; }
+
+.strip { position:absolute; left:40px; top:150px; width:1200px; height:76px; overflow:hidden; border:2px solid var(--line);
+  border-radius:14px; background:var(--card); }
+.strip .lab { position:absolute; left:0; top:0; bottom:0; width:190px; z-index:2; display:grid; place-items:center;
+  background:var(--card); border-right:2px solid var(--line); font:600 21px var(--mono); color:var(--muted); }
+.nals { position:absolute; left:200px; top:14px; display:flex; gap:8px; }
+.nal { width:92px; height:44px; border-radius:8px; display:grid; place-items:center; font:700 20px var(--mono);
+  background:#0e1116; border:2px solid var(--line); color:var(--muted); }
+.nal.k { border-color:var(--go); color:var(--go); } .nal.h { border-color:var(--dash); color:var(--dash); }
+.err { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; }
+.err b { font-size:30px; } .err span { font:21px var(--mono); color:var(--bad); }
+.load { position:absolute; inset:0; display:grid; place-items:center; font:21px var(--mono); color:var(--muted); }
+#v { left:662px; top:316px; width:576px; height:324px; }
+</style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="12" data-width="1280" data-height="800">
+      <div id="scene" class="clip" data-start="0" data-duration="12" data-track-index="0">
+<div class="title">HEVC in the browser, decoded in WebAssembly</div>
+<div class="strip" data-layout-allow-overflow><div class="lab">H.265 stream</div><div class="nals" id="nals"><div class="nal h">VPS</div><div class="nal h">SPS</div><div class="nal h">PPS</div><div class="nal k">IDR</div><div class="nal">P</div><div class="nal">P</div><div class="nal">P</div><div class="nal">P</div><div class="nal">P</div><div class="nal">P</div><div class="nal">P</div><div class="nal k">IDR</div><div class="nal">P</div><div class="nal">P</div><div class="nal">P</div><div class="nal">P</div><div class="nal">P</div><div class="nal">P</div><div class="nal">P</div><div class="nal">P</div></div></div>
+<div class="card" id="native" style="left:40px; top:260px; width:580px; height:443px">
+  <div class="head">&lt;video&gt;<span class="r">native</span></div>
+  <div class="screen" style="height:324px"><div class="err" id="err"><b>Can't play this video</b><span>codec "hvc1" is not supported</span></div></div>
+  <div class="foot">no HEVC decoder in this browser</div>
+</div>
+<div class="card" id="wasm" style="left:660px; top:260px; width:580px; height:443px">
+  <div class="head">&lt;canvas&gt;<span class="r">WASM + WebGPU</span></div>
+  <div class="screen" style="height:324px"><div class="load" id="load" data-layout-allow-occlusion>loading decoder.wasm…</div></div>
+  <div class="foot"><span class="chip" id="c1">I/O</span><span class="chip" id="c2">libavcodec</span><span class="chip" id="c3">WebGPU</span></div>
+</div>
+</div>
+      <video id="v" class="clip" data-start="5" data-duration="7" data-track-index="1" src="cam.mp4" muted playsinline></video>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const END = 12;
+      const show = (sel, at, d = 0.3) => tl.fromTo(sel, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: d, ease: "power2.out" }, at);
+      const fadeIn = (sel, at, d = 0.3) => tl.fromTo(sel, { opacity: 0 }, { opacity: 1, duration: d }, at);
+      tl.fromTo("#scene", { opacity: 0 }, { opacity: 1, duration: 0.4 }, 0);
+
+      tl.fromTo("#nals", { x: 0 }, { x: -900, duration: END, ease: "none" }, 0);
+      show("#native", 0.5, 0.5);
+      fadeIn("#err", 1.3);
+      tl.fromTo("#err", { x: -8 }, { x: 0, duration: 0.4, ease: "elastic.out(1, 0.3)" }, 1.3);
+      show("#wasm", 2.2, 0.5);
+      const chip = (id, at) => tl.to(id, { color: "#00add8", borderColor: "#00add8", duration: 0.3 }, at);
+      chip("#c1", 3.0); chip("#c2", 3.8); chip("#c3", 4.6);
+      fadeIn("#v", 5.0);
+
+      tl.to(["#scene", "video"], { opacity: 0, duration: 0.4 }, END - 0.4);
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

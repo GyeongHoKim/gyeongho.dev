@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1280, height=800" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+:root { --ground:#0e1116; --card:#161b22; --line:#30363d; --ink:#e6edf3; --muted:#9aa4af;
+  --go:#00add8; --hls:#f0883e; --dash:#a371f7; --ok:#3fb950; --bad:#f85149;
+  --sans:-apple-system,"Helvetica Neue",Arial,sans-serif; --mono:Menlo,"SF Mono",Monaco,monospace; }
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { width:1280px; height:800px; overflow:hidden; background:var(--ground); }
+#root { position:relative; width:1280px; height:800px; font-family:var(--sans); color:var(--ink);
+  background:radial-gradient(ellipse at 50% 40%, #18202b 0%, var(--ground) 70%); }
+.title { position:absolute; left:40px; top:48px; font-size:44px; font-weight:700; letter-spacing:-0.02em; }
+.card { position:absolute; background:var(--card); border:2px solid var(--line); border-radius:16px; overflow:hidden;
+  box-shadow:0 18px 40px rgba(0,0,0,.45); }
+.head { height:54px; padding:0 18px; display:flex; align-items:center; gap:12px; border-bottom:2px solid var(--line);
+  font-size:24px; font-weight:700; }
+.head .r { margin-left:auto; font:600 20px var(--mono); color:var(--muted); }
+.foot { height:63px; padding:0 18px; display:flex; align-items:center; gap:10px; font:600 21px var(--mono); color:var(--muted); }
+.screen { background:#000; position:relative; }
+.dots { display:inline-flex; gap:7px; } .dots i { width:13px; height:13px; border-radius:50%; background:var(--line); }
+.term { padding:16px 20px; font:21px/1.62 var(--mono); color:var(--muted); white-space:pre; }
+.term b { color:var(--ink); font-weight:600; } .term .c { color:var(--go); } .term .g { color:var(--ok); }
+.term .o { color:var(--hls); } .term .p { color:var(--dash); }
+.chip { padding:5px 13px; border:2px solid var(--line); border-radius:999px; font:600 20px var(--mono); color:var(--muted); }
+video { position:absolute; object-fit:cover; z-index:2; }
+
+.code { padding:18px 22px; font:20px/1.6 var(--mono); color:var(--ink); white-space:pre; }
+.code .k { color:var(--dash); } .code .s { color:var(--ok); } .code .f { color:var(--go); }
+#call { display:block; margin:0 -22px; padding:2px 22px; }
+.req { margin:14px 16px 0; border:2px solid var(--line); border-radius:12px; background:#0e1116; overflow:hidden; }
+.req .l { display:flex; align-items:center; gap:14px; padding:10px 16px; font:600 21px var(--mono); }
+.req .st { margin-left:auto; padding:2px 12px; border-radius:8px; font-weight:700; }
+.req .d { padding:10px 16px 12px; border-top:2px solid var(--line); font:19px/1.5 var(--mono); color:var(--muted); white-space:pre; }
+.req .d b { color:var(--ink); font-weight:600; }
+.calc { margin:14px 16px 0; padding:10px 16px; border:2px dashed var(--go); border-radius:12px; font:19px/1.5 var(--mono); color:var(--go); white-space:pre; }
+</style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="12" data-width="1280" data-height="800">
+      <div id="scene" class="clip" data-start="0" data-duration="12" data-track-index="0">
+<div class="title">HTTP Digest authentication for Ky</div>
+<div class="card" id="code" style="left:40px; top:150px; width:500px; height:560px">
+  <div class="head">app.ts</div>
+  <div class="code"><span class="k">import</span> ky <span class="k">from</span> <span class="s">'ky'</span>;
+<span class="k">import</span> { digestAuth } <span class="k">from</span>
+  <span class="s">'@gyeonghokim/ky-digest-auth'</span>;
+
+<span class="k">const</span> api = ky.<span class="f">create</span>({
+  hooks: <span class="f">digestAuth</span>({
+    username: <span class="s">'admin'</span>,
+    password: <span class="s">'********'</span>,
+  }),
+});
+
+<span id="call"><span class="k">await</span> api.<span class="f">get</span>(<span class="s">'/api/status'</span>);</span></div>
+</div>
+<div class="card" id="net" style="left:580px; top:150px; width:660px; height:560px">
+  <div class="head">Network<span class="r">NVR · device.example.com</span></div>
+  <div class="req" id="r1">
+    <div class="l">GET /api/status<span class="st" id="st1" style="background:var(--bad); color:#fff">401</span></div>
+    <div class="d" id="d1"><b>WWW-Authenticate:</b> Digest realm="NVR",
+  nonce="b7f3a9c2…", qop="auth", algorithm=SHA-256</div>
+  </div>
+  <div class="calc" id="calc">response = SHA-256(HA1:nonce:nc:cnonce:qop:HA2)</div>
+  <div class="req" id="r2">
+    <div class="l">GET /api/status<span class="st" id="st2" style="background:var(--ok); color:#04260f">200</span></div>
+    <div class="d" id="d2"><b>Authorization:</b> Digest username="admin",
+  nonce="b7f3a9c2…", nc=00000001,
+  response="9e1c04d7…"</div>
+  </div>
+</div>
+</div>
+
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const END = 12;
+      const show = (sel, at, d = 0.3) => tl.fromTo(sel, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: d, ease: "power2.out" }, at);
+      const fadeIn = (sel, at, d = 0.3) => tl.fromTo(sel, { opacity: 0 }, { opacity: 1, duration: d }, at);
+      tl.fromTo("#scene", { opacity: 0 }, { opacity: 1, duration: 0.4 }, 0);
+
+      show("#code", 0.3, 0.5);
+      show("#net", 0.6, 0.5);
+      tl.to("#call", { backgroundColor: "rgba(0,173,216,0.18)", duration: 0.3 }, 1.6);
+      show("#r1", 2.2);
+      tl.fromTo("#st1", { scale: 0.5, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: "back.out(2)" }, 3.0);
+      fadeIn("#d1", 3.6);
+      show("#calc", 5.2);
+      show("#r2", 6.8);
+      fadeIn("#d2", 7.2);
+      tl.fromTo("#st2", { scale: 0.5, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: "back.out(2)" }, 8.4);
+      tl.to("#r2", { borderColor: "#3fb950", duration: 0.3 }, 8.4);
+
+      tl.to(["#scene", "video"], { opacity: 0, duration: 0.4 }, END - 0.4);
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

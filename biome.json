@@ -5,6 +5,7 @@
 		"includes": [
 			"**",
 			"!docs/design",
+			"!videos",
 			"!.claude",
 			"!.serena",
 			"!skills-lock.json",

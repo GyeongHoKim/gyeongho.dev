@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1280, height=800" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+:root { --ground:#0e1116; --card:#161b22; --line:#30363d; --ink:#e6edf3; --muted:#9aa4af;
+  --go:#00add8; --hls:#f0883e; --dash:#a371f7; --ok:#3fb950; --bad:#f85149;
+  --sans:-apple-system,"Helvetica Neue",Arial,sans-serif; --mono:Menlo,"SF Mono",Monaco,monospace; }
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { width:1280px; height:800px; overflow:hidden; background:var(--ground); }
+#root { position:relative; width:1280px; height:800px; font-family:var(--sans); color:var(--ink);
+  background:radial-gradient(ellipse at 50% 40%, #18202b 0%, var(--ground) 70%); }
+.title { position:absolute; left:40px; top:48px; font-size:44px; font-weight:700; letter-spacing:-0.02em; }
+.card { position:absolute; background:var(--card); border:2px solid var(--line); border-radius:16px; overflow:hidden;
+  box-shadow:0 18px 40px rgba(0,0,0,.45); }
+.head { height:54px; padding:0 18px; display:flex; align-items:center; gap:12px; border-bottom:2px solid var(--line);
+  font-size:24px; font-weight:700; }
+.head .r { margin-left:auto; font:600 20px var(--mono); color:var(--muted); }
+.foot { height:63px; padding:0 18px; display:flex; align-items:center; gap:10px; font:600 21px var(--mono); color:var(--muted); }
+.screen { background:#000; position:relative; }
+.dots { display:inline-flex; gap:7px; } .dots i { width:13px; height:13px; border-radius:50%; background:var(--line); }
+.term { padding:16px 20px; font:21px/1.62 var(--mono); color:var(--muted); white-space:pre; }
+.term b { color:var(--ink); font-weight:600; } .term .c { color:var(--go); } .term .g { color:var(--ok); }
+.term .o { color:var(--hls); } .term .p { color:var(--dash); }
+.chip { padding:5px 13px; border:2px solid var(--line); border-radius:999px; font:600 20px var(--mono); color:var(--muted); }
+video { position:absolute; object-fit:cover; z-index:2; }
+
+.grid { position:absolute; left:40px; top:150px; width:1200px; display:grid; grid-template-columns:repeat(22, 1fr); gap:6px; }
+.grid i u, .grid i b { grid-area:1 / 1; text-decoration:none; font-weight:600; } .grid i u { opacity:0; }
+.grid i { height:44px; border-radius:6px; display:grid; place-items:center; font:600 19px var(--mono); font-style:normal;
+  background:var(--card); border:2px solid var(--line); color:var(--muted); }
+.legend { position:absolute; left:40px; top:368px; display:flex; gap:28px; font:600 21px var(--mono); }
+.legend span { display:flex; align-items:center; gap:10px; }
+.legend i { width:20px; height:20px; border-radius:5px; border:2px solid; }
+.sub { padding:14px 24px; font:22px/1.7 var(--mono); color:var(--muted); white-space:pre; }
+.sub b { color:var(--ink); }
+.merged { display:inline-block; padding:8px 18px; border-radius:999px; background:#8957e5; color:#fff; font-size:26px; font-weight:700; }
+.pr { padding:26px 28px; } .pr p { margin-top:18px; font-size:28px; font-weight:700; line-height:1.3; } .pr span { display:block; margin-top:12px; font:21px var(--mono); color:var(--muted); }
+</style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="11" data-width="1280" data-height="800">
+      <div id="scene" class="clip" data-start="0" data-duration="11" data-track-index="0">
+<div class="title">VP9 Common Encryption in mp4ff</div>
+<div class="grid" id="grid"><i class="h"><u>6C</u><b>4E</b></i><i class="h"><u>74</u><b>92</b></i><i class="h"><u>13</u><b>25</b></i><i class="h"><u>22</u><b>2E</b></i><i class="h"><u>31</u><b>A1</b></i><i class="h"><u>CD</u><b>13</b></i><i class="h"><u>BE</u><b>12</b></i><i class="h"><u>ED</u><b>42</b></i><i class="p"><u>69</u><b>66</b></i><i class="p"><u>CE</u><b>24</b></i><i class="p"><u>FC</u><b>23</b></i><i class="p"><u>D7</u><b>DA</b></i><i class="p"><u>8D</u><b>20</b></i><i class="p"><u>97</u><b>61</b></i><i class="p"><u>6A</u><b>06</b></i><i class="p"><u>95</u><b>6E</b></i><i class="p"><u>C2</u><b>8A</b></i><i class="p"><u>D4</u><b>03</b></i><i class="p"><u>13</u><b>68</b></i><i class="p"><u>28</u><b>D4</b></i><i class="p"><u>57</u><b>1E</b></i><i class="p"><u>3C</u><b>5D</b></i><i class="p"><u>EE</u><b>6E</b></i><i class="p"><u>5E</u><b>C0</b></i><i class="p"><u>4A</u><b>91</b></i><i class="p"><u>11</u><b>5F</b></i><i class="p"><u>5D</u><b>3B</b></i><i class="p"><u>51</u><b>3E</b></i><i class="p"><u>C2</u><b>53</b></i><i class="p"><u>A4</u><b>16</b></i><i class="p"><u>AD</u><b>6E</b></i><i class="p"><u>E5</u><b>38</b></i><i class="p"><u>94</u><b>11</b></i><i class="p"><u>D0</u><b>28</b></i><i class="p"><u>9A</u><b>A3</b></i><i class="p"><u>4C</u><b>F5</b></i><i class="p"><u>C0</u><b>34</b></i><i class="p"><u>7C</u><b>59</b></i><i class="p"><u>CA</u><b>F0</b></i><i class="p"><u>84</u><b>95</b></i><i class="h"><u>F3</u><b>61</b></i><i class="h"><u>1B</u><b>0B</b></i><i class="h"><u>50</u><b>68</b></i><i class="h"><u>D5</u><b>98</b></i><i class="h"><u>04</u><b>F9</b></i><i class="h"><u>2E</u><b>B7</b></i><i class="p"><u>29</u><b>99</b></i><i class="p"><u>55</u><b>57</b></i><i class="p"><u>79</u><b>99</b></i><i class="p"><u>BE</u><b>78</b></i><i class="p"><u>C0</u><b>10</b></i><i class="p"><u>66</u><b>87</b></i><i class="p"><u>02</u><b>99</b></i><i class="p"><u>E5</u><b>7F</b></i><i class="p"><u>6C</u><b>D2</b></i><i class="p"><u>35</u><b>BC</b></i><i class="p"><u>FB</u><b>8F</b></i><i class="p"><u>44</u><b>9D</b></i><i class="p"><u>EE</u><b>E2</b></i><i class="p"><u>3B</u><b>E1</b></i><i class="p"><u>EC</u><b>CC</b></i><i class="p"><u>8C</u><b>BF</b></i><i class="p"><u>F5</u><b>BF</b></i><i class="p"><u>BE</u><b>C2</b></i><i class="p"><u>0B</u><b>DB</b></i><i class="p"><u>F8</u><b>6B</b></i><i class="p"><u>9C</u><b>E5</b></i><i class="p"><u>4F</u><b>85</b></i><i class="p"><u>B6</u><b>07</b></i><i class="p"><u>CF</u><b>46</b></i><i class="p"><u>E9</u><b>4A</b></i><i class="p"><u>4B</u><b>2A</b></i><i class="p"><u>FB</u><b>D4</b></i><i class="p"><u>E5</u><b>8F</b></i><i class="p"><u>4F</u><b>E1</b></i><i class="p"><u>5C</u><b>11</b></i><i class="p"><u>12</u><b>82</b></i><i class="p"><u>18</u><b>A3</b></i><i class="x"><u>2B</u><b>18</b></i><i class="x"><u>F7</u><b>72</b></i><i class="x"><u>DF</u><b>8F</b></i><i class="x"><u>D5</u><b>7A</b></i><i class="x"><u>47</u><b>5B</b></i><i class="x"><u>DE</u><b>E4</b></i><i class="x"><u>74</u><b>34</b></i><i class="x"><u>93</u><b>26</b></i><i class="x"><u>5C</u><b>91</b></i><i class="x"><u>9D</u><b>D9</b></i></div>
+<div class="legend">
+  <span id="l1" style="color:var(--go)"><i></i>frame header · clear</span>
+  <span id="l2" style="color:var(--hls)"><i></i>superframe index · clear</span>
+  <span id="l3" style="color:var(--dash)"><i style="background:var(--dash)"></i>frame data · AES-CTR, 16-byte blocks</span>
+</div>
+<div class="card" id="subs" style="left:40px; top:440px; width:600px; height:270px">
+  <div class="head">Subsamples</div>
+  <div class="sub"><div id="s1">frame 1   clear <b> 8</b>   protected <b>32</b></div><div id="s2">frame 2   clear <b> 6</b>   protected <b>32</b></div><div id="s3">index     clear <b>10</b>   protected <b> 0</b></div></div>
+</div>
+<div class="card" id="pr" style="left:680px; top:440px; width:560px; height:270px">
+  <div class="head">Pull request<span class="r">Eyevinn/mp4ff</span></div>
+  <div class="pr"><div class="merged">Merged</div><p>feat(mp4): add VP9 cenc encryption support</p><span>#663</span></div>
+</div>
+</div>
+
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const END = 11;
+      const show = (sel, at, d = 0.3) => tl.fromTo(sel, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: d, ease: "power2.out" }, at);
+      const fadeIn = (sel, at, d = 0.3) => tl.fromTo(sel, { opacity: 0 }, { opacity: 1, duration: d }, at);
+      tl.fromTo("#scene", { opacity: 0 }, { opacity: 1, duration: 0.4 }, 0);
+
+      show("#grid", 0.2, 0.5);
+      tl.to("#grid i.h", { borderColor: "#00add8", color: "#00add8", duration: 0.3, stagger: 0.03 }, 1.2);
+      fadeIn("#l1", 1.2);
+      tl.to("#grid i.x", { borderColor: "#f0883e", color: "#f0883e", duration: 0.3, stagger: 0.03 }, 2.2);
+      fadeIn("#l2", 2.2);
+      fadeIn("#l3", 3.2);
+      document.querySelectorAll("#grid i.p").forEach((cell, n) => {
+        const at = 3.3 + n * 0.045;
+        tl.set(cell.querySelector("b"), { opacity: 0 }, at);
+        tl.set(cell.querySelector("u"), { opacity: 1 }, at);
+        tl.to(cell, { backgroundColor: "#a371f7", borderColor: "#a371f7", color: "#0e1116", duration: 0.15 }, at);
+      });
+      show("#subs", 6.4, 0.4);
+      fadeIn("#s1", 6.8); fadeIn("#s2", 7.2); fadeIn("#s3", 7.6);
+      show("#pr", 8.3, 0.4);
+      tl.fromTo(".merged", { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(2)" }, 8.6);
+
+      tl.to(["#scene", "video"], { opacity: 0, duration: 0.4 }, END - 0.4);
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

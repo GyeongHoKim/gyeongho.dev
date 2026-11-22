@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1280, height=800" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+:root { --ground:#0e1116; --card:#161b22; --line:#30363d; --ink:#e6edf3; --muted:#9aa4af;
+  --go:#00add8; --hls:#f0883e; --dash:#a371f7; --ok:#3fb950; --bad:#f85149;
+  --sans:-apple-system,"Helvetica Neue",Arial,sans-serif; --mono:Menlo,"SF Mono",Monaco,monospace; }
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { width:1280px; height:800px; overflow:hidden; background:var(--ground); }
+#root { position:relative; width:1280px; height:800px; font-family:var(--sans); color:var(--ink);
+  background:radial-gradient(ellipse at 50% 40%, #18202b 0%, var(--ground) 70%); }
+.title { position:absolute; left:40px; top:48px; font-size:44px; font-weight:700; letter-spacing:-0.02em; }
+.card { position:absolute; background:var(--card); border:2px solid var(--line); border-radius:16px; overflow:hidden;
+  box-shadow:0 18px 40px rgba(0,0,0,.45); }
+.head { height:54px; padding:0 18px; display:flex; align-items:center; gap:12px; border-bottom:2px solid var(--line);
+  font-size:24px; font-weight:700; }
+.head .r { margin-left:auto; font:600 20px var(--mono); color:var(--muted); }
+.foot { height:63px; padding:0 18px; display:flex; align-items:center; gap:10px; font:600 21px var(--mono); color:var(--muted); }
+.screen { background:#000; position:relative; }
+.dots { display:inline-flex; gap:7px; } .dots i { width:13px; height:13px; border-radius:50%; background:var(--line); }
+.term { padding:16px 20px; font:21px/1.62 var(--mono); color:var(--muted); white-space:pre; }
+.term b { color:var(--ink); font-weight:600; } .term .c { color:var(--go); } .term .g { color:var(--ok); }
+.term .o { color:var(--hls); } .term .p { color:var(--dash); }
+.chip { padding:5px 13px; border:2px solid var(--line); border-radius:999px; font:600 20px var(--mono); color:var(--muted); }
+video { position:absolute; object-fit:cover; z-index:2; }
+
+.chg { padding:12px 18px; border-bottom:2px solid var(--line); font-size:23px; font-weight:700; display:flex; align-items:center; gap:12px; }
+.chg span { margin-left:auto; }
+.diff { padding:10px 0; font:19px/1.65 var(--mono); white-space:pre; color:var(--ink); }
+.diff div { padding:0 18px; } .diff .n { color:var(--muted); }
+.diff .a { background:rgba(63,185,80,.16); } .diff .r { background:rgba(248,81,73,.16); }
+.cmt { margin:6px 18px 0; padding:12px 16px; border:2px solid var(--go); border-radius:12px; background:#0e1116; }
+.cmt .who { display:flex; align-items:center; gap:10px; font:600 19px var(--mono); color:var(--go); }
+.cmt .tag { margin-left:auto; padding:1px 10px; border-radius:6px; background:var(--hls); color:#2b1300; font-weight:700; }
+.cmt p { margin-top:8px; font-size:21px; line-height:1.4; }
+</style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="12" data-width="1280" data-height="800">
+      <div id="scene" class="clip" data-start="0" data-duration="12" data-track-index="0">
+<div class="title">Gerrit code review, driven by an agent</div>
+<div class="card" id="agent" style="left:40px; top:150px; width:540px; height:560px">
+  <div class="head"><span class="dots"><i></i><i></i><i></i></span>Coding agent</div>
+  <div class="term"><div id="a0"><span class="g">&gt;</span> <b>Review the change waiting on me</b></div><div id="a1"> </div><div id="a2"><span class="c">●</span> <b>query_changes</b></div><div id="a3">  is:open reviewer:self</div><div id="a4"><span class="c">●</span> <b>get_file_diff</b></div><div id="a5">  change 12345 · src/main.go</div><div id="a6"><span class="c">●</span> <b>post_review_comment</b></div><div id="a7">  line 42 · draft saved</div><div id="a8"><span class="c">●</span> <b>publish_drafts</b></div><div id="a9"><span class="g">  review published</span></div></div>
+</div>
+<div class="card" id="gerrit" style="left:620px; top:150px; width:620px; height:560px">
+  <div class="head">Gerrit<span class="r">gerrit.example.com</span></div>
+  <div class="chg" id="chg">Change 12345<span class="chip">src/main.go</span></div>
+  <div class="diff" id="diff"><div><span class="n">40 </span>  func (c *Client) Close() error {</div><div class="r"><span class="n">41 </span>-   c.conn.Close()</div><div class="a"><span class="n">41 </span>+   err := c.conn.Close()</div><div class="a"><span class="n">42 </span>+   c.done &lt;- struct{}{}</div><div class="a"><span class="n">43 </span>+   return err</div><div><span class="n">44 </span>  }</div></div>
+  <div class="cmt" id="cmt">
+    <div class="who">line 42<span class="tag" id="tag">DRAFT</span></div>
+    <p>This send blocks when nobody is reading from done. Close the channel instead.</p>
+  </div>
+</div>
+</div>
+
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const END = 12;
+      const show = (sel, at, d = 0.3) => tl.fromTo(sel, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: d, ease: "power2.out" }, at);
+      const fadeIn = (sel, at, d = 0.3) => tl.fromTo(sel, { opacity: 0 }, { opacity: 1, duration: d }, at);
+      tl.fromTo("#scene", { opacity: 0 }, { opacity: 1, duration: 0.4 }, 0);
+
+      show("#agent", 0.3, 0.5);
+      [0.9, 0.9, 1.9, 2.2, 3.4, 3.7, 5.6, 6.2, 7.8, 8.4].forEach((at, n) => fadeIn("#a" + n, at, 0.15));
+      show("#gerrit", 2.4, 0.5);
+      fadeIn("#chg", 2.7);
+      tl.fromTo("#diff div", { opacity: 0 }, { opacity: 1, duration: 0.2, stagger: 0.12 }, 3.9);
+      show("#cmt", 6.0, 0.4);
+      tl.set("#tag", { textContent: "PUBLISHED" }, 8.4);
+      tl.to("#tag", { backgroundColor: "#3fb950", color: "#04260f", duration: 0.3 }, 8.4);
+      tl.to("#cmt", { borderColor: "#3fb950", duration: 0.3 }, 8.4);
+      tl.to("#cmt .who", { color: "#3fb950", duration: 0.3 }, 8.4);
+
+      tl.to(["#scene", "video"], { opacity: 0, duration: 0.4 }, END - 0.4);
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>
