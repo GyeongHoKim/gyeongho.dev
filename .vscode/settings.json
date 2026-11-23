@@ -14,6 +14,11 @@
 	},
 	"[terraform-vars]": { "editor.defaultFormatter": "hashicorp.terraform" },
 	"files.associations": { "*.dc.html": "html" },
-	"search.exclude": { "dist": true, ".astro": true, "docs/design": true },
+	"search.exclude": {
+		"dist": true,
+		"dist-drafts": true,
+		".astro": true,
+		"docs/design": true
+	},
 	"mise.configureExtensionsAutomatically": true
 }

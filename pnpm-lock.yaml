@@ -227,6 +227,9 @@ importers:
       hyperframes:
         specifier: 0.9.80
         version: 0.9.80(@types/node@26.6.6)
+      sharp:
+        specifier: 0.35.5
+        version: 0.35.5(@types/node@26.6.6)
       typescript:
         specifier: 6.0.3
         version: 6.0.3
@@ -3146,8 +3149,7 @@ snapshots:
     dependencies:
       hono: 4.13.19
 
-  '@img/colour@1.1.0':
-    optional: true
+  '@img/colour@1.1.0': {}
 
   '@img/sharp-darwin-arm64@0.35.5':
     optionalDependencies:
@@ -4480,7 +4482,6 @@ snapshots:
       '@img/sharp-win32-ia32': 0.35.5
       '@img/sharp-win32-x64': 0.35.5
       '@types/node': 26.6.6
-    optional: true
 
   shiki@4.6.0:
     dependencies:

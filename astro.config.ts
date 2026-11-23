@@ -4,6 +4,8 @@ import { defineConfig } from "astro/config";
 export default defineConfig({
 	site: "https://gyeongho.dev",
 	output: "static",
+	// `astro preview` has no --outDir flag, so the drafts build is chosen by env.
+	outDir: process.env.DRAFTS_BUILD === "1" ? "./dist-drafts" : "./dist",
 	trailingSlash: "always",
 	i18n: {
 		locales: ["ko", "en"],

@@ -27,5 +27,11 @@
 			}
 		}
 	},
-	"file_scan_exclusions": ["**/.git", "**/node_modules", "**/dist", "**/.astro"]
+	"file_scan_exclusions": [
+		"**/.git",
+		"**/node_modules",
+		"**/dist",
+		"**/dist-drafts",
+		"**/.astro"
+	]
 }

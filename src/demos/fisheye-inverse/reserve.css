@@ -1,0 +1,25 @@
+/* Loaded on every post page, so that the tag has its height before the demo arrives. */
+demo-fisheye-inverse {
+	display: block;
+	margin-block-end: var(--sys-spacing-lg);
+}
+/* Without scripting the demo never comes and the fallback keeps its own height. */
+@media (scripting: enabled) {
+	/* 100cqi is the width of the post body. Two panes side by side, each a
+	   square of 50cqi less half the gap. The rest is at most 185px: the
+	   caption, three gaps, the slider and three rows of text. The rows are the
+	   hint and a readout of two rows or, without WebGPU, the notice that takes
+	   the place of the hint. The rest is in px, like the sizes it adds up: none
+	   of them follows the root font size. */
+	demo-fisheye-inverse {
+		min-block-size: calc(50cqi + 192px);
+	}
+	/* The panes are stacked: two squares of 100cqi and at most 297px for two
+	   captions, four gaps, the slider, a readout of three rows, and three rows
+	   for the notice. The hint takes no more rows than the notice. */
+	@media (max-width: 640px) {
+		demo-fisheye-inverse {
+			min-block-size: calc(200cqi + 304px);
+		}
+	}
+}

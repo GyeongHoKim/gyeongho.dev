@@ -1,0 +1,215 @@
+/* Every class starts with "fi-": this sheet is global once the demo has loaded. */
+.fi {
+	display: grid;
+	gap: var(--sys-spacing-md);
+	/* A line the demo draws on a picture lies on a wider line in the surface
+	   colour, like the outline in the fallback picture of the post. */
+	--fi-line: var(--sys-border-width-thick);
+	--fi-halo: calc(
+		var(--sys-border-width-thick) +
+		2 *
+		var(--sys-border-width-default)
+	);
+}
+.fi-panes {
+	position: relative;
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--sys-spacing-md);
+}
+.fi-pane {
+	display: grid;
+	gap: var(--sys-spacing-xs);
+	margin: 0;
+}
+.fi-pane figcaption {
+	font-size: var(--sys-typography-label-fontSize);
+	font-weight: var(--sys-typography-label-fontWeight);
+	line-height: var(--sys-typography-label-lineHeight);
+	color: var(--sys-color-text-secondary);
+}
+.fi-frame {
+	position: relative;
+	aspect-ratio: 1;
+	background: var(--sys-color-bg-muted);
+}
+.fi-frame > img,
+.fi-frame > canvas {
+	display: block;
+	inline-size: 100%;
+	block-size: auto;
+}
+
+/* The outline of the view and the pixel it reads, in pixels of the photo. */
+.fi-overlay {
+	position: absolute;
+	inset: 0;
+	inline-size: 100%;
+	block-size: 100%;
+	pointer-events: none;
+}
+.fi-footprint,
+.fi-footprint-halo {
+	fill: none;
+	stroke-linejoin: round;
+	stroke-linecap: round;
+	/* The same width on the screen at every size of the pane. */
+	vector-effect: non-scaling-stroke;
+}
+.fi-footprint-halo {
+	stroke: var(--sys-color-bg-surface);
+	stroke-width: var(--fi-halo);
+}
+.fi-footprint {
+	stroke: var(--sys-color-border-focus);
+	stroke-width: var(--fi-line);
+}
+.fi-dot {
+	fill: var(--sys-color-border-danger);
+	stroke: var(--sys-color-bg-surface);
+	stroke-width: var(--sys-border-width-default);
+	vector-effect: non-scaling-stroke;
+}
+/* The hidden attribute hides HTML elements only. */
+.fi-dot[hidden],
+.fi-link [hidden] {
+	display: none;
+}
+
+/* The pointed pixel. The button is the 44px target, the cross is drawn in it. */
+.fi-frame[data-testid="fi-view"] {
+	cursor: crosshair;
+}
+.fi-cross {
+	position: absolute;
+	inline-size: 44px;
+	block-size: 44px;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background: none;
+	translate: -50% -50%;
+	cursor: crosshair;
+}
+.fi-cross::before {
+	content: "";
+	position: absolute;
+	inset: var(--sys-spacing-xs);
+	background:
+		linear-gradient(
+			var(--sys-color-border-danger),
+			var(--sys-color-border-danger)
+		)
+		center / calc(100% - 2 * var(--sys-border-width-default)) var(--fi-line)
+		no-repeat,
+		linear-gradient(
+			var(--sys-color-border-danger),
+			var(--sys-color-border-danger)
+		)
+		center / var(--fi-line) calc(100% - 2 * var(--sys-border-width-default))
+		no-repeat,
+		linear-gradient(var(--sys-color-bg-surface), var(--sys-color-bg-surface))
+		center / 100% var(--fi-halo) no-repeat,
+		linear-gradient(var(--sys-color-bg-surface), var(--sys-color-bg-surface))
+		center / var(--fi-halo) 100% no-repeat;
+	/* Forced colours remove background images, and the cross is nothing else. */
+	forced-color-adjust: none;
+}
+.fi-cross:focus-visible {
+	outline: var(--fi-line) solid var(--sys-color-border-focus);
+	outline-offset: calc(-1 * var(--fi-line));
+	box-shadow:
+		0 0 0 var(--sys-border-width-default) var(--sys-color-bg-surface),
+		inset 0 0 0 calc(var(--fi-line) + var(--sys-border-width-default))
+		var(--sys-color-bg-surface);
+}
+
+/* With WebGPU a drag turns the view: it must not scroll the page or select
+   the text around the picture. Two fingers still zoom the page. */
+.fi[data-gpu="on"] .fi-frame[data-testid="fi-view"] {
+	touch-action: pinch-zoom;
+	-webkit-user-select: none;
+	user-select: none;
+}
+/* The crosshair lies under the pointer and would take the focus of every
+   press. While the view turns, a press goes through it to the frame, whose
+   arrow keys turn the view; the Tab key still reaches the crosshair. */
+.fi[data-gpu="on"] .fi-cross {
+	pointer-events: none;
+}
+.fi-frame[data-grabbing] {
+	cursor: grabbing;
+}
+/* A dragging finger gives the frame a focus without the ring, and a key
+   does not bring the ring back. The script marks the frame at the first key
+   that turns the view. */
+.fi-frame:focus-visible,
+.fi-frame[data-keyboard] {
+	outline: var(--fi-line) solid var(--sys-color-border-focus);
+	outline-offset: var(--fi-line);
+}
+
+/* From the pointed pixel to the pixel it reads, across both panes. */
+.fi-link {
+	position: absolute;
+	inset: 0;
+	inline-size: 100%;
+	block-size: 100%;
+	overflow: visible;
+	pointer-events: none;
+}
+.fi-link line {
+	stroke: var(--sys-color-border-danger);
+	stroke-width: var(--fi-line);
+	stroke-linecap: round;
+}
+/* A round cap would reach into the dot, where the halo stops. */
+.fi-link .fi-link-halo {
+	stroke: var(--sys-color-bg-surface);
+	stroke-width: var(--fi-halo);
+	stroke-linecap: butt;
+}
+
+/* gh-slider is as wide as its label by default. */
+.fi gh-slider {
+	display: flex;
+	inline-size: 100%;
+}
+
+/* The same specificity as the paragraph rule of the post body; this sheet
+   comes later, so the demo spaces its own rows. */
+.fi p.fi-hint,
+.fi p.fi-notice {
+	margin: 0;
+	font-size: var(--sys-typography-label-fontSize);
+	line-height: var(--sys-typography-label-lineHeight);
+	color: var(--sys-color-text-secondary);
+}
+/* Until WebGPU answers the hint is not shown, and its row is there: the rows
+   under it stay where they are when it appears. */
+.fi:not([data-gpu]) .fi-hint {
+	visibility: hidden;
+}
+.fi p.fi-readout {
+	margin: 0;
+	font-family: var(--sys-typography-code-fontFamily);
+	font-size: var(--sys-typography-code-fontSize);
+	line-height: var(--sys-typography-code-lineHeight);
+	font-variant-numeric: tabular-nums;
+	color: var(--sys-color-text-secondary);
+}
+/* What the keys of the demo changed, for a screen reader only. */
+.fi p.fi-status {
+	position: absolute;
+	inline-size: 1px;
+	block-size: 1px;
+	margin: 0;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+@media (max-width: 640px) {
+	.fi-panes {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}

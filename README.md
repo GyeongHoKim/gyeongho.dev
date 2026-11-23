@@ -8,6 +8,10 @@ mise run dev
 mise run ci
 ```
 
+## Writing posts
+
+Start a post with `pnpm new:post <slug>`.
+
 ## Portfolio screens
 
 Each project in `src/data/projects.json` can show a screen beside it on the Portfolio page.

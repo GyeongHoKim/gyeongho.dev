@@ -31,6 +31,13 @@ description = "Build the site into dist/"
 depends = ["install"]
 run = "pnpm build"
 
+[tasks."build:drafts"]
+description = "Build the site with draft posts into dist-drafts/"
+# After build, so the two builds do not write .astro/ at the same time.
+depends = ["build"]
+env = { VERCEL_ENV = "preview", DRAFTS_BUILD = "1" }
+run = "pnpm build"
+
 [tasks.check]
 description = "Lint, format check and type check"
 depends = ["install"]
@@ -42,8 +49,8 @@ depends = ["install"]
 run = "pnpm test"
 
 [tasks.e2e]
-description = "Run browser tests against the built site"
-depends = ["build"]
+description = "Run browser tests against the built site and the drafts build"
+depends = ["build:drafts"]
 run = "pnpm e2e"
 
 [tasks.ci]

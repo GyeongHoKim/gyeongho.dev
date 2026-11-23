@@ -15,7 +15,8 @@
 		"format": "biome check --write .",
 		"test": "vitest run",
 		"e2e": "playwright test",
-		"new:post": "node scripts/new-post.mjs"
+		"new:post": "node scripts/new-post.mjs",
+		"render:fisheye-stills": "node scripts/render-fisheye-stills.mjs"
 	},
 	"dependencies": {
 		"@astrojs/rss": "4.0.19",
@@ -37,6 +38,7 @@
 		"@biomejs/biome": "2.6.8",
 		"@playwright/test": "1.65.1",
 		"hyperframes": "0.9.80",
+		"sharp": "0.35.5",
 		"typescript": "6.0.3",
 		"typescript-language-server": "6.1.0",
 		"vitest": "5.1.1"

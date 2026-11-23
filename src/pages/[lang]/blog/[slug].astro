@@ -7,6 +7,9 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { fullDate } from "../../../lib/format";
 import { getPosts, type Post, postSlug } from "../../../lib/posts";
 
+// Every demo folder reserves the height of its tag; a new folder is picked up here.
+import.meta.glob("../../../demos/*/reserve.css", { eager: true });
+
 export async function getStaticPaths() {
 	const byLocale = await Promise.all(
 		LOCALES.map(async (locale) => ({ locale, posts: await getPosts(locale) })),
@@ -129,6 +132,12 @@ const href = (target: Post) =>
 	</div>
 </BaseLayout>
 
+<script>
+import { initDemos } from "../../../scripts/demo-loader";
+
+initDemos(document, import.meta.glob("../../../demos/*/index.ts"));
+</script>
+
 <style>
 .layout {
 	padding-block: var(--sys-spacing-2xl) var(--sys-spacing-3xl);
@@ -141,6 +150,10 @@ const href = (target: Post) =>
 	flex: 999 1 600px;
 	min-width: 0;
 	max-width: 720px;
+	/* A demo reserves its height in cqi, the width of the post body. The
+	   container is the article, not .prose: as a flex item it already keeps its
+	   children's margins inside, so the spacing of the post stays as it was. */
+	container-type: inline-size;
 }
 .crumb {
 	margin-bottom: var(--sys-spacing-md);
@@ -169,6 +182,24 @@ h1 {
 .prose {
 	font-size: calc(var(--sys-typography-body-fontSize) * 1.125);
 	line-height: 1.8;
+}
+/* Demo tags (<demo-name>): the content written inside is the fallback. It
+   shows until the demo is ready and stays when the demo fails. */
+.prose :global([data-demo-state="ready"] > :not([data-demo-stage])) {
+	display: none;
+}
+/* While the demo is being set up it is laid out but takes no room. */
+.prose :global([data-demo-state="loading"]) {
+	position: relative;
+}
+.prose :global([data-demo-state="loading"] > [data-demo-stage]) {
+	position: absolute;
+	inset: 0 0 auto;
+	visibility: hidden;
+}
+/* A failed demo gives back the height that was reserved for it. */
+.prose :global([data-demo-state="failed"]) {
+	min-block-size: 0;
 }
 .prose :global(h2) {
 	margin: var(--sys-spacing-2xl) 0 var(--sys-spacing-sm);
