@@ -17,6 +17,7 @@
 		"experimentalFullSupportEnabled": true,
 		"formatter": { "enabled": true }
 	},
+	"markdown": { "parser": { "frontmatter": true } },
 	"formatter": { "indentStyle": "tab" },
 	"javascript": { "formatter": { "quoteStyle": "double" } },
 	"linter": { "enabled": true, "rules": { "preset": "recommended" } },

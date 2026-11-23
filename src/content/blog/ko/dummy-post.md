@@ -1,9 +1,8 @@
 ---
-
 title: "[글 제목]"
 description: "[글 요약]"
 pubDate: 2026-11-16
-tags: ["dummy"]
+tags: ["영상"]
 series: "FishEye"
 draft: true
 ---

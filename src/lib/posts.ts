@@ -1,6 +1,7 @@
 import { type CollectionEntry, getCollection } from "astro:content";
 import { isLocale, type Locale } from "../i18n";
 import { SERIES, type Series } from "./series";
+import { TAGS } from "./tags";
 
 export { SERIES } from "./series";
 
@@ -25,6 +26,23 @@ export function postSlug(id: string): string {
 	return id.split("/").slice(1).join("/");
 }
 
+/**
+ * Throws when a post uses a tag that is not in the list of its own locale.
+ * The schema cannot check this because it does not see the entry id.
+ */
+export function assertLocaleTags(all: Post[]): void {
+	for (const post of all) {
+		const locale = postLocale(post.id);
+		const allowed: readonly string[] = TAGS[locale];
+		post.data.tags.forEach((tag, index) => {
+			if (allowed.includes(tag)) return;
+			throw new Error(
+				`blog → ${post.id}: tags.${index} is "${tag}", which is not one of the ${locale} tags (${allowed.join(", ")}).`,
+			);
+		});
+	}
+}
+
 /** Posts of one locale, newest first. */
 export function selectPosts(
 	all: Post[],
@@ -41,6 +59,7 @@ export function selectPosts(
 
 export async function getPosts(locale: Locale): Promise<Post[]> {
 	const all = await getCollection("blog");
+	assertLocaleTags(all);
 	return selectPosts(
 		all,
 		locale,

@@ -1,5 +1,7 @@
-import { expect, it } from "vitest";
+import { expect, it, vi } from "vitest";
 import {
+	assertLocaleTags,
+	getPosts,
 	groupBySeries,
 	groupByYear,
 	type Post,
@@ -9,6 +11,10 @@ import {
 	showDrafts,
 } from "../../src/lib/posts";
 import { matchesFilter } from "../../src/scripts/blog";
+
+// getPosts() reads the collection through astro:content; the test supplies the entries.
+const getCollection = vi.hoisted(() => vi.fn());
+vi.mock("astro:content", () => ({ getCollection }));
 
 const post = (id: string, pubDate: string, extra = {}) =>
 	({
@@ -49,6 +55,40 @@ it("selects by locale, drops drafts and sorts newest first", () => {
 		"ko/c",
 		"ko/a",
 	]);
+});
+it("accepts posts that use the tags of their own locale", () => {
+	expect(() =>
+		assertLocaleTags([
+			post("ko/a", "2026-01-01", { tags: ["영상", "WebGPU"] }),
+			post("en/a", "2026-01-01", { tags: ["Video", "WebGPU"] }),
+			post("en/b", "2026-01-01"),
+		]),
+	).not.toThrow();
+});
+it("rejects a tag of the other locale and names the post and the item", () => {
+	expect(() =>
+		assertLocaleTags([
+			post("ko/a", "2026-01-01", { tags: ["영상"] }),
+			post("en/a", "2026-01-01", { tags: ["Video", "영상"] }),
+		]),
+	).toThrow(/en\/a.*tags\.1.*영상/);
+	expect(() =>
+		assertLocaleTags([post("ko/b", "2026-01-01", { tags: ["Video"] })]),
+	).toThrow(/ko\/b.*tags\.0.*Video/);
+});
+it("getPosts checks the tags of every post before it selects", async () => {
+	getCollection.mockResolvedValue([
+		post("ko/a", "2026-01-01", { tags: ["영상"] }),
+		post("en/a", "2026-01-01", { tags: ["Video"] }),
+	]);
+	expect((await getPosts("ko")).map((p) => p.id)).toEqual(["ko/a"]);
+
+	// The en post is wrong, and the ko list fails too: no page is built from it.
+	getCollection.mockResolvedValue([
+		post("ko/a", "2026-01-01", { tags: ["영상"] }),
+		post("en/a", "2026-01-01", { tags: ["영상"] }),
+	]);
+	await expect(getPosts("ko")).rejects.toThrow(/en\/a.*tags\.0.*영상/);
 });
 it("groups by year, newest year first", () => {
 	const groups = groupByYear([

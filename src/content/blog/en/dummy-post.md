@@ -1,9 +1,8 @@
 ---
-
 title: "[Post title]"
 description: "[Post summary]"
 pubDate: 2026-11-16
-tags: ["dummy"]
+tags: ["Video"]
 series: "FishEye"
 draft: true
 ---

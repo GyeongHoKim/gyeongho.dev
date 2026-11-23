@@ -57,7 +57,8 @@ export const ui = {
 		"home.lately.more": "모든 글 보기",
 		"home.lately.empty": "아직 올린 글이 없습니다.",
 
-		"about.description": "웹 브라우저에서 영상을 재생하는 데에 필요한 모든 것을 개발하는 김경호를 소개합니다",
+		"about.description":
+			"웹 브라우저에서 영상을 재생하는 데에 필요한 모든 것을 개발하는 김경호를 소개합니다",
 		"about.title": "About",
 		"about.caption": "그거 아시나요?\n프로그래밍과 활쏘기는\n닮아있답니다?",
 		"about.p1":
@@ -461,8 +462,7 @@ export const ui = {
 		"colophon.stack.inspirationAfter": ".",
 
 		"portfolio.title": "Portfolio",
-		"portfolio.description":
-			"What I open-sourced, shown with real screens",
+		"portfolio.description": "What I open-sourced, shown with real screens",
 		"portfolio.scrollHint": "Please scroll",
 		"portfolio.chapter.company": "IDIS",
 		"portfolio.chapter.oss": "Open source",
