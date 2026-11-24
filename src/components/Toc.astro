@@ -8,17 +8,40 @@ interface Props {
 }
 
 const { headings, locale } = Astro.props;
-const items = headings.filter((heading) => heading.depth <= 3);
+
+interface Entry {
+	heading: MarkdownHeading;
+	children: MarkdownHeading[];
+}
+
+// The h2 headings are the numbered entries. An h3 goes under the entry before
+// it, so that it does not take a number; before the first h2 it is an entry.
+const entries: Entry[] = [];
+for (const heading of headings) {
+	if (heading.depth > 3) continue;
+	const parent = entries.at(-1);
+	if (heading.depth === 3 && parent) parent.children.push(heading);
+	else entries.push({ heading, children: [] });
+}
 ---
 
-{items.length > 0 && (
+{entries.length > 0 && (
 	<gh-card variant="lined" fastener="pin" tilt="right">
 		<div class="toc">
 			<h2 class="hand">{t(locale, "post.toc")}</h2>
 			<ol>
-				{items.map((heading) => (
-					<li class:list={{ sub: heading.depth === 3 }}>
+				{entries.map(({ heading, children }) => (
+					<li>
 						<a href={`#${heading.slug}`}>{heading.text}</a>
+						{children.length > 0 && (
+							<ul>
+								{children.map((child) => (
+									<li>
+										<a href={`#${child.slug}`}>{child.text}</a>
+									</li>
+								))}
+							</ul>
+						)}
 					</li>
 				))}
 			</ol>
@@ -44,8 +67,9 @@ ol {
 	font-size: var(--sys-typography-label-fontSize);
 	line-height: 28px;
 }
-.sub {
-	margin-left: var(--sys-spacing-md);
+ul {
+	margin: 0;
+	padding-left: var(--sys-spacing-md);
 	list-style-type: circle;
 }
 a {
