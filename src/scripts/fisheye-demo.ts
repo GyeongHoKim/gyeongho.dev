@@ -1,5 +1,6 @@
 import type { GhSlider } from "@ghds/web-components/slider";
 import { animate } from "motion";
+import { arrowTurn } from "./fisheye-keys";
 
 type Mode = "ptz" | "equirectangular" | "cylindrical" | "pane" | "original";
 type Cam = "cam1" | "cam2";
@@ -403,19 +404,14 @@ async function initLive(root: HTMLElement, deck: ReturnType<typeof initDeck>) {
 	canvas.addEventListener("pointercancel", release);
 	canvas.addEventListener("keydown", (e) => {
 		if (state.mode !== "ptz") return;
-		const step = 5 / state.zoom;
-		let handled = true;
-		if (e.key === "ArrowLeft") state.pan = Math.max(-180, state.pan - step);
-		else if (e.key === "ArrowRight")
-			state.pan = Math.min(180, state.pan + step);
-		else if (e.key === "ArrowUp") state.tilt = Math.max(-90, state.tilt - step);
-		else if (e.key === "ArrowDown")
-			state.tilt = Math.min(90, state.tilt + step);
-		else if (e.key === "+" || e.key === "=")
+		const turned = arrowTurn(state, e.key);
+		if (turned) {
+			state.pan = turned.pan;
+			state.tilt = turned.tilt;
+		} else if (e.key === "+" || e.key === "=")
 			state.zoom = Math.min(4, state.zoom + 0.2);
 		else if (e.key === "-") state.zoom = Math.max(1, state.zoom - 0.2);
-		else handled = false;
-		if (!handled) return;
+		else return;
 		e.preventDefault();
 		state.dragged = true;
 		slider.value = state.zoom;
